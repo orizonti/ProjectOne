@@ -174,7 +174,7 @@ public:
 class ClassHero
 {
 public:
-	ClassHero()
+	ClassHero()  // Test comment
 	{
 		SetPosition(3, 4);
 		SetDestination(3, 4);
