@@ -8,18 +8,32 @@
 #include <qstring>
 #include "QPainterPath"
 #include "QPolygon"
+#include "qfile.h"
+#include "QtXml\qxml.h"
+#include "QtXml\qdom.h"
+
+class PathPoints
+{
+public:
+	QString typePath = "none";
+	QList<QPointF> Points;
+};
+
+
 
 class CurveShape : public sf::Shape
 {
 public:
 
+	void AddCurves(QDomElement newElement);
+
 	explicit CurveShape()
 	{
+
 		Curve.setPrimitiveType(sf::LineStrip);
-		DrawPainterPath();
-		update();
 	}
 
+	QList<PathPoints> PathMassive;
 	QPainterPath Path;
 	QList<QPolygonF> listPoints;
 
@@ -34,16 +48,62 @@ public:
 	virtual sf::Vector2f getPoint(std::size_t index) const
 	{
 
-		qDebug() << "index - " << index;
+		//qDebug() << "index - " << index;
 		sf::Vector2f Coord;
 		Coord.x = listPoints.at(0).at(index).x();
 		Coord.y = listPoints.at(0).at(index).y();
 		return Coord;
 	}
 
+	QPointF GetCoord(QString &str, QRegExp &rx)
+	{
+		QPointF Point;
+		rx.indexIn(str);
+		Point.setX(rx.cap(1).toDouble()); // "189"
+		Point.setY(rx.cap(2).toDouble()); // "189"
+		return Point;
+	}
 private:
 	void DrawPainterPath();
 
+};
+
+
+class SVGCurveContainer
+{
+public:
+	SVGCurveContainer(QString path = "e://444.svg")
+	{
+		QFile newXMLFile(path);
+		bool result = newXMLFile.open(QIODevice::ReadOnly);
+
+		QDomDocument newDomDoc;
+		result = newDomDoc.setContent(&newXMLFile);
+
+
+
+		if (result)
+		{
+			QDomNode currentNod = newDomDoc.documentElement().firstChild();
+			while (!currentNod.isNull())
+			{
+				QDomElement newElement = currentNod.toElement();
+
+				qDebug() << "*************************************";
+				if (newElement.tagName() == "path")
+				{
+					CurveShape newShape;
+					newShape.AddCurves(newElement);
+					Curves.append(newShape);
+				}
+
+				currentNod = currentNod.nextSibling();
+			}
+		}
+
+
+	}
+	QList<CurveShape> Curves;
 };
 
 
@@ -250,7 +310,7 @@ int main(int argc, char *argv[])
 
 	ClassHero Hero;
 	//CurveShape Shape;
-
+	SVGCurveContainer Contaner;
 
 	while (window.isOpen())
 	{
@@ -303,19 +363,19 @@ int main(int argc, char *argv[])
 
 			window.clear();
 
-			for (int x = 0; x <= 40; x++)
-			{
-				for (int y = 0; y <= 40; y++)
-				{
-					IsoVect(0) = x;
-					IsoVect(1) = y;
+		//	for (int x = 0; x <= 40; x++)
+		//	{
+		//		for (int y = 0; y <= 40; y++)
+		//		{
+		//			IsoVect(0) = x;
+		//			IsoVect(1) = y;
 
-					DecVect = m*IsoVect * 64;
+		//			DecVect = m*IsoVect * 64;
 
-					sprite.setPosition(0 + DecVect(0), 320 + DecVect(1));
-					window.draw(sprite);
-				}
-			}
+		//			sprite.setPosition(0 + DecVect(0), 320 + DecVect(1));
+		//			window.draw(sprite);
+		//		}
+		//	}
 
 			//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
 			//	{
@@ -339,12 +399,15 @@ int main(int argc, char *argv[])
 			//		y_center += 64;
 			//	}
 
-			Hero.MoveHero();
+			//Hero.MoveHero();
 
-			spriteBorder.setPosition(DecVect2(0), DecVect2(1));
-			window.draw(spriteBorder);
-			window.draw(Hero.ImageHero.spriteHero);
-			//window.draw(Shape.Curve);
+			//spriteBorder.setPosition(DecVect2(0), DecVect2(1));
+			//window.draw(spriteBorder);
+			//window.draw(Hero.ImageHero.spriteHero);
+			for (CurveShape Shape : Contaner.Curves)
+				window.draw(Shape.Curve);
+
+
 			window.setView(view2);
 			window.display();
 		}
@@ -394,9 +457,18 @@ void ClassHero::SetPosition(int x, int y)
 
 void CurveShape::DrawPainterPath()
 {
-	Path.moveTo(56, 268);
-	Path.quadTo(QPointF(73, 112), QPointF(188, 170));
-	Path.cubicTo(QPointF(303, 230), QPointF(380, 228), QPointF(320, 166));
+
+	for (PathPoints sub_path : this->PathMassive)
+	{
+		if (sub_path.typePath == "MOVE")
+			Path.moveTo(sub_path.Points.at(0));
+
+		if (sub_path.typePath == "LINE")
+			Path.lineTo(sub_path.Points.at(0));
+
+		if (sub_path.typePath == "CUBIC")
+			Path.cubicTo(sub_path.Points.at(0), sub_path.Points.at(1), sub_path.Points.at(2));
+	}
 
 
 	listPoints = Path.toSubpathPolygons();
@@ -409,24 +481,85 @@ void CurveShape::DrawPainterPath()
 		vertex.color = sf::Color::Green;
 		Curve.append(vertex);
 
-		qDebug() << point.toPoint().x() << point.toPoint().y();
 	}
-
 	qDebug() << "Nuber polygons - " << listPoints.at(0).size();
+}
 
 
-	listPoints = Path.toSubpathPolygons();
+void CurveShape::AddCurves(QDomElement newElement)
+{
 
-	for (QPointF point : listPoints.at(0))
+
+	QString curve_path_str = newElement.attribute("d");
+
+	QStringList list;
+	list = curve_path_str.split(QRegExp("\\s"));
+
+	for (QString str : list)
 	{
-
-		sf::Vertex vertex;
-		vertex.position = sf::Vector2f(point.x(), point.y());
-		vertex.color = sf::Color::Green;
-		Curve.append(vertex);
-
-		qDebug() << point.toPoint().x() << point.toPoint().y();
+		qDebug() << "PATH -" << str;
 	}
 
-	qDebug() << "Nuber polygons - " << listPoints.at(0).size();
+	qDebug() << "list - " << list;
+	QRegExp rx("(\\d{1,4}.\\d{3}),(\\d{1,4}.\\d{3})");
+
+
+
+	qDebug() << "size list - " << list.size();
+	QString str;
+	QPointF Point;
+	for (int n = 0; n < list.size(); n++)
+	{
+		qDebug() << "Start parsing";
+		str = list.at(n);
+		PathPoints newPath;
+
+		if (str[0] == 'M')
+		{
+			str.remove(0, 1);
+			Point = GetCoord(str, rx);
+			newPath.typePath = "MOVE";
+			newPath.Points.append(Point);
+
+			this->PathMassive.append(newPath);
+			qDebug() << "MOVE TO - " << Point;
+		}
+
+		if (str[0] == 'L')
+		{
+			str.remove(0, 1);
+			Point = GetCoord(str, rx);
+			newPath.typePath = "LINE";
+			newPath.Points.append(Point);
+			this->PathMassive.append(newPath);
+			qDebug() << "LINE TO - " << Point;
+		}
+
+		if (str[0] == 'C')
+		{
+
+			str.remove(0, 1);
+			Point = GetCoord(str, rx);
+			newPath.Points.append(Point);
+
+			n++;
+			str = list.at(n);
+			Point = GetCoord(str, rx);
+			newPath.Points.append(Point);
+
+			n++;
+			str = list.at(n);
+			Point = GetCoord(str, rx);
+			newPath.Points.append(Point);
+
+
+			newPath.typePath = "CUBIC";
+			this->PathMassive.append(newPath);
+			qDebug() << "CUBIC BEZIER - " << newPath.Points.at(0) << newPath.Points.at(1) << newPath.Points.at(2);
+		}
+
+	}
+
+	DrawPainterPath();
+	update();
 }
