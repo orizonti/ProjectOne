@@ -11,6 +11,7 @@
 #include "qfile.h"
 #include "QtXml\qxml.h"
 #include "QtXml\qdom.h"
+#include "MapConteinerClass.h"
 
 class PathPoints
 {
@@ -179,8 +180,12 @@ int main(int argc, char *argv[])
 	double y_center = 0;
 
 
-	ClassHero Hero;
+	//ClassHero Hero;
 	//CurveShape Shape;
+
+	MapConteinerClass Map;
+	Map.CreateMapFromFile(QString("E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx"));
+
 	SVGCurveContainer Contaner;
 
 	while (window.isOpen())
@@ -221,7 +226,7 @@ int main(int argc, char *argv[])
 				IsoVect2(1) = floor(IsoVect2(1));
 
 
-				Hero.SetDestination(IsoVect2(0), IsoVect2(1));
+				///Hero.SetDestination(IsoVect2(0), IsoVect2(1));
 
 			}
 		}
@@ -248,27 +253,6 @@ int main(int argc, char *argv[])
 		//		}
 		//	}
 
-			//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-			//	{
-			//		view2.move(-64, 0);
-			//		x_center -= 64;
-			//	}
-
-			//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-			//	{
-			//		view2.move(64, 0);
-			//		x_center += 64;
-			//	}
-			//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-			//	{
-			//		view2.move(0, -64);
-			//		y_center -= 64;
-			//	}
-			//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-			//	{
-			//		view2.move(0, 64);
-			//		y_center += 64;
-			//	}
 
 			//Hero.MoveHero();
 
@@ -291,40 +275,6 @@ int main(int argc, char *argv[])
 	//return a.exec();
 }
 
-void ClassHero::MoveHero()
-{
-
-	if (this->PosHero == PosDestinationHero)
-		return;
-
-
-
-	double x1 = this->PosHero.DecPos(0);
-	double y1 = this->PosHero.DecPos(1);
-
-
-	double x2 = PosDestinationHero.DecPos(0);
-	double y2 = PosDestinationHero.DecPos(1);
-
-	this->PosHero.DecPos(0) = PosHero.DecPos(0) + 4;
-	this->PosHero.DecPos(1) = (-(x1*y2 - x2*y1) - (y1 - y2)*(PosHero.DecPos(0))) / (x2 - x1);
-
-	ImageHero.SetPositionImage(PosHero.DecPos(0), PosHero.DecPos(1));
-	ImageHero.IterateAnimation();
-}
-
-void ClassHero::SetDestination(int x, int y)
-{
-	PosDestinationHero.SetCoordIsometric(x, y);
-}
-
-
-void ClassHero::SetPosition(int x, int y)
-{
-	this->PosHero.SetCoordIsometric(x, y);
-	qDebug() << "Set position - " << x << y;
-	this->ImageHero.spriteHero.setPosition(PosHero.ScreenPos.x, PosHero.ScreenPos.y);
-}
 
 void CurveShape::DrawPainterPath()
 {
