@@ -72,7 +72,7 @@ private:
 class SVGCurveContainer
 {
 public:
-	SVGCurveContainer(QString path = "e://444.svg")
+	SVGCurveContainer(QString path = "d:/WorkDir/444.svg")
 	{
 		QFile newXMLFile(path);
 		bool result = newXMLFile.open(QIODevice::ReadOnly);
@@ -109,50 +109,6 @@ public:
 
 
 
-class GameImage
-{
-public:
-	GameImage(std::string path_to_Image = "")
-	{
-		hero.loadFromFile("E:/WorkDir/WORK_DIR/DEMO_UNIT_ANIMATION/running/RUNNING E0.png");
-		textureHero.loadFromImage(hero);
-		spriteHero.setTexture(textureHero);
-
-		for (int n = 0; n <= 11; n++)
-		{
-			QString file = QString("E:/WorkDir/WORK_DIR/DEMO_UNIT_ANIMATION/running/RUNNING E%1.png").arg(n);
-			textureHeroMove[n].loadFromFile(file.toStdString());
-		};
-
-	}
-	int CurrentFrame = 0;
-
-	sf::Image hero;
-	sf::Texture textureHero;
-	sf::Sprite spriteHero;
-
-	sf::Texture textureHeroMove[12];
-
-	void SetPositionImage(int x, int y)
-	{
-		spriteHero.setPosition(x, y);
-	}
-
-	void SetDiretionMoving(int direction)
-	{
-
-	}
-
-	void IterateAnimation()
-	{
-		CurrentFrame++;
-		if (CurrentFrame == 11)
-			CurrentFrame = 0;
-
-		spriteHero.setTexture(this->textureHeroMove[CurrentFrame]);
-	}
-
-};
 
 class DisplayMapClass
 {
@@ -161,97 +117,12 @@ public:
 	{
 
 	}
-	GameImage MapTile;
+	//GameImage MapTile;
 
 };
 
-class CoordClass
-{
-public:
-	CoordClass()
-	{
-		m << 1, 1,
-			-0.5, 0.5;
-
-		n << 0.5, -1,
-			0.5, 1;
-
-		IsoPos(0) = 0;
-		IsoPos(1) = 0;
-	};
-
-	Eigen::Matrix2d n;
-	Eigen::Matrix2d m;
 
 
-	Eigen::Vector2d DecPos;
-	Eigen::Vector2d IsoPos;
-	sf::Vector2f ScreenPos;
-
-	void SetCoordDecart(int x, int y)
-	{
-		DecPos(0) = x;
-		DecPos(1) = y;
-		IsoPos = n*DecPos;
-	}
-
-	void SetCoordIsometric(int x, int y)
-	{
-		qDebug() << "POS HERO SET COORD - " << x << y;
-		IsoPos(0) = x - 1;
-		IsoPos(1) = y - 1;
-
-		DecPos = m*IsoPos * 64;
-		qDebug() << "IsoPos - " << x << y << "DecPos - " << DecPos(0) << DecPos(1);
-		ScreenPos.x = DecPos(0);
-		ScreenPos.y = 270 - DecPos(1);
-
-	}
-
-	void SetCoodScreen(double x, double y, int x_center, int y_center)
-	{
-
-		DecPos(0) = x / 64.0 + x_center / 64;
-		DecPos(1) = -(y - 350.0) / 64.0 + y_center / 64;
-
-		IsoPos = n*DecPos;
-
-		IsoPos(0) = floor(IsoPos(0));
-		IsoPos(1) = floor(IsoPos(1));
-	}
-
-	bool operator==(CoordClass &Coord)
-	{
-		if (this->DecPos == Coord.DecPos)
-			return true;
-		else
-			return false;
-
-	}
-};
-
-
-class ClassHero
-{
-public:
-	ClassHero()  // Test comment
-	{
-		SetPosition(3, 4);
-		SetDestination(3, 4);
-	}
-
-	int CurrentFrame = 0;
-
-	CoordClass PosHero;
-	CoordClass PosDestinationHero;
-	GameImage ImageHero;
-
-
-	void MoveHero();
-	void SetPosition(int x, int y);
-	void SetDestination(int x, int y);
-
-};
 
 int main(int argc, char *argv[])
 {
@@ -333,7 +204,7 @@ int main(int argc, char *argv[])
 
 				DecVect2 = m*IsoVect2 * 64;
 				DecVect2(1) = 320 - DecVect2(1);
-				qDebug() << "IsoVect - " << IsoVect2(0) << IsoVect2(1) << "DecVect - " << DecVect2(0) << DecVect2(1);
+				//qDebug() << "IsoVect - " << IsoVect2(0) << IsoVect2(1) << "DecVect - " << DecVect2(0) << DecVect2(1);
 
 
 			}
@@ -495,22 +366,12 @@ void CurveShape::AddCurves(QDomElement newElement)
 	QStringList list;
 	list = curve_path_str.split(QRegExp("\\s"));
 
-	for (QString str : list)
-	{
-		qDebug() << "PATH -" << str;
-	}
-
-	qDebug() << "list - " << list;
 	QRegExp rx("(\\d{1,4}.\\d{3}),(\\d{1,4}.\\d{3})");
 
-
-
-	qDebug() << "size list - " << list.size();
 	QString str;
 	QPointF Point;
 	for (int n = 0; n < list.size(); n++)
 	{
-		qDebug() << "Start parsing";
 		str = list.at(n);
 		PathPoints newPath;
 
