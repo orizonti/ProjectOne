@@ -16,10 +16,21 @@ struct MapItem
 class MapConteinerClass
 {
 public:
+	MapConteinerClass();
+
 	QSize MapSize;
 	void DrawMap(sf::RenderWindow &Window);
 
 	std::vector<TerrainObjectClass> MapObjects;
-	std::map<sf::Texture, int> TerrainTypes;
+	std::map<int,sf::Sprite> TerrainTypes;
 	void CreateMapFromFile(QString MapFilePath = "E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx");
+	void UploadImage(std::string ImagesFile, int Type);
+
+		QVector<MapItem> TerrainItems;
+		QVector<MapItem> LandScapeItems;
+
+	sf::Image   terrainImage;
+	sf::Texture textureTerrain;
+	sf::Sprite  spriteTerrain;
 };
+

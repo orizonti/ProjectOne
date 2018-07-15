@@ -1,8 +1,29 @@
 #include "MapConteinerClass.h"
 
+MapConteinerClass::MapConteinerClass()
+{
+	std::string Terrain1 = "E:/WorkDir/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
+	std::string Hill1 = "E:/WorkDir/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
+
+	this->UploadImage(Terrain1, 1);
+	this->UploadImage(Hill1, 2);
+}
+
 void MapConteinerClass::DrawMap(sf::RenderWindow &Window)
 {
-	qDebug() << "Draw map not implemented";
+//					IsoVect(0) = x;
+//					IsoVect(1) = y;
+
+//					DecVect = m*IsoVect * 256;
+
+//					sprite.setPosition(0 + DecVect(0), 320 + DecVect(1));
+//					window.draw(sprite);
+
+	//Window.draw(this->spriteTerrain);
+
+		//qDebug() << TerrainTypes.at(1).getPosition().x << TerrainTypes.at(1).getPosition().y;
+	//TerrainTypes.at(1).setPosition(400, 400);
+	Window.draw(TerrainTypes.at(1));
 }
 
 
@@ -17,8 +38,6 @@ void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
 		QStringList DataStringLayer1;
 		QStringList DataStringLayer2;
 
-		QVector<MapItem> TerrainItems;
-		QVector<MapItem> LandScapeItems;
 
 
 		if (result)
@@ -39,17 +58,17 @@ void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
 							qDebug() << "GROUND LAYER";
 							DataStringLayer1 = dataNode.toElement().text().split(QString("\r\n"));
 
-							for (int n = 100; n>=0; n = n-10)
+							for (int y = 10; y<=100; y = y+10)
 							{
-							QString data = DataStringLayer1.at(n);
+							QString data = DataStringLayer1.at(110-y);
 
-									for (int m = 0; m < data.size(); m = m + 2)
+									for (int x = 0; x < data.size(); x = x + 2)
 									{
-										if (data.at(m).digitValue() == 1)
+										if (data.at(x).digitValue() == 1)
 										{
 											MapItem newItem;
-											newItem.coord.first = n-10;
-											newItem.coord.second = m / 2;
+											newItem.coord.first = x / 2;
+											newItem.coord.second = y-1;
 											newItem.type = 1;
 											TerrainItems.append(newItem);
 
@@ -68,9 +87,9 @@ void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
 							qDebug() << "LANDSCAPE LAYER";
 							DataStringLayer2 = dataNode.toElement().text().split(QString("\r\n"));
 
-							for (int y = 100; y > 0; y--)
+							for (int y = 0; y <= 100; y++)
 							{
-							QString data = DataStringLayer2.at(y);
+							QString data = DataStringLayer2.at(100-y);
 
 									for (int m = 0; m < data.size(); m = m + 2)
 									{
@@ -78,7 +97,7 @@ void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
 										{
 											MapItem newItem;
 											newItem.coord.first = m/2;
-											newItem.coord.second = y-1;
+											newItem.coord.second = y;
 											newItem.type = 2;
 											LandScapeItems.append(newItem);
 
@@ -98,4 +117,16 @@ void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
 		}
 
 
+}
+
+void MapConteinerClass::UploadImage(std::string ImagesFile, int Type)
+{
+
+	qDebug() << "Upload image type - " << Type;
+
+		terrainImage.loadFromFile(ImagesFile);
+		textureTerrain.loadFromImage(terrainImage);
+		spriteTerrain.setTexture(textureTerrain);
+
+		TerrainTypes.insert(std::pair<int, sf::Sprite>(Type, spriteTerrain));
 }

@@ -137,7 +137,8 @@ int main(int argc, char *argv[])
 	sf::Image img;
 	sf::Image border;
 
-	bool res = img.loadFromFile("E:/WorkDir/2dworkdir/Terrain/1x1Green.png");
+	bool res = img.loadFromFile("E:/WorkDir/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/GrassTest.png");
+//	bool res = img.loadFromFile("E:/WorkDir/2dworkdir/Terrain/1x1Green.png");
 	res = border.loadFromFile("E:/WorkDir/2dworkdir/Terrain/1x1Border.png");
 
 
@@ -239,28 +240,16 @@ int main(int argc, char *argv[])
 
 			window.clear();
 
-		//	for (int x = 0; x <= 40; x++)
-		//	{
-		//		for (int y = 0; y <= 40; y++)
-		//		{
-		//			IsoVect(0) = x;
-		//			IsoVect(1) = y;
-
-		//			DecVect = m*IsoVect * 64;
-
-		//			sprite.setPosition(0 + DecVect(0), 320 + DecVect(1));
-		//			window.draw(sprite);
-		//		}
-		//	}
-
+//			window.draw(sprite);
+			Map.DrawMap(window);
 
 			//Hero.MoveHero();
 
 			//spriteBorder.setPosition(DecVect2(0), DecVect2(1));
 			//window.draw(spriteBorder);
 			//window.draw(Hero.ImageHero.spriteHero);
-			for (CurveShape Shape : Contaner.Curves)
-				window.draw(Shape.Curve);
+			//for (CurveShape Shape : Contaner.Curves)
+			//	window.draw(Shape.Curve);
 
 
 			window.setView(view2);
