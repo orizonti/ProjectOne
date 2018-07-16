@@ -75,7 +75,9 @@ class SVGCurveContainer
 public:
 	SVGCurveContainer(QString path = "d:/WorkDir/444.svg")
 	{
-		QFile newXMLFile(path);
+	    QString GameDir = qgetenv("GAME_WORK_DIR");
+		qDebug() << "SVG FILE LOAD - " << GameDir + "/444.svg";
+		QFile newXMLFile(GameDir + "/444.svg");
 		bool result = newXMLFile.open(QIODevice::ReadOnly);
 
 		QDomDocument newDomDoc;
@@ -137,9 +139,11 @@ int main(int argc, char *argv[])
 	sf::Image img;
 	sf::Image border;
 
-	bool res = img.loadFromFile("E:/WorkDir/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/GrassTest.png");
-//	bool res = img.loadFromFile("E:/WorkDir/2dworkdir/Terrain/1x1Green.png");
-	res = border.loadFromFile("E:/WorkDir/2dworkdir/Terrain/1x1Border.png");
+
+	std::string GameDir = qgetenv("GAME_WORK_DIR");
+
+	bool res = img.loadFromFile(GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/GrassTest.png");
+	res = border.loadFromFile(GameDir + "E:/WorkDir/2dworkdir/Terrain/1x1Border.png");
 
 
 	qDebug() << "Curretn path - " << QDir::currentPath();
@@ -180,20 +184,36 @@ int main(int argc, char *argv[])
 	double x_center = 0;
 	double y_center = 0;
 
+	float zoom = 1.0f;
+
 
 	//ClassHero Hero;
 	//CurveShape Shape;
 
 	MapConteinerClass Map;
-	Map.CreateMapFromFile(QString("E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx"));
+	//Map.CreateMapFromFile(QString("E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx"));
 
-	SVGCurveContainer Contaner;
+	//SVGCurveContainer Contaner;
 
 	while (window.isOpen())
 	{
 		sf::Event event;
 		while (window.pollEvent(event))
 		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+			{
+				zoom = 0.8;
+			qDebug() << "zoom + " << zoom;
+			view2.zoom(zoom);
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			{
+				zoom = 1.25;
+				qDebug() << "zoom - " << zoom;
+			view2.zoom(zoom);
+			}
+
 			if (event.type == sf::Event::Closed)
 				window.close();
 
@@ -230,13 +250,38 @@ int main(int argc, char *argv[])
 				///Hero.SetDestination(IsoVect2(0), IsoVect2(1));
 
 			}
+
+
 		}
 
 
 
-		if (clock.getElapsedTime().asMilliseconds() >= 300)
+		if (clock.getElapsedTime().asMilliseconds() >= 50)
 		{
 			clock.restart();
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+			{
+				view2.move(-64, 0);
+				x_center -= 64;
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+			{
+				view2.move(64, 0);
+				x_center += 64;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+			{
+				view2.move(0, -64);
+				y_center -= 64;
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+			{
+				view2.move(0, 64);
+				y_center += 64;
+			}
+
 
 			window.clear();
 
@@ -250,7 +295,6 @@ int main(int argc, char *argv[])
 			//window.draw(Hero.ImageHero.spriteHero);
 			//for (CurveShape Shape : Contaner.Curves)
 			//	window.draw(Shape.Curve);
-
 
 			window.setView(view2);
 			window.display();

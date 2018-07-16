@@ -2,8 +2,12 @@
 
 MapConteinerClass::MapConteinerClass()
 {
-	std::string Terrain1 = "E:/WorkDir/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
-	std::string Hill1 = "E:/WorkDir/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
+	qDebug() << "CREATE MAP CONTAINER";
+	std::string GameDir = qgetenv("GAME_WORK_DIR");
+
+	std::string Terrain1 =GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
+	std::string Hill1 = GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
+	qDebug() << "Terrain1 - " << Terrain1.c_str();
 
 	this->UploadImage(Terrain1, 1);
 	this->UploadImage(Hill1, 2);
@@ -19,11 +23,11 @@ void MapConteinerClass::DrawMap(sf::RenderWindow &Window)
 //					sprite.setPosition(0 + DecVect(0), 320 + DecVect(1));
 //					window.draw(sprite);
 
-	//Window.draw(this->spriteTerrain);
+	Window.draw(this->spriteTerrain);
 
 		//qDebug() << TerrainTypes.at(1).getPosition().x << TerrainTypes.at(1).getPosition().y;
 	//TerrainTypes.at(1).setPosition(400, 400);
-	Window.draw(TerrainTypes.at(1));
+	//Window.draw(TerrainTypes.at(1));
 }
 
 
@@ -124,9 +128,13 @@ void MapConteinerClass::UploadImage(std::string ImagesFile, int Type)
 
 	qDebug() << "Upload image type - " << Type;
 
-		terrainImage.loadFromFile(ImagesFile);
-		textureTerrain.loadFromImage(terrainImage);
-		spriteTerrain.setTexture(textureTerrain);
+	bool result = false;
+	result = terrainImage.loadFromFile(ImagesFile);
+	qDebug() << "Load Image result - " << result;
+	result = textureTerrain.loadFromImage(terrainImage);
+	         spriteTerrain.setTexture(textureTerrain);
+
+			 //spriteTerrain.setPosition(0, 300);
 
 		TerrainTypes.insert(std::pair<int, sf::Sprite>(Type, spriteTerrain));
 }
