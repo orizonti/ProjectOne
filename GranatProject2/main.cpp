@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 
 	std::string GameDir = qgetenv("GAME_WORK_DIR");
 
-	bool res = img.loadFromFile(GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/GrassTest.png");
+	bool res = img.loadFromFile(GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png");
 	res = border.loadFromFile(GameDir + "E:/WorkDir/2dworkdir/Terrain/1x1Border.png");
 
 
@@ -191,7 +191,8 @@ int main(int argc, char *argv[])
 	//CurveShape Shape;
 
 	MapConteinerClass Map;
-	//Map.CreateMapFromFile(QString("E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx"));
+			view2.zoom(3);
+	Map.CreateMapFromFile(QString("E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx"));
 
 	//SVGCurveContainer Contaner;
 
@@ -203,14 +204,12 @@ int main(int argc, char *argv[])
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
 			{
 				zoom = 0.8;
-			qDebug() << "zoom + " << zoom;
 			view2.zoom(zoom);
 			}
 
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 			{
 				zoom = 1.25;
-				qDebug() << "zoom - " << zoom;
 			view2.zoom(zoom);
 			}
 

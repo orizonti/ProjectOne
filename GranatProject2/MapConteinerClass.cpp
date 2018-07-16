@@ -6,28 +6,60 @@ MapConteinerClass::MapConteinerClass()
 	std::string GameDir = qgetenv("GAME_WORK_DIR");
 
 	std::string Terrain1 =GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
-	std::string Hill1 = GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
+	std::string Hill1 = GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Hill1.png";
 	qDebug() << "Terrain1 - " << Terrain1.c_str();
 
 	this->UploadImage(Terrain1, 1);
 	this->UploadImage(Hill1, 2);
+
+	m << 1, 1,
+		-0.5, 0.5;
+
+	n << 0.5, -1,
+		0.5, 1;
 }
 
 void MapConteinerClass::DrawMap(sf::RenderWindow &Window)
 {
-//					IsoVect(0) = x;
-//					IsoVect(1) = y;
+	for (MapItem item : TerrainItems)
+	{
 
-//					DecVect = m*IsoVect * 256;
+					IsoVect(0) = item.coord.first;
+					IsoVect(1) = item.coord.second;
+					DecVect = m*IsoVect * 128;
+	TerrainTypes.at(1)->setPosition(DecVect(0), 320 + DecVect(1));
+	Window.draw(*TerrainTypes.at(1));
+	}
 
-//					sprite.setPosition(0 + DecVect(0), 320 + DecVect(1));
-//					window.draw(sprite);
+//					IsoVect(0) = 0;
+//					IsoVect(1) = 9;
+//					DecVect = m*IsoVect * 128;
+//	TerrainTypes.at(2)->setPosition(DecVect(0), 320 + DecVect(1));
+//	Window.draw(*TerrainTypes.at(2));
 
-	Window.draw(this->spriteTerrain);
+//					IsoVect(0) = 10;
+//					IsoVect(1) = 39;
+//					DecVect = m*IsoVect * 128;
+//	TerrainTypes.at(2)->setPosition(DecVect(0), 320 + DecVect(1));
+//	Window.draw(*TerrainTypes.at(2));
+
+	for (MapItem item : LandScapeItems)
+	{
+
+					IsoVect(0) = item.coord.first;
+					IsoVect(1) = item.coord.second;
+					DecVect = m*IsoVect * 128;
+	TerrainTypes.at(2)->setPosition(DecVect(0), 320 + DecVect(1));
+	Window.draw(*TerrainTypes.at(2));
+	}
+
+					//setPosition(0 + DecVect(0), 320 + DecVect(1));
+
+	//Window.draw(this->spriteTerrain);
 
 		//qDebug() << TerrainTypes.at(1).getPosition().x << TerrainTypes.at(1).getPosition().y;
 	//TerrainTypes.at(1).setPosition(400, 400);
-	//Window.draw(TerrainTypes.at(1));
+	//Window.draw(TerrainTypes.at(2));
 }
 
 
@@ -128,13 +160,18 @@ void MapConteinerClass::UploadImage(std::string ImagesFile, int Type)
 
 	qDebug() << "Upload image type - " << Type;
 
+	sf::Image*   terrainImage = new sf::Image;
+	sf::Texture* textureTerrain = new sf::Texture;
+	sf::Sprite*  spriteTerrain = new sf::Sprite;
+
 	bool result = false;
-	result = terrainImage.loadFromFile(ImagesFile);
+	result = terrainImage->loadFromFile(ImagesFile);
 	qDebug() << "Load Image result - " << result;
-	result = textureTerrain.loadFromImage(terrainImage);
-	         spriteTerrain.setTexture(textureTerrain);
+	result = textureTerrain->loadFromImage(*terrainImage);
+	         spriteTerrain->setTexture(*textureTerrain);
 
 			 //spriteTerrain.setPosition(0, 300);
 
-		TerrainTypes.insert(std::pair<int, sf::Sprite>(Type, spriteTerrain));
+		TerrainTypes.insert(std::pair<int, sf::Sprite*>(Type, spriteTerrain));
+		//TerrainTypes2.insert(Type, spriteTerrain);
 }
