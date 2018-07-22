@@ -1,17 +1,27 @@
 #pragma once
 #include "UnitObjectClass.h"
+#include "SFML\Graphics.hpp"
+#include <Eigen/Dense>
+#include <iostream>
+#include <qstring>
+#include "QPolygon"
+#include "qfile.h"
+#include "QtXml\qxml.h"
+#include "QtXml\qdom.h"
+#include <GridShapeContainer.h>
+#include "TileSetClass.h"
 
 
 class TerrainObjectClass
 {
 public:
-	sf::Image* Terrain = 0;
-	sf::Texture* TerrainTexture = 0;
-	sf::Sprite* TerrainSprite = 0;
+	TerrainObjectClass();
+	TerrainTileElement* TerrainSprite = 0;
 
-	CoordClass Position;
-	int TerrainType;
+	void SetCoord(int x, int y);
 private:
 public:
+	CoordClass Position;
+	int TerrainType;
 	QSize TileSize;
 };
