@@ -19,12 +19,10 @@ public:
 
 	QSize MapSize;
 	void DrawMap(sf::RenderWindow &Window);
-
 	void CreateMapFromFile(QString MapFilePath = "E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx");
-	void UploadImage(std::string ImagesFile, int Type);
 
-		QMap<int,QVector<TerrainObjectClass> > TerrainLayers;
-		TileSetClass TileSet;
+	QMap<int,QVector<TerrainObjectClass> > TerrainLayers;
+	TileSetClass TileSet;
 
 };
 

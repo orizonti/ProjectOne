@@ -3,45 +3,18 @@
 MapConteinerClass::MapConteinerClass()
 {
 	TileSet.CreateTileSetFromMap("Path to map");
-//	qDebug() << "CREATE MAP CONTAINER";
-//	std::string GameDir = qgetenv("GAME_WORK_DIR");
-
-//	std::string Terrain1 =GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Grass2.png";
-//	std::string Hill1 = GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/with_grid/Hill1.png";
-//	qDebug() << "Terrain1 - " << Terrain1.c_str();
-
-//	this->UploadImage(Terrain1, 1);
-//	this->UploadImage(Hill1, 2);
-
-//	m << 1, 1,
-//		-0.5, 0.5;
-
-//	n << 0.5, -1,
-//		0.5, 1;
 }
 
 void MapConteinerClass::DrawMap(sf::RenderWindow &Window)
 {
-//	for (MapItem item : TerrainItems)
-//	{
+	for (QVector<TerrainObjectClass> Layer : TerrainLayers)
+	{
+			for (TerrainObjectClass item :Layer)
+			{
+			Window.draw(*item.GetSpriteToDraw());
+			}
 
-//					IsoVect(0) = item.coord.first;
-//					IsoVect(1) = item.coord.second;
-//					DecVect = m*IsoVect * 128;
-//	TerrainTypes.at(1)->setPosition(DecVect(0), 320 + DecVect(1));
-//	Window.draw(*TerrainTypes.at(1));
-//	}
-
-
-//	for (MapItem item : LandScapeItems)
-//	{
-
-//					IsoVect(0) = item.coord.first;
-//					IsoVect(1) = item.coord.second;
-//					DecVect = m*IsoVect * 128;
-//	TerrainTypes.at(2)->setPosition(DecVect(0), 320 + DecVect(1));
-//	Window.draw(*TerrainTypes.at(2));
-//	}
+	}
 
 }
 
@@ -68,6 +41,7 @@ void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
 				qDebug() << "*************************************";
 				if (newElement.tagName() == "layer")
 				{
+					qDebug() << "ADD LAYER - " << newElement.attribute("name");
 					TerrainLayers.insert(Number_Layer, QVector<TerrainObjectClass>());
 
 				QDomNode dataNode = newElement.firstChild();
@@ -80,12 +54,11 @@ void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
 
 									for (int x = 0; x < data.size(); x = x + 2)
 									{
-										//Change CoordDecard to CoordScreen
 											TerrainObjectClass newItem;
 											 newItem.TerrainType = data.at(x).digitValue();
-
-											 newItem.Position.SetCoordDecart(x / 2, y);
-											TerrainLayers[Number_Layer].append(newItem);
+											 newItem.Position.SetCoordIsometric(x / 2, y);
+											 newItem.TerrainData = TileSet.TerrainElementsByType.at(newItem.TerrainType);
+											 TerrainLayers[Number_Layer].append(newItem);
 
 									}
 
@@ -104,7 +77,3 @@ void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
 
 }
 
-void MapConteinerClass::UploadImage(std::string ImagesFile, int Type)
-{
-
-}

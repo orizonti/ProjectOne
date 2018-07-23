@@ -16,7 +16,7 @@ class TerrainObjectClass
 {
 public:
 	TerrainObjectClass();
-	TerrainTileElement* TerrainSprite = 0;
+	TerrainTileElement* TerrainData = 0;
 
 	void SetCoord(int x, int y);
 private:
@@ -24,4 +24,5 @@ public:
 	CoordClass Position;
 	int TerrainType;
 	QSize TileSize;
+	sf::Sprite* GetSpriteToDraw();
 };

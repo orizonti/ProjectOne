@@ -91,15 +91,10 @@ int main(int argc, char *argv[])
 
 	float zoom = 1.0f;
 
-
-	//ClassHero Hero;
-	//CurveShape Shape;
-
 	MapConteinerClass Map;
 			view2.zoom(3);
 	Map.CreateMapFromFile(QString("E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx"));
 
-	//SVGCurveContainer Contaner;
 
 	while (window.isOpen())
 	{
@@ -188,15 +183,10 @@ int main(int argc, char *argv[])
 
 
 			window.clear();
-
-//			window.draw(sprite);
 			Map.DrawMap(window);
 
 			//Hero.MoveHero();
 
-			//spriteBorder.setPosition(DecVect2(0), DecVect2(1));
-			//window.draw(spriteBorder);
-			//window.draw(Hero.ImageHero.spriteHero);
 			//for (CurveShape Shape : Contaner.Curves)
 			//	window.draw(Shape.Curve);
 
