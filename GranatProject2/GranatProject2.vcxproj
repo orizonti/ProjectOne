@@ -86,7 +86,7 @@
   <ItemGroup>
     <ClCompile Include="GridShapeContainer.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MapConteinerClass.cpp" />
+    <ClCompile Include="MapContainerClass.cpp" />
     <ClCompile Include="TerrainObjectClass.cpp" />
     <ClCompile Include="TileSetClass.cpp" />
     <ClCompile Include="UnitObjectClass.cpp" />
@@ -94,7 +94,7 @@
   <ItemGroup>
     <ClInclude Include="GridShapeContainer.h" />
     <ClInclude Include="HeaderAndStructures.h" />
-    <ClInclude Include="MapConteinerClass.h" />
+    <ClInclude Include="MapContainerClass.h" />
     <ClInclude Include="TerrainObjectClass.h" />
     <ClInclude Include="TileSetClass.h" />
     <ClInclude Include="UnitObjectClass.h" />

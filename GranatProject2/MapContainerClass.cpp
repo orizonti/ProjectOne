@@ -1,11 +1,11 @@
-#include "MapConteinerClass.h"
+#include "MapContainerClass.h"
 
-MapConteinerClass::MapConteinerClass()
+MapContainerClass::MapContainerClass()
 {
 	TileSet.CreateTileSetFromMap("Path to map");
 }
 
-void MapConteinerClass::DrawMap(sf::RenderWindow &Window)
+void MapContainerClass::DrawMap(sf::RenderWindow &Window)
 {
 	for (QVector<TerrainObjectClass> Layer : TerrainLayers)
 	{
@@ -19,7 +19,7 @@ void MapConteinerClass::DrawMap(sf::RenderWindow &Window)
 }
 
 
-void MapConteinerClass::CreateMapFromFile(QString MapFilePath)
+void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 {
 	
 		QFile XMLMapFile(MapFilePath);
