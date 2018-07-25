@@ -84,6 +84,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameCoord.cpp" />
+    <ClCompile Include="GameImageClass.cpp" />
     <ClCompile Include="GridShapeContainer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapConteinerClass.cpp" />
@@ -92,6 +94,8 @@
     <ClCompile Include="UnitObjectClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameCoord.h" />
+    <ClInclude Include="GameImageClass.h" />
     <ClInclude Include="GridShapeContainer.h" />
     <ClInclude Include="HeaderAndStructures.h" />
     <ClInclude Include="MapConteinerClass.h" />

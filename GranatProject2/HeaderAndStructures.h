@@ -7,3 +7,10 @@
 #include "QDebug"
 #include "QSize"
 #include "QPainterPath"
+#include <iostream>
+#include <qstring>
+#include "QPolygon"
+#include <Eigen/Dense>
+#include <qstring>
+#include <QDebug>
+#include <QDir>

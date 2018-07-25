@@ -11,37 +11,8 @@ UnitObjectClass::~UnitObjectClass()
 {
 }
 
-void CoordClass::SetCoordDecart(int x, int y)
-{
-	DecPos(0) = x;
-	DecPos(1) = y;
-	IsoPos = n*DecPos;
-}
-
-void CoordClass::SetCoordIsometric(int x, int y)
-{
-	qDebug() << "POS HERO SET COORD - " << x << y;
-	IsoPos(0) = x - 1;
-	IsoPos(1) = y - 1;
-
-	DecPos = m*IsoPos * 64;
-	qDebug() << "IsoPos - " << x << y << "DecPos - " << DecPos(0) << DecPos(1);
-	ScreenPos.x = DecPos(0);
-	ScreenPos.y = 270 - DecPos(1);
-
-}
 
 
-inline void CoordClass::SetCoodScreen(double x, double y, int x_center, int y_center)
-{
-	DecPos(0) = x / 64.0 + x_center / 64;
-	DecPos(1) = -(y - 350.0) / 64.0 + y_center / 64;
-
-	IsoPos = n*DecPos;
-
-	IsoPos(0) = floor(IsoPos(0));
-	IsoPos(1) = floor(IsoPos(1));
-}
 
 void ClassHero::MoveHero()
 {
@@ -74,6 +45,5 @@ void ClassHero::SetDestination(int x,int y )
 void ClassHero::SetPosition(int x,int y )
 {
 	this->CurrentPosition.SetCoordIsometric(x, y);
-	qDebug() << "Set position - " << x << y;
-	this->UnitImage.spriteHero.setPosition(CurrentPosition.ScreenPos.x, CurrentPosition.ScreenPos.y);
+	this->UnitImage.spriteHero.setPosition(CurrentPosition.DecPos(0),CurrentPosition.DecPos(1));
 }

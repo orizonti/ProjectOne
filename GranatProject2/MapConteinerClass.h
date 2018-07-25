@@ -1,11 +1,6 @@
 #pragma once
-#include <QSize>
 
-#include "SFML\Graphics.hpp"
 #include "TerrainObjectClass.h"
-#include "qfile.h"
-#include "QtXml\qxml.h"
-#include "QtXml\qdom.h"
 #include "TerrainObjectClass.h"
 #include "TileSetClass.h"
 

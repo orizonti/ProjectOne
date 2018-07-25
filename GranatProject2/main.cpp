@@ -1,33 +1,9 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCoreApplication>
-#include <QDebug>
-#include <QDir>
-#include "SFML\Graphics.hpp"
-#include <Eigen/Dense>
-#include <iostream>
-#include <qstring>
-#include "QPainterPath"
-#include "QPolygon"
-#include "qfile.h"
-#include "QtXml\qxml.h"
-#include "QtXml\qdom.h"
+#include <HeaderAndStructures.h>
 #include "MapConteinerClass.h"
 
 
-
-
-
-
-class DisplayMapClass
-{
-public:
-	DisplayMapClass()
-	{
-
-	}
-	//GameImage MapTile;
-
-};
 
 
 

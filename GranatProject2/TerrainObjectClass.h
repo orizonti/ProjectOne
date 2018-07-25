@@ -1,15 +1,9 @@
 #pragma once
 #include "UnitObjectClass.h"
-#include "SFML\Graphics.hpp"
-#include <Eigen/Dense>
-#include <iostream>
-#include <qstring>
-#include "QPolygon"
-#include "qfile.h"
-#include "QtXml\qxml.h"
-#include "QtXml\qdom.h"
 #include <GridShapeContainer.h>
 #include "TileSetClass.h"
+#include "HeaderAndStructures.h"
+
 
 
 class TerrainObjectClass
