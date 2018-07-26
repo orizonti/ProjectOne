@@ -32,9 +32,6 @@
     <ClCompile Include="UnitObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapConteinerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TerrainObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -50,12 +47,15 @@
     <ClCompile Include="GameCoord.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MapContainerClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GameViewUnitContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UnitObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapConteinerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TerrainObjectClass.h">
@@ -74,6 +74,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GameCoord.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MapContainerClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameViewUnitContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -16,6 +16,7 @@ public:
 
 	void SetCoordDecart(int x, int y);
 	void SetCoordIsometric(int x, int y);
+	void SetRealCoord(int x, int y);
 
 
 	bool operator==(GameCoord &Coord)

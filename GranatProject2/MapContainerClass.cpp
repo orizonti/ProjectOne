@@ -1,20 +1,21 @@
 #include "MapContainerClass.h"
 
+
 MapContainerClass::MapContainerClass()
 {
 	TileSet.CreateTileSetFromMap("Path to map");
 }
 
-void MapContainerClass::DrawMap(sf::RenderWindow &Window)
+void MapDisplayEngine::DrawMap(sf::RenderWindow &Window)
 {
-	for (QVector<TerrainObjectClass> Layer : TerrainLayers)
-	{
-			for (TerrainObjectClass item :Layer)
-			{
-			Window.draw(*item.GetSpriteToDraw());
-			}
+//	for (QVector<TerrainObjectClass> Layer : TerrainLayers)
+//	{
+//			for (TerrainObjectClass item :Layer)
+//			{
+//			Window.draw(*item.GetSpriteToDraw());
+//			}
 
-	}
+//	}
 
 }
 
@@ -77,3 +78,53 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 }
 
+void MapDisplayEngine::KeyboardControl(sf::Event Keyboard)
+{
+			if (Keyboard.key.code == sf::Keyboard::Left)
+			{
+				Camera.move(-64, 0);
+				OffsetCamera(0) += 1;
+				qDebug() << "Scale - " << Scale << "OffsetCamera(0) - " << OffsetCamera(0);
+			}
+
+			if (Keyboard.key.code == sf::Keyboard::Right)
+			{
+				Camera.move(64.0, 0);
+				OffsetCamera(0) -= 1;
+				qDebug() << "Scale - " << Scale << "OffsetCamera(0) - " << OffsetCamera(0);
+			}
+			if (Keyboard.key.code == sf::Keyboard::Up)
+			{
+				Camera.move(0, -64);
+				OffsetCamera(1) -= 1;
+			}
+			if (Keyboard.key.code == sf::Keyboard::Down)
+			{
+				Camera.move(0, 64);
+				OffsetCamera(1) += 1;
+			}
+
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			{
+				Camera.zoom(2);
+				Scale = Scale / 2;
+
+			}
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			{
+				Camera.zoom(0.5);
+				Scale = Scale * 2;
+
+			}
+}
+void MapDisplayEngine::MouseControl(sf::Event event)
+{
+			if (event.type == sf::Event::MouseMoved)
+			{
+
+				MousePosReal(0) = double(event.mouseMove.x - WindowSize.width() / 2) / (Scale*64.0) - OffsetCamera(0);
+				MousePosReal(1) = double(event.mouseMove.y - WindowSize.height() / 2) / (Scale*64.0) - OffsetCamera(1);
+				MousePosition.SetRealCoord(MousePosReal(0), MousePosReal(1));
+
+			}
+}

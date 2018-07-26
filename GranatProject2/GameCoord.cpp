@@ -18,6 +18,18 @@ GameCoord::GameCoord()
 GameCoord::~GameCoord()
 {
 }
+void GameCoord::SetRealCoord(int x, int y)
+{
+	DecPos(0) = x;
+	DecPos(1) = y;
+
+				IsoPos = n*DecPos;
+
+				IsoPos(0) = floor(IsoPos(0));
+				IsoPos(1) = floor(IsoPos(1));
+
+				DecPos = m*IsoPos * 64;
+}
 
 void GameCoord::SetCoordDecart(int x, int y)
 {
