@@ -4,11 +4,11 @@
 #include "TerrainObjectClass.h"
 #include "TileSetClass.h"
 
-class MapConteinerClass
+class MapContainerClass
 {
 public:
-	MapConteinerClass();
-	~MapConteinerClass()
+	MapContainerClass();
+	~MapContainerClass()
 	{
 	}
 

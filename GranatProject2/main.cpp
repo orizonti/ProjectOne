@@ -1,9 +1,33 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QCoreApplication>
-#include <HeaderAndStructures.h>
-#include "MapConteinerClass.h"
+#include <QDebug>
+#include <QDir>
+#include "SFML\Graphics.hpp"
+#include <Eigen/Dense>
+#include <iostream>
+#include <qstring>
+#include "QPainterPath"
+#include "QPolygon"
+#include "qfile.h"
+#include "QtXml\qxml.h"
+#include "QtXml\qdom.h"
+#include "MapContainerClass.h"
 
 
+
+
+
+
+class DisplayMapClass
+{
+public:
+	DisplayMapClass()
+	{
+
+	}
+	//GameImage MapTile;
+
+};
 
 
 
@@ -41,7 +65,7 @@ int main(int argc, char *argv[])
 	sprite.setTexture(texture);
 
 	spriteBorder.setTexture(textborder);
-	spriteBorder.setPosition(0, 320);
+	spriteBorder.setPosition(0, 0);
 
 
 	// Matrix from isometric to decarc
@@ -67,8 +91,9 @@ int main(int argc, char *argv[])
 
 	float zoom = 1.0f;
 
-	MapConteinerClass Map;
+	MapContainerClass Map;
 			view2.zoom(3);
+				view2.move(0, 320);
 	Map.CreateMapFromFile(QString("E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx"));
 
 
@@ -96,7 +121,7 @@ int main(int argc, char *argv[])
 			{
 
 				DecVect2(0) = double(event.mouseMove.x) / 64.0 + x_center / 64;
-				DecVect2(1) = -(double(event.mouseMove.y) - 350.0) / 64.0 + y_center / 64;
+				DecVect2(1) = double(-event.mouseMove.y) / 64.0 + y_center / 64;
 
 				IsoVect2 = n*DecVect2;
 
@@ -104,7 +129,6 @@ int main(int argc, char *argv[])
 				IsoVect2(1) = floor(IsoVect2(1));
 
 				DecVect2 = m*IsoVect2 * 64;
-				DecVect2(1) = 320 - DecVect2(1);
 				//qDebug() << "IsoVect - " << IsoVect2(0) << IsoVect2(1) << "DecVect - " << DecVect2(0) << DecVect2(1);
 
 
@@ -114,7 +138,7 @@ int main(int argc, char *argv[])
 			{
 
 				DecVect2(0) = double(event.mouseMove.x) / 64.0 + x_center / 64;
-				DecVect2(1) = -(double(event.mouseMove.y) - 350.0) / 64.0 + y_center / 64;
+				DecVect2(1) = double(-event.mouseMove.y) / 64.0 + y_center / 64;
 
 				IsoVect2 = n*DecVect2;
 
