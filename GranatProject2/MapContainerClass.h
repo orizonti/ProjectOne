@@ -2,6 +2,7 @@
 
 #include "TerrainObjectClass.h"
 #include "TerrainObjectClass.h"
+#include "GameViewUnitContainer.h"
 #include "TileSetClass.h"
 
 class MapContainerClass
@@ -18,6 +19,7 @@ public:
 	QMap<int,QVector<TerrainObjectClass> > TerrainLayers;
 	TileSetClass TileSet;
 
+	void DrawTerrain(sf::RenderWindow &Window);
 
 };
 
@@ -37,7 +39,8 @@ public:
 	 void KeyboardControl(sf::Event event);
 	 void MouseControl(sf::Event event);
 
-	 void DrawMap(sf::RenderWindow &Window);
+	 void DrawMap();
 	 
 	 MapContainerClass Map;
+	 GameViewUnitContainer Units;
 };

@@ -15,23 +15,6 @@
 
 
 
-
-
-
-class DisplayMapClass
-{
-public:
-	DisplayMapClass()
-	{
-
-	}
-	//GameImage MapTile;
-
-};
-
-
-
-
 int main(int argc, char *argv[])
 {
 	//QCoreApplication a(argc, argv);

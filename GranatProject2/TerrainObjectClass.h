@@ -15,7 +15,7 @@ public:
 	void SetCoord(int x, int y);
 private:
 public:
-	CoordClass Position;
+	GameCoord Position;
 	int TerrainType;
 	QSize TileSize;
 	sf::Sprite* GetSpriteToDraw();

@@ -6,19 +6,22 @@ MapContainerClass::MapContainerClass()
 	TileSet.CreateTileSetFromMap("Path to map");
 }
 
-void MapDisplayEngine::DrawMap(sf::RenderWindow &Window)
+void MapDisplayEngine::DrawMap()
 {
-//	for (QVector<TerrainObjectClass> Layer : TerrainLayers)
-//	{
-//			for (TerrainObjectClass item :Layer)
-//			{
-//			Window.draw(*item.GetSpriteToDraw());
-//			}
-
-//	}
-
+	this->Map.DrawTerrain(this->Window);
 }
 
+void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
+{
+	for (QVector<TerrainObjectClass> Layer : TerrainLayers)
+	{
+			for (TerrainObjectClass item :Layer)
+			{
+			Window.draw(*item.GetSpriteToDraw());
+			}
+
+	}
+}
 
 void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 {
