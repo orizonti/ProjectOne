@@ -6,6 +6,7 @@ class GameCoord
 public:
 	~GameCoord();
 	GameCoord();
+	static QSize CellSize;
 
 	Eigen::Matrix2d n;
 	Eigen::Matrix2d m;

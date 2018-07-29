@@ -1,7 +1,7 @@
 #include "GameViewUnitContainer.h"
 GameViewUnitContainer::GameViewUnitContainer()
 {
-
+	qDebug() << "CREATE GAME UNIT CONTAINER";
 }
 GameViewUnitContainer::~GameViewUnitContainer()
 {
@@ -17,3 +17,4 @@ void GameViewUnitContainer::DrawUnits(sf::RenderWindow &Window)
 {
 
 }
+

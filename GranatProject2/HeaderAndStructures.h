@@ -15,7 +15,7 @@
 #include <QDebug>
 #include <QDir>
 
-
+extern QString GameDir;
 class EventControlInterface
 {
 public:
@@ -23,15 +23,6 @@ public:
 	virtual void MouseControl(sf::Event Mouse_event) = 0;
 
 	friend void operator >> (sf::Event event, EventControlInterface& Interface);
-	friend void operator >> (sf::Event event, EventControlInterface& Interface);
 };
 
-void operator >> (sf::Event event, EventControlInterface& Interface)
-{
-	Interface.MouseControl(event);
-}
 
-void operator >> (sf::Event event, EventControlInterface& Interface)
-{
-	Interface.KeyboardControl(event);
-}

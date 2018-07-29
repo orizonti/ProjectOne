@@ -1,23 +1,47 @@
 #include "MapContainerClass.h"
 
+MapDisplayEngine::~MapDisplayEngine()
+{
+
+
+}
+MapDisplayEngine::MapDisplayEngine()
+{
+	 Window = new sf::RenderWindow(sf::VideoMode(1280, 640), "SFML works!");
+	 Camera = new sf::View(sf::Vector2f(0, 0), sf::Vector2f(1280, 640));
+	 CellSize = QSize(512, 256);
+}
 
 MapContainerClass::MapContainerClass()
 {
-	TileSet.CreateTileSetFromMap("Path to map");
+	TileSet.CreateTileSetFromMap(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
+	
+	this->CreateMapFromFile(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
 }
 
 void MapDisplayEngine::DrawMap()
 {
-	this->Map.DrawTerrain(this->Window);
+	Window->clear();
+	this->Map.DrawTerrain(*Window);
+
+	Window->setView(*Camera);
+	Window->display();
 }
 
 void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 {
-	for (QVector<TerrainObjectClass> Layer : TerrainLayers)
+//	TileSet.TerrainElementsByType.value(15)->Sprite->setPosition(0, 0);
+//	    Window.draw(*TileSet.TerrainElementsByType.value(22)->Sprite);
+
+//		sf::RectangleShape shape(sf::Vector2f(100,100));
+//		shape.setFillColor(sf::Color::Green);
+//		shape.setPosition(0, 0);
+//		Window.draw(shape);
+	for (QVector<TerrainObjectClass*> Layer : TerrainLayers)
 	{
-			for (TerrainObjectClass item :Layer)
+			for (TerrainObjectClass* item :Layer)
 			{
-			Window.draw(*item.GetSpriteToDraw());
+				item->DrawObject(Window);
 			}
 
 	}
@@ -25,7 +49,7 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 
 void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 {
-	
+		qDebug() << "CREATE MAP FROM FILE - " << MapFilePath;
 		QFile XMLMapFile(MapFilePath);
 		bool result = XMLMapFile.open(QIODevice::ReadOnly);
 
@@ -42,42 +66,49 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 			{
 				QDomElement newElement = currentNod.toElement();
 
-				qDebug() << "*************************************";
-				if (newElement.tagName() == "layer")
+				if (newElement.tagName() == "layer" && newElement.attribute("name") != "GridHill" && newElement.attribute("name") != "Grid")
 				{
 					qDebug() << "ADD LAYER - " << newElement.attribute("name");
-					TerrainLayers.insert(Number_Layer, QVector<TerrainObjectClass>());
+					TerrainLayers.insert(Number_Layer, QVector<TerrainObjectClass*>());
 
-				QDomNode dataNode = newElement.firstChild();
+							QDomNode dataNode = newElement.firstChild();
 
 							DataStringLayer = dataNode.toElement().text().split(QString("\r\n"));
 
-							for (int y = 1; y<=100; y++)
+							for (int y = 0; y<=60; y++)
 							{
 							QString data = DataStringLayer.at(y);
+							QStringList Digits = data.split(",");
+							int Type = 0;
 
-									for (int x = 0; x < data.size(); x = x + 2)
+								    for (int x = 0; x < Digits.size(); x++)
 									{
-											TerrainObjectClass newItem;
-											 newItem.TerrainType = data.at(x).digitValue();
-											 newItem.Position.SetCoordIsometric(x / 2, y);
-											 newItem.TerrainData = TileSet.TerrainElementsByType.at(newItem.TerrainType);
+										     
+											 Type = Digits.at(x).toInt();
+											 if (Type > 0)
+											 {
+											 //	qDebug() << Digits.at(x).toInt();
+											 TerrainObjectClass* newItem = new TerrainObjectClass;
+											 newItem->TerrainType = Type;
+											 newItem->TerrainData = TileSet.TerrainElementsByType.value(newItem->TerrainType);
+											 newItem->SetCoord(60-y, x);
 											 TerrainLayers[Number_Layer].append(newItem);
+											 }
 
 									}
 
 							}
-
-
-							for (TerrainObjectClass item : TerrainLayers[Number_Layer])
-						  qDebug() << "At coord - " << item.Position.DecPos(0) << item.Position.DecPos(1) << "terrain - " << item.TerrainType;
-
+							Number_Layer++;
 				}
 
 				currentNod = currentNod.nextSibling();
 			}
+
+		//	for (TerrainObjectClass* item : TerrainLayers[0])
+		//	qDebug() << "At coord - " << item->Position.DecPos(0) << item->Position.DecPos(1) << "terrain - " << item->TerrainType;
 		}
 
+		qDebug() << "CREATE MAP END - " << MapFilePath;
 
 }
 
@@ -85,49 +116,65 @@ void MapDisplayEngine::KeyboardControl(sf::Event Keyboard)
 {
 			if (Keyboard.key.code == sf::Keyboard::Left)
 			{
-				Camera.move(-64, 0);
+				Camera->move(-CellSize.height(), 0);
 				OffsetCamera(0) += 1;
 				qDebug() << "Scale - " << Scale << "OffsetCamera(0) - " << OffsetCamera(0);
 			}
 
 			if (Keyboard.key.code == sf::Keyboard::Right)
 			{
-				Camera.move(64.0, 0);
+				Camera->move(CellSize.height() , 0);
 				OffsetCamera(0) -= 1;
 				qDebug() << "Scale - " << Scale << "OffsetCamera(0) - " << OffsetCamera(0);
 			}
 			if (Keyboard.key.code == sf::Keyboard::Up)
 			{
-				Camera.move(0, -64);
+				Camera->move(0, -CellSize.height());
 				OffsetCamera(1) -= 1;
 			}
 			if (Keyboard.key.code == sf::Keyboard::Down)
 			{
-				Camera.move(0, 64);
+				Camera->move(0, CellSize.height());
 				OffsetCamera(1) += 1;
 			}
 
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+			if (Keyboard.key.code == sf::Keyboard::S)
 			{
-				Camera.zoom(2);
+				Camera->zoom(2);
 				Scale = Scale / 2;
 
 			}
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+			if (Keyboard.key.code == sf::Keyboard::D)
 			{
-				Camera.zoom(0.5);
+				Camera->zoom(0.5);
 				Scale = Scale * 2;
-
 			}
 }
 void MapDisplayEngine::MouseControl(sf::Event event)
 {
-			if (event.type == sf::Event::MouseMoved)
-			{
-
-				MousePosReal(0) = double(event.mouseMove.x - WindowSize.width() / 2) / (Scale*64.0) - OffsetCamera(0);
-				MousePosReal(1) = double(event.mouseMove.y - WindowSize.height() / 2) / (Scale*64.0) - OffsetCamera(1);
+				MousePosReal(0) = double(event.mouseMove.x - WindowSize.width() / 2) / (Scale*256.0) - OffsetCamera(0);
+				MousePosReal(1) = double(event.mouseMove.y - WindowSize.height() / 2) / (Scale*256.0) - OffsetCamera(1);
 				MousePosition.SetRealCoord(MousePosReal(0), MousePosReal(1));
+				qDebug() << "MousePosReal - " << event.mouseMove.x << event.mouseMove.y;
+			if (event.type == sf::Event::MouseMoved)
+				this->Map.MapCellMoved(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
 
+			if (event.type == sf::Event::MouseButtonPressed)
+			{
+				this->Map.MapCellMoved(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
+				this->Map.MapCellPressed(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
+				this->Units.MapCellPressed(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
 			}
+
+
+}
+
+void MapContainerClass::MapCellPressed(int x, int y)
+{
+	//qDebug() << "MapCellPressed - " << x << y;
+}
+
+void MapContainerClass::MapCellMoved(int x, int y)
+{
+	//qDebug() << "MapCellMoved - " << x << y;
 }

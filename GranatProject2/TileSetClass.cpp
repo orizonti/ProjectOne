@@ -1,6 +1,16 @@
 #include "TileSetClass.h"
 
 
+TerrainTileElement::TerrainTileElement()
+{
+
+}
+TerrainTileElement::~TerrainTileElement()
+{
+	qDebug() << "Delete tile element";
+	delete Texture;
+	delete Sprite;
+}
 
 TileSetClass::TileSetClass()
 {
@@ -13,7 +23,7 @@ TileSetClass::~TileSetClass()
 
 void TileSetClass::CreateTileSetFromMap(QString MapFilePath)
 {
-
+		qDebug() << "CREATE TILE SET FROM MAP - " << MapFilePath;
 		QFile XMLMapFile(MapFilePath);
 		bool result = XMLMapFile.open(QIODevice::ReadOnly);
 
@@ -30,6 +40,7 @@ void TileSetClass::CreateTileSetFromMap(QString MapFilePath)
 
 				if (newElement.tagName() == "tileset")
 				{
+					
 					int type_id = newElement.attribute("firstgid").toInt();
 					QString MapTilePath = newElement.attribute("source");
 					UploadTerrainElementData(MapTilePath, type_id);
@@ -38,13 +49,14 @@ void TileSetClass::CreateTileSetFromMap(QString MapFilePath)
 				currentNod = currentNod.nextSibling();
 			}
 		}
+	qDebug() << "Terrain types - " <<	TerrainElementsByType.size();
 
 }
 
 
 void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 {
-							QFile XMLMapFile(PathXMLFile);
+							QFile XMLMapFile(GameDir + "/WORK_DIR/MAPS_TILED/" + PathXMLFile);
 						    bool result = XMLMapFile.open(QIODevice::ReadOnly);
 
 							TerrainTileElement* newTileElement = new TerrainTileElement;
@@ -57,7 +69,6 @@ void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 							QDomElement image = newDomDoc.elementsByTagName("image").at(0).toElement();
 
 							QString name = tileset.attribute("name");
-							qDebug() << "LOAD TILE - " << name;
 
 							newTileElement->size.setWidth(tileset.attribute("tilewidth").toInt()); 
 							newTileElement->size.setHeight(tileset.attribute("tileheight").toInt());
@@ -65,8 +76,13 @@ void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 							newTileElement->offset.first = tileoffset.attribute("x").toInt(); 
 							newTileElement->offset.second = tileoffset.attribute("y").toInt();
 
-							QString imageSource = image.attribute("source");
+							qDebug() << "LOAD TILE - " << name  << "ID - " << type_id << "OFFSET - " << newTileElement->offset;
 
+							QString imageSource = image.attribute("source");
+							imageSource.remove(0, 2);
+							imageSource = GameDir + "/WORK_DIR" + imageSource;
+
+							qDebug() << "UPLOAD TERRAIN - " << imageSource;
 
 									sf::Texture* textureTerrain = new sf::Texture;
 									sf::Sprite*  spriteTerrain = new sf::Sprite;
@@ -74,20 +90,24 @@ void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 									result = textureTerrain->loadFromFile(imageSource.toStdString());
 											 spriteTerrain->setTexture(*textureTerrain);
 
+											 newTileElement->Texture = textureTerrain;
 											 newTileElement->Sprite = spriteTerrain;
+											 newTileElement->type_id = type_id;
+											 newTileElement->Name = name;
+
 
 											 UploadGridLines(PathXMLFile, newTileElement);
 
-										TerrainElementsByType.insert(std::pair<int, TerrainTileElement*>(type_id, newTileElement));
-										TerrainElementsByName.insert(std::pair<QString, TerrainTileElement*>(name, newTileElement));
+										TerrainElementsByType.insert(type_id, newTileElement);
+										TerrainElementsByName.insert(name, newTileElement);
 
 }
 
 void TileSetClass::UploadGridLines(QString PathXMLSprite,TerrainTileElement* element)
 {
 	QString FileName = PathXMLSprite.split(".").first();
-	QString PathTSX = QString("G%1.tsx").arg(FileName);
-	QString PathXMLLines = PathTSX.replace(".tsx", ".xml");
+	QString PathTSX = QString("%1.tsx").arg(FileName);
+	QString PathXMLLines = PathTSX.replace(".tsx", ".svg");
 
 							QFile XMLGridFile(PathTSX);
 						    bool result = XMLGridFile.open(QIODevice::ReadOnly);

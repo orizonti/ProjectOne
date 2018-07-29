@@ -52,19 +52,39 @@ public:
 		Point.setY(rx.cap(2).toDouble()); // "189"
 		return Point;
 	}
-private:
-	void DrawPainterPath();
+
+	void DrawPainterPath(int offset_x, int offset_y);
 
 };
 
 
-class GridShapeContainer
+class GridShapeContainer: public sf::Shape
 {
 public:
 	GridShapeContainer()
 	{
 
 	}
-	void AddCurves(QString path);
+	void SetOffset(int x, int y);
+	int position_x = 0;
+	int position_y = 0;
+
+	virtual std::size_t getPointCount() const
+	{
+		return Points.size(); // fixed, but could be an attribute of the class if needed
+	}
+
+	virtual sf::Vector2f getPoint(std::size_t index) const
+	{
+
+		sf::Vector2f Coord;
+
+		Coord.x = Points.at(index).x;
+		Coord.y = Points.at(index).y;
+		return Coord;
+	}
+
+	void AddCurves(QString file);
 	QList<CurveShape> Curves;
+	QVector<sf::Vector2f> Points;
 };

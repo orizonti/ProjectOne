@@ -2,8 +2,9 @@
 
 
 
-UnitObjectClass::UnitObjectClass()
+UnitObjectClass::UnitObjectClass(QString TypeUnit)
 {
+	UnitImage.SetImage(TypeUnit);
 }
 
 
@@ -11,6 +12,10 @@ UnitObjectClass::~UnitObjectClass()
 {
 }
 
+ClassHero::ClassHero(QString TypeUnit) : UnitObjectClass(TypeUnit)
+{
+
+}
 
 
 
@@ -45,5 +50,5 @@ void ClassHero::SetDestination(int x,int y )
 void ClassHero::SetPosition(int x,int y )
 {
 	this->CurrentPosition.SetCoordIsometric(x, y);
-	this->UnitImage.spriteHero.setPosition(CurrentPosition.DecPos(0),CurrentPosition.DecPos(1));
+	this->UnitImage.UnitSprite.setPosition(CurrentPosition.DecPos(0),CurrentPosition.DecPos(1));
 }

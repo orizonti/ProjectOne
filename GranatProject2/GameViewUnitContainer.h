@@ -4,6 +4,7 @@
 
 class GameViewUnitContainer
 {
+public:
 	GameViewUnitContainer();
 	~GameViewUnitContainer();
 

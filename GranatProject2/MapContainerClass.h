@@ -14,22 +14,31 @@ public:
 	}
 
 	QSize MapSize;
+
+
 	void CreateMapFromFile(QString MapFilePath = "E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx");
 
-	QMap<int,QVector<TerrainObjectClass> > TerrainLayers;
+	QMap<int,QVector<TerrainObjectClass*> > TerrainLayers;
 	TileSetClass TileSet;
 
 	void DrawTerrain(sf::RenderWindow &Window);
 
+	void MapCellPressed(int x, int y);
+	void MapCellMoved(int x, int );
 };
 
-class MapDisplayEngine : EventControlInterface
+class MapDisplayEngine :public EventControlInterface
 {
 public: 
-	 sf::RenderWindow Window;
-	 sf::View Camera;
+	MapDisplayEngine();
+	~MapDisplayEngine();
+
+	 sf::RenderWindow* Window;
+	 sf::View* Camera;
+
 	 float Scale = 1;
 	 QSize WindowSize;
+	 QSize CellSize;
 
 	Eigen::Vector2d OffsetCamera;
 	Eigen::Vector2d MousePosReal;

@@ -5,19 +5,18 @@ class GameImage
 {
 public:
 public:
-	GameImage(std::string path_to_Image = "");
+	GameImage();
 	~GameImage();
 	int CurrentFrame = 0;
 
-	sf::Image hero;
-	sf::Texture textureHero;
-	sf::Sprite spriteHero;
-
-	sf::Texture textureHeroMove[12];
+	sf::Sprite UnitSprite;
+	sf::Texture UnitTextures[12];
 
 	void SetPositionImage(int x, int y);
 
 	void SetDiretionMoving(int direction);
 	void IterateAnimation();
+
+	void SetImage(QString TypeUnit);
 };
 
