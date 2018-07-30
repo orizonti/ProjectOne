@@ -19,13 +19,13 @@ public:
 	explicit CurveShape()
 	{
 
-		Curve.setPrimitiveType(sf::LineStrip);
+		Curve.setPrimitiveType(sf::TrianglesStrip);
 	}
 
 	QList<PathPoints> PathMassive;
 	QPainterPath Path;
 	QList<QPolygonF> listPoints;
-
+	int Direction = 0;
 	sf::VertexArray Curve;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const

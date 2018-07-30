@@ -12,17 +12,26 @@ void GridShapeContainer::AddCurves(QString file)
 
 
 
-		if (result)
+		QDomNodeList GroupsNodes = newDomDoc.documentElement().firstChild().nextSibling().toElement().elementsByTagName("g");
+
+		qDebug() << "FIRST CHILD NODE -" << GroupsNodes.size();
+
+
+		for (int n = 0; n <= 1; n++)
 		{
-			QDomNode currentNod = newDomDoc.documentElement().firstChild();
+
+			QDomNode currentNod = GroupsNodes.at(n).firstChild();
+
 			while (!currentNod.isNull())
 			{
+				qDebug() << "New shape direction - " << n;
 				QDomElement newElement = currentNod.toElement();
 
 				qDebug() << "*************************************";
 				if (newElement.tagName() == "path")
 				{
 					CurveShape newShape;
+					newShape.Direction = n;
 					newShape.AddCurves(newElement);
 					Curves.append(newShape);
 				}
@@ -30,18 +39,17 @@ void GridShapeContainer::AddCurves(QString file)
 				currentNod = currentNod.nextSibling();
 			}
 		}
-		
 
 		
-		for (CurveShape Shape : Curves)
-		{
-			int CountPoints;
-			CountPoints = Shape.listPoints.at(0).size();
+	//	for (CurveShape Shape : Curves)
+	//	{
+	//		int CountPoints;
+	//		CountPoints = Shape.listPoints.at(0).size();
 
-			for (int n = 0; n < CountPoints; n++)
-				this->Points.append(Shape.getPoint(n));
+	//		for (int n = 0; n < CountPoints; n++)
+	//			this->Points.append(Shape.getPoint(n));
 
-		}
+	//	}
 
 }
 
@@ -63,6 +71,12 @@ void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 
 	listPoints = Path.toSubpathPolygons();
 
+	int x_offset = 8;
+	int y_offset = -4;
+
+	if (this->Direction == 1)
+		y_offset = 4;
+
 	for (QPointF point : listPoints.at(0))
 	{
 
@@ -71,6 +85,10 @@ void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 		vertex.color = sf::Color::Black;
 		Curve.append(vertex);
 
+		sf::Vertex vertex2;
+		vertex2.position = sf::Vector2f(point.x() + x_offset, point.y() + y_offset);
+		vertex2.color = sf::Color::Black;
+		Curve.append(vertex2);
 	}
 }
 
