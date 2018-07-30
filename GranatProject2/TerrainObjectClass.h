@@ -19,4 +19,6 @@ public:
 	int TerrainType;
 	QSize TileSize;
 	sf::Sprite* GetSpriteToDraw();
+
+	void DrawObject(sf::RenderWindow& Window);
 };

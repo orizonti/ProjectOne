@@ -1,12 +1,12 @@
 #include <GridShapeContainer.h>
 
-void GridShapeContainer::AddCurves(QString path)
+void GridShapeContainer::AddCurves(QString file)
 {
 	    QString GameDir = qgetenv("GAME_WORK_DIR");
-		qDebug() << "SVG FILE LOAD - " << GameDir + "/444.svg";
-		QFile newXMLFile(GameDir + "/444.svg");
+		QFile newXMLFile("E:/WorkDir/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PNG HILL TILES/TilesHill/" + file);
+		qDebug() << "SVG FILE LOAD - " << GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PSD HILL TILES/TilesHill/L.svg";
 		bool result = newXMLFile.open(QIODevice::ReadOnly);
-
+		qDebug() << "FILE OPEN - " << newXMLFile.isOpen();
 		QDomDocument newDomDoc;
 		result = newDomDoc.setContent(&newXMLFile);
 
@@ -30,10 +30,21 @@ void GridShapeContainer::AddCurves(QString path)
 				currentNod = currentNod.nextSibling();
 			}
 		}
+		
+
+		for (CurveShape Shape : Curves)
+		{
+			int CountPoints;
+			CountPoints = Shape.listPoints.at(0).size();
+
+			for (int n = 0; n < CountPoints; n++)
+				this->Points.append(Shape.getPoint(n));
+
+		}
 
 }
 
-void CurveShape::DrawPainterPath()
+void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 {
 
 	for (PathPoints sub_path : this->PathMassive)
@@ -60,7 +71,7 @@ void CurveShape::DrawPainterPath()
 		Curve.append(vertex);
 
 	}
-	qDebug() << "Nuber polygons - " << listPoints.at(0).size();
+	//qDebug() << "Nuber polygons - " << listPoints.at(0).size();
 }
 
 
@@ -130,4 +141,10 @@ void CurveShape::AddCurves(QDomElement newElement)
 
 	DrawPainterPath();
 	update();
+}
+
+void GridShapeContainer::SetOffset(int x, int y)
+{
+	position_x = x;
+	position_y = y;
 }

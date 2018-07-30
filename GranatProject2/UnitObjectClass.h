@@ -7,7 +7,7 @@
 class UnitObjectClass
 {
 public:
-	UnitObjectClass();
+	UnitObjectClass(QString TypeUnit);
 	~UnitObjectClass();
 	GameImage UnitImage;
 
@@ -19,11 +19,7 @@ class ClassHero :
 	public UnitObjectClass
 {
 public:
-	ClassHero()  // Test comment
-	{
-		SetPosition(3, 4);
-		SetDestination(3, 4);
-	}
+	ClassHero(QString TypeUnit);  // Test comment
 
 	int CurrentFrame = 0;
 
