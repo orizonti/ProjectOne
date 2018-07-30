@@ -3,7 +3,7 @@
 void GridShapeContainer::AddCurves(QString file)
 {
 	    QString GameDir = qgetenv("GAME_WORK_DIR");
-		QFile newXMLFile("E:/WorkDir/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PNG HILL TILES/TilesHill/" + file);
+		QFile newXMLFile(GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PNG HILL TILES/TilesHill/" + file);
 		qDebug() << "SVG FILE LOAD - " << GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PSD HILL TILES/TilesHill/L.svg";
 		bool result = newXMLFile.open(QIODevice::ReadOnly);
 		qDebug() << "FILE OPEN - " << newXMLFile.isOpen();
@@ -32,6 +32,7 @@ void GridShapeContainer::AddCurves(QString file)
 		}
 		
 
+		
 		for (CurveShape Shape : Curves)
 		{
 			int CountPoints;
@@ -67,11 +68,10 @@ void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 
 		sf::Vertex vertex;
 		vertex.position = sf::Vector2f(point.x(), point.y());
-		vertex.color = sf::Color::Green;
+		vertex.color = sf::Color::Black;
 		Curve.append(vertex);
 
 	}
-	//qDebug() << "Nuber polygons - " << listPoints.at(0).size();
 }
 
 
@@ -145,6 +145,19 @@ void CurveShape::AddCurves(QDomElement newElement)
 
 void GridShapeContainer::SetOffset(int x, int y)
 {
-	position_x = x;
-	position_y = y;
+	for (CurveShape& Shape : this->Curves)
+		Shape.move(x, y);
 }
+
+void GridShapeContainer::SetPosition(int x, int y)
+{
+	for (CurveShape& Shape : this->Curves)
+		Shape.setPosition(x, y);
+}
+
+void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
+{
+	for (CurveShape Shape : this->Curves)
+		Window.draw(Shape);
+}
+

@@ -32,8 +32,9 @@ void TerrainObjectClass::DrawObject(sf::RenderWindow& Window)
 
 	if (TerrainData->GridLines != 0)
 	{
-		TerrainData->GridLines->setPosition(this->Position.DecPos(0), this->Position.DecPos(1));
-		Window.draw(*TerrainData->GridLines);
+		TerrainData->GridLines->SetPosition(this->Position.DecPos(0) + TerrainData->offset.first, 
+			                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height());
+		TerrainData->GridLines->DrawGrid(Window);
 	}
 
 }

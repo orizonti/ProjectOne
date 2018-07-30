@@ -28,6 +28,11 @@ public:
 
 	sf::VertexArray Curve;
 
+	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
+	{
+		states.transform *= getTransform(); // getTransform() is defined by sf::Transformable
+		target.draw(Curve, states);
+	}
 
 	virtual std::size_t getPointCount() const
 	{
@@ -58,7 +63,7 @@ public:
 };
 
 
-class GridShapeContainer: public sf::Shape
+class GridShapeContainer
 {
 public:
 	GridShapeContainer()
@@ -66,23 +71,9 @@ public:
 
 	}
 	void SetOffset(int x, int y);
-	int position_x = 0;
-	int position_y = 0;
+	void SetPosition(int x, int y);
+	void DrawGrid(sf::RenderWindow& Window);
 
-	virtual std::size_t getPointCount() const
-	{
-		return Points.size(); // fixed, but could be an attribute of the class if needed
-	}
-
-	virtual sf::Vector2f getPoint(std::size_t index) const
-	{
-
-		sf::Vector2f Coord;
-
-		Coord.x = Points.at(index).x;
-		Coord.y = Points.at(index).y;
-		return Coord;
-	}
 
 	void AddCurves(QString file);
 	QList<CurveShape> Curves;
