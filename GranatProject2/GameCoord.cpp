@@ -19,10 +19,12 @@ GameCoord::GameCoord()
 GameCoord::~GameCoord()
 {
 }
-void GameCoord::SetRealCoord(int x, int y)
+void GameCoord::SetRealCoord(double x, double y)
 {
 	DecPos(0) = x;
 	DecPos(1) = y;
+	qDebug() << "DecVect - " << DecPos(0) << DecPos(1);
+
 
 				IsoPos = n*DecPos;
 
@@ -30,6 +32,7 @@ void GameCoord::SetRealCoord(int x, int y)
 				IsoPos(1) = floor(IsoPos(1));
 
 				DecPos = m*IsoPos * CellSize.height();
+	qDebug() << "DecVect - " << DecPos(0) << DecPos(1);
 }
 
 void GameCoord::SetCoordDecart(int x, int y)
@@ -41,8 +44,8 @@ void GameCoord::SetCoordDecart(int x, int y)
 
 void GameCoord::SetCoordIsometric(int x, int y)
 {
-	IsoPos(0) = x - 1;
-	IsoPos(1) = y - 1;
+	IsoPos(0) = x;
+	IsoPos(1) = y;
 
 	DecPos = m*IsoPos * CellSize.height();
 

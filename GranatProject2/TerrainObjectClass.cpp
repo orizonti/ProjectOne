@@ -19,7 +19,7 @@ sf::Sprite* TerrainObjectClass::GetSpriteToDraw()
 {
 	
 	TerrainData->Sprite->setPosition(Position.DecPos(0) + TerrainData->offset.first,
-		                             Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height());
+		                             Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
 	//qDebug() << "DrawType - " << TerrainType << "Offset - " << this->TerrainData->offset.first << this->TerrainData->offset.second;
 	//TerrainData->Sprite->setPosition(Position.DecPos(0), Position.DecPos(1));
 
@@ -29,12 +29,14 @@ sf::Sprite* TerrainObjectClass::GetSpriteToDraw()
 void TerrainObjectClass::DrawObject(sf::RenderWindow& Window)
 {
 	Window.draw(*this->GetSpriteToDraw());
+}
+void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
+{
 
 	if (TerrainData->GridLines != 0)
 	{
 		TerrainData->GridLines->SetPosition(this->Position.DecPos(0) + TerrainData->offset.first, 
-			                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height());
+			                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
 		TerrainData->GridLines->DrawGrid(Window);
 	}
-
 }

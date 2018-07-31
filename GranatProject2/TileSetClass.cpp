@@ -19,6 +19,11 @@ TileSetClass::TileSetClass()
 
 TileSetClass::~TileSetClass()
 {
+
+	for (TerrainTileElement* Tile : TerrainElementsByType)
+	{
+		delete Tile;
+	}
 }
 
 void TileSetClass::CreateTileSetFromMap(QString MapFilePath)

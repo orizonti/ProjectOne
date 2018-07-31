@@ -12,12 +12,13 @@ public:
 	Eigen::Matrix2d m;
 
 
+	Eigen::Vector2d MousePosReal;
 	Eigen::Vector2d DecPos;
 	Eigen::Vector2d IsoPos;
 
 	void SetCoordDecart(int x, int y);
 	void SetCoordIsometric(int x, int y);
-	void SetRealCoord(int x, int y);
+	void SetRealCoord(double x, double y);
 
 
 	bool operator==(GameCoord &Coord)

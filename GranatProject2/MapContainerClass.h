@@ -10,11 +10,22 @@ class MapContainerClass
 public:
 	MapContainerClass();
 	~MapContainerClass()
-	{
+	{	
 	}
 
-	QSize MapSize;
+		sf::Image img;
 
+	sf::Texture texture;
+	 
+	sf::Sprite sprite;
+
+	QSize MapSize;
+	sf::Texture BorderCellTexture;
+	sf::Sprite BorderCellSprite;
+	GameCoord CursorPosition;
+	GameCoord CursorPosition2;
+
+	 bool FLAG_DRAW_GRID = false;
 
 	void CreateMapFromFile(QString MapFilePath = "E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx");
 
@@ -22,6 +33,7 @@ public:
 	TileSetClass TileSet;
 
 	void DrawTerrain(sf::RenderWindow &Window);
+	void DrawCurrentCell(sf::RenderWindow &Window);
 
 	void MapCellPressed(int x, int y);
 	void MapCellMoved(int x, int );
@@ -41,7 +53,6 @@ public:
 	 QSize CellSize;
 
 	Eigen::Vector2d OffsetCamera;
-	Eigen::Vector2d MousePosReal;
 
     GameCoord MousePosition;
 

@@ -21,4 +21,5 @@ public:
 	sf::Sprite* GetSpriteToDraw();
 
 	void DrawObject(sf::RenderWindow& Window);
+	void DrawGrid(sf::RenderWindow& Window);
 };
