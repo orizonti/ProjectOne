@@ -173,6 +173,9 @@ void GridShapeContainer::SetOffset(int x, int y)
 		Shape.move(x, y);
 	for (CurveShape& Shape : this->CurvesHoriz)
 		Shape.move(x, y);
+
+	x_pos += x;
+	y_pos += y;
 }
 
 void GridShapeContainer::SetPosition(int x, int y)
@@ -181,6 +184,9 @@ void GridShapeContainer::SetPosition(int x, int y)
 		Shape.setPosition(x, y);
 	for (CurveShape& Shape : this->CurvesHoriz)
 		Shape.setPosition(x, y);
+
+	x_pos = x;
+	y_pos = y;
 }
 
 void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
@@ -196,6 +202,7 @@ void GridShapeContainer::CreateLinePathes()
 {
 	if (CurvesVert.isEmpty())
 		return;
+	qDebug() << "CREATE LINE PATHES TILE AT POS" << x_pos << y_pos;
 
 	QVector<QPainterPath> EdgeVertStart = CurvesVert.first().SubPathEdge;
 	QVector<QPainterPath> EdgeVertEnd = CurvesVert.last().SubPathEdge;
@@ -203,25 +210,56 @@ void GridShapeContainer::CreateLinePathes()
 	QVector<QPainterPath> EdgeHorizStart = CurvesHoriz.first().SubPathEdge;
 	QVector<QPainterPath> EdgeHorizEnd   = CurvesHoriz.last().SubPathEdge;
 	
-	qDebug() << "Crate line pathes";
-	qDebug() << "Edge vert size - " << CurvesVert.size() << EdgeHorizStart.size();
-	qDebug() << "Edge vert size - " << CurvesHoriz.size() << EdgeVertStart.size();
-
-	QPainterPath SubPathUp;
-	QPainterPath SubPathBottom;
-
+	QPainterPath PathUp;
+	QPainterPath PathBottom;
 	QPainterPath PathRibLeft;
 	QPainterPath PathRibRight;
 
-	for (int n = 1; n <= CurvesVert.size(); n++)
+	PathUp = CurvesHoriz.first().Path.toReversed();
+	PathBottom = CurvesHoriz.last().Path;
+	PathRibLeft = CurvesVert.first().Path;
+	PathRibRight = CurvesVert.last().Path.toReversed();
+
+	qDebug() << "CREATE PATH CONTOUR";
+		PathRibLeft.connectPath(PathBottom);
+		PathRibLeft.connectPath(PathRibLeft);
+		PathRibLeft.connectPath(PathUp);
+		PathRibLeft.closeSubpath();
+		PathContour = PathRibLeft;
+	
+
+		qDebug() << "CREATE PATH LINE VERT";
+	for (int n = 0; n < CurvesVert.size()-1; n++)
 	{
-		SubPathUp = EdgeHorizStart.at(n+1);
-		SubPathBottom = EdgeHorizEnd.at(n+1);
+		PathUp = EdgeHorizStart.at(n).toReversed();
+		PathBottom = EdgeHorizEnd.at(n);
 
-		PathRibLeft = CurvesVert.at(n-1).Path;
-		PathRibRight = CurvesVert.at(n).Path;
+		PathRibLeft = CurvesVert.at(n).Path;
+		PathRibRight = CurvesVert.at(n+1).Path.toReversed();
 
+		PathRibLeft.connectPath(PathBottom);
+		PathRibLeft.connectPath(PathRibRight);
+		PathRibLeft.connectPath(PathUp);
+		PathRibLeft.closeSubpath();
+		PathLineVert.append(PathRibLeft);
 	}
+	qDebug() << "PATH LINE VERT COUNT - " << PathLineVert.size();
 
 
+	qDebug() << "CREATE PATH LINE HORIZ";
+	for (int n = 0; n < CurvesHoriz.size()-1; n++)
+	{
+		PathUp = CurvesHoriz.at(n).Path.toReversed();
+		PathBottom = CurvesHoriz.at(n+1).Path;
+
+		PathRibLeft = EdgeVertStart.at(n);
+		PathRibRight = EdgeVertEnd.at(n).toReversed();
+
+		PathRibLeft.connectPath(PathBottom);
+		PathRibLeft.connectPath(PathRibLeft);
+		PathRibLeft.connectPath(PathUp);
+		PathRibLeft.closeSubpath();
+		PathLineHoriz.append(PathRibLeft);
+	}
+	qDebug() << "PATH LINE HORIZ COUNT -" << PathLineHoriz.size();
 }

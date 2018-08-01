@@ -77,6 +77,9 @@ public:
 	void SetPosition(int x, int y);
 	void DrawGrid(sf::RenderWindow& Window);
 
+	int x_pos = 0;
+	int y_pos = 0;
+
 
 	void AddCurves(QString file);
 	void CreateLinePathes();
@@ -87,6 +90,7 @@ public:
 
 	QVector<QPainterPath> PathLineVert;
 	QVector<QPainterPath> PathLineHoriz;
+	QPainterPath PathContour;
 
 	QVector<sf::Vector2f> Points;
 };
