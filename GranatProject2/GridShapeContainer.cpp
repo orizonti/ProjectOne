@@ -33,40 +33,46 @@ void GridShapeContainer::AddCurves(QString file)
 					CurveShape newShape;
 					newShape.Direction = n;
 					newShape.AddCurves(newElement);
-					Curves.append(newShape);
+
+					if(n == 0)
+					CurvesHoriz.append(newShape);
+					if(n == 1)
+					CurvesVert.append(newShape);
 				}
 
 				currentNod = currentNod.nextSibling();
 			}
 		}
-
 		
-	//	for (CurveShape Shape : Curves)
-	//	{
-	//		int CountPoints;
-	//		CountPoints = Shape.listPoints.at(0).size();
-
-	//		for (int n = 0; n < CountPoints; n++)
-	//			this->Points.append(Shape.getPoint(n));
-
-	//	}
-
+		CreateLinePathes();
 }
 
 void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 {
 
+	QPainterPath sub_path_rib;
 	for (PathPoints sub_path : this->PathMassive)
 	{
 		if (sub_path.typePath == "MOVE")
+		{
 			Path.moveTo(sub_path.Points.at(0));
+			sub_path_rib.moveTo(sub_path.Points.at(0));
+		}
 
 		if (sub_path.typePath == "LINE")
+		{
 			Path.lineTo(sub_path.Points.at(0));
+			sub_path_rib.lineTo(sub_path.Points.at(0));
+		}
 
 		if (sub_path.typePath == "CUBIC")
+		{
 			Path.cubicTo(sub_path.Points.at(0), sub_path.Points.at(1), sub_path.Points.at(2));
+			sub_path_rib.cubicTo(sub_path.Points.at(0), sub_path.Points.at(1), sub_path.Points.at(2));
+     	}
+	SubPathEdge.append(sub_path_rib);
 	}
+	qDebug() << "SUB PATH EDGE SIZE  - " << SubPathEdge.size();
 
 
 	listPoints = Path.toSubpathPolygons();
@@ -163,19 +169,59 @@ void CurveShape::AddCurves(QDomElement newElement)
 
 void GridShapeContainer::SetOffset(int x, int y)
 {
-	for (CurveShape& Shape : this->Curves)
+	for (CurveShape& Shape : this->CurvesVert)
+		Shape.move(x, y);
+	for (CurveShape& Shape : this->CurvesHoriz)
 		Shape.move(x, y);
 }
 
 void GridShapeContainer::SetPosition(int x, int y)
 {
-	for (CurveShape& Shape : this->Curves)
+	for (CurveShape& Shape : this->CurvesVert)
+		Shape.setPosition(x, y);
+	for (CurveShape& Shape : this->CurvesHoriz)
 		Shape.setPosition(x, y);
 }
 
 void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
 {
-	for (CurveShape Shape : this->Curves)
+	for (CurveShape Shape : this->CurvesVert)
+		Window.draw(Shape);
+
+	for (CurveShape Shape : this->CurvesHoriz)
 		Window.draw(Shape);
 }
 
+void GridShapeContainer::CreateLinePathes()
+{
+	if (CurvesVert.isEmpty())
+		return;
+
+	QVector<QPainterPath> EdgeVertStart = CurvesVert.first().SubPathEdge;
+	QVector<QPainterPath> EdgeVertEnd = CurvesVert.last().SubPathEdge;
+
+	QVector<QPainterPath> EdgeHorizStart = CurvesHoriz.first().SubPathEdge;
+	QVector<QPainterPath> EdgeHorizEnd   = CurvesHoriz.last().SubPathEdge;
+	
+	qDebug() << "Crate line pathes";
+	qDebug() << "Edge vert size - " << CurvesVert.size() << EdgeHorizStart.size();
+	qDebug() << "Edge vert size - " << CurvesHoriz.size() << EdgeVertStart.size();
+
+	QPainterPath SubPathUp;
+	QPainterPath SubPathBottom;
+
+	QPainterPath PathRibLeft;
+	QPainterPath PathRibRight;
+
+	for (int n = 1; n <= CurvesVert.size(); n++)
+	{
+		SubPathUp = EdgeHorizStart.at(n+1);
+		SubPathBottom = EdgeHorizEnd.at(n+1);
+
+		PathRibLeft = CurvesVert.at(n-1).Path;
+		PathRibRight = CurvesVert.at(n).Path;
+
+	}
+
+
+}

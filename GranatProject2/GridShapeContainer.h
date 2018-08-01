@@ -25,7 +25,10 @@ public:
 	QList<PathPoints> PathMassive;
 	QPainterPath Path;
 	QList<QPolygonF> listPoints;
+	QVector<QPainterPath> SubPathEdge;
 	int Direction = 0;
+
+
 	sf::VertexArray Curve;
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -76,6 +79,14 @@ public:
 
 
 	void AddCurves(QString file);
-	QList<CurveShape> Curves;
+	void CreateLinePathes();
+
+
+	QList<CurveShape> CurvesVert;
+	QList<CurveShape> CurvesHoriz;
+
+	QVector<QPainterPath> PathLineVert;
+	QVector<QPainterPath> PathLineHoriz;
+
 	QVector<sf::Vector2f> Points;
 };
