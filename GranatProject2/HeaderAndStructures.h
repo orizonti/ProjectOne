@@ -14,6 +14,7 @@
 #include <qstring>
 #include <QDebug>
 #include <QDir>
+#include <math.h>
 
 extern QString GameDir;
 class EventControlInterface

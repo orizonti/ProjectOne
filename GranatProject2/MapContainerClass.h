@@ -5,6 +5,9 @@
 #include "GameViewUnitContainer.h"
 #include "TileSetClass.h"
 
+typedef QVector<TerrainObjectClass*> Terrains;
+typedef QPair<int, int> PairCoord;
+
 class MapContainerClass
 {
 public:
@@ -29,8 +32,12 @@ public:
 
 	void CreateMapFromFile(QString MapFilePath = "E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx");
 
-	QMap<int,QVector<TerrainObjectClass*> > TerrainLayers;
+	QMap<int,Terrains> TerrainLayers;
+	QMap<PairCoord, Terrains> ClusteredObjects;
+	QMap<PairCoord, PairCoord> ClustersOffsetFromCenter;
 	TileSetClass TileSet;
+
+	void TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer);
 
 	void DrawTerrain(sf::RenderWindow &Window);
 	void DrawCurrentCell(sf::RenderWindow &Window);

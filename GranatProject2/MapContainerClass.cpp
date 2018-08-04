@@ -20,16 +20,16 @@ MapDisplayEngine::MapDisplayEngine()
 MapContainerClass::MapContainerClass()
 {
 
-		BorderCellTexture.loadFromFile("D:/WorkDir/1x1Border.png");
+		BorderCellTexture.loadFromFile((GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/1x1Border.png").toStdString());
 		BorderCellSprite.setTexture(BorderCellTexture);
 
-	bool res = img.loadFromFile("D:/WorkDir/1x1Terrain.png");
+	bool res = img.loadFromFile((GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/1x1Terrain.png").toStdString());
 	texture.loadFromImage(img);
 	sprite.setTexture(texture);
 
 	TileSet.CreateTileSetFromMap(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
-	
 	this->CreateMapFromFile(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
+	TerrainClasterization(this->TerrainLayers.value(1));
 }
 
 void MapDisplayEngine::DrawMap()
@@ -97,7 +97,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 				if (newElement.tagName() == "layer" && newElement.attribute("name") != "GridHill" && newElement.attribute("name") != "Grid")
 				{
-					qDebug() << "ADD LAYER - " << newElement.attribute("name");
+					qDebug() << "ADD LAYER - " << newElement.attribute("name") << "NUMBER - " << Number_Layer;
 					TerrainLayers.insert(Number_Layer, QVector<TerrainObjectClass*>());
 
 							QDomNode dataNode = newElement.firstChild();
@@ -116,7 +116,6 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 											 Type = Digits.at(x).toInt();
 											 if (Type > 0)
 											 {
-											 //	qDebug() << Digits.at(x).toInt();
 											 TerrainObjectClass* newItem = new TerrainObjectClass;
 											 newItem->TerrainType = Type;
 											 newItem->TerrainData = TileSet.TerrainElementsByType.value(newItem->TerrainType);
@@ -216,4 +215,118 @@ void MapContainerClass::MapCellMoved(int x, int y)
 {
 	qDebug() << "MapCellMoved - " << x << y;
 	CursorPosition2.SetCoordIsometric(x, y);
+}
+void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer)
+{
+
+	qDebug() << "========================================";
+	qDebug() << "========================================";
+	qDebug() << "TERRAIN CLASTERIZATION";
+
+	std::function<QPair<double,double>(Terrains)> CalcMassCenter = [](Terrains Cluster) -> PairCoord
+	{
+			double summ_x = 0;
+			double summ_y = 0;
+		for (auto Object : Cluster)
+		{
+			summ_x += Object->Position.IsoPos(0);
+			summ_y += Object->Position.IsoPos(1);
+		}
+		QPair<double,double> Center;
+		Center.first = summ_x / Cluster.size();
+		Center.second = summ_y / Cluster.size();
+
+		qDebug() << "CLUSTER - " << Cluster[0]->Position.IsoPos(0) << Cluster[0]->Position.IsoPos(1) << "CENTER - " << Center.first << Center.second;
+		return Center;
+	};
+
+	std::function<PairCoord(PairCoord, Terrains)> DefineCornerObject = [](PairCoord Center, Terrains Cluster)->PairCoord
+	{
+		QMap<double, TerrainObjectClass*> ObjectsByLength;
+		QVector<double> MassLength;
+			double d_x = 0;
+			double d_y = 0;
+			double Length = 0;
+		for (auto Object : Cluster)
+		{
+			d_x =Center.first - Object->Position.IsoPos(0);
+			d_y =Center.second - Object->Position.IsoPos(1);
+			Length = std::hypot(d_x, d_y);
+			ObjectsByLength.insert(Length,Object);
+			//qDebug() << "LENGHT - "<<Length << Object->TerrainType;
+		}
+
+
+		//qSort(ObjectsByLength);
+
+		
+		PairCoord CornerCoord; 
+		CornerCoord.first = ObjectsByLength.last()->Position.IsoPos(0);
+	    CornerCoord.second=  ObjectsByLength.last()->Position.IsoPos(1);
+
+		qDebug() << "CORNER OBJECT - "<< CornerCoord.first << CornerCoord.second<< "Type - " << ObjectsByLength.last()->TerrainType;
+		return CornerCoord;
+	};
+
+	std::function<QVector<TerrainObjectClass*>(QVector<TerrainObjectClass*>)> DefineCloseObject = 
+		[&TerrainLayer,&DefineCloseObject](QVector<TerrainObjectClass*> SeedObjects) -> QVector<TerrainObjectClass*>
+	    {
+		QVector<TerrainObjectClass*> NewSet;
+
+		double d_x = 0;
+		double d_y = 0;
+		double lenght = 0;
+		for (auto Object : SeedObjects)
+		{
+			for(int n = 0; n < TerrainLayer.size(); n++)
+			{
+				TerrainObjectClass* DefineObject = TerrainLayer.at(n);
+				d_x = Object->Position.IsoPos(0) - DefineObject->Position.IsoPos(0);
+				d_y = Object->Position.IsoPos(1) - DefineObject->Position.IsoPos(1);
+				lenght = std::hypot(d_x, d_y);
+
+				if (lenght < 8)
+				{
+				//	qDebug() << DefineObject->Position.IsoPos(0) << 
+				//		        DefineObject->Position.IsoPos(1) << 
+				//		        "TYPE - " << DefineObject->TerrainType << "LENGHT - " << lenght;
+					TerrainLayer.remove(n);
+					NewSet.append(DefineObject);
+				}
+				
+			}
+		}
+
+		
+		QVector<TerrainObjectClass*> ChildSet;
+
+		if (NewSet.size() != 0)
+		{
+		ChildSet = DefineCloseObject(NewSet);
+		NewSet.append(ChildSet);
+		}
+
+		return NewSet;
+		};
+		
+
+	while (TerrainLayer.size() != 0)
+	{
+	QVector<TerrainObjectClass*> StartSeed;
+    StartSeed.append(TerrainLayer.takeFirst());
+    qDebug() << "*********************************************";
+	QVector<TerrainObjectClass*> NewCluster = DefineCloseObject(StartSeed);
+							     NewCluster.prepend(StartSeed.first());
+    qDebug() << "*********************************************";
+	qDebug() << "========================================";
+	QPair<double,double> CenterCoord =  CalcMassCenter(NewCluster);
+	PairCoord OffsetFromClustCenter = DefineCornerObject(CenterCoord, NewCluster);
+
+	ClusteredObjects.insert(CenterCoord, NewCluster);
+	ClustersOffsetFromCenter.insert(CenterCoord, OffsetFromClustCenter);
+	qDebug() << "-----------------          -------------";
+	qDebug() << "CREATED NEW CLUSTER SIZE - " << NewCluster.size();
+	qDebug() << "========================================";
+	}
+
 }
