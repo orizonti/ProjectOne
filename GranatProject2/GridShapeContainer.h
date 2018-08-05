@@ -21,15 +21,16 @@ public:
 
 		Curve.setPrimitiveType(sf::TrianglesStrip);
 	}
+	void SetColor(sf::Color color);
 
 	QList<PathPoints> PathMassive;
 	QPainterPath Path;
 	QList<QPolygonF> listPoints;
 	QVector<QPainterPath> SubPathEdge;
 	int Direction = 0;
-
-
 	sf::VertexArray Curve;
+
+	void PainterPathToShape(QPainterPath path);
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const
 	{
@@ -60,8 +61,27 @@ public:
 		Point.setY(rx.cap(2).toDouble()); // "189"
 		return Point;
 	}
-
 	void DrawPainterPath(int offset_x, int offset_y);
+
+	void operator=(const CurveShape& Shape)
+	{
+	 Path.addPath(Shape.Path);
+	 listPoints.append(Shape.listPoints);
+	 SubPathEdge.append(Shape.SubPathEdge);
+	 Direction = Shape.Direction;
+
+	 for(int n = 0; n < Shape.Curve.getVertexCount(); n++)
+	 Curve.append(Shape.Curve[n]);
+
+	 PathMassive.append(Shape.PathMassive);
+	}
+
+	CurveShape& GetCopy()
+	{
+		CurveShape* NewShape = new CurveShape;
+		*NewShape = *this;
+		return *NewShape;
+	}
 
 };
 
@@ -77,16 +97,19 @@ public:
 	void SetPosition(int x, int y);
 	void DrawGrid(sf::RenderWindow& Window);
 
-	int x_pos = 0;
-	int y_pos = 0;
+	void DrawContour(sf::RenderWindow& Window);
 
+	bool draw_contour_flag = false;
 
 	void AddCurves(QString file);
 	void CreateLinePathes();
 
-
 	QList<CurveShape> CurvesVert;
 	QList<CurveShape> CurvesHoriz;
+
+	QList<QVector<CurveShape>> CurveStripeHoriz;
+	QList<QVector<CurveShape>> CurveStripeVert;
+	QVector<CurveShape> ContourShapes;
 
 	QVector<QPainterPath> PathLineVert;
 	QVector<QPainterPath> PathLineHoriz;

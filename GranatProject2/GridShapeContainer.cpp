@@ -4,7 +4,6 @@ void GridShapeContainer::AddCurves(QString file)
 {
 	    QString GameDir = qgetenv("GAME_WORK_DIR");
 		QFile newXMLFile(GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PNG HILL TILES/TilesHill/" + file);
-		qDebug() << "SVG FILE LOAD - " << GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PSD HILL TILES/TilesHill/L.svg";
 		bool result = newXMLFile.open(QIODevice::ReadOnly);
 		qDebug() << "FILE OPEN - " << newXMLFile.isOpen();
 		QDomDocument newDomDoc;
@@ -74,8 +73,24 @@ void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 	}
 	qDebug() << "SUB PATH EDGE SIZE  - " << SubPathEdge.size();
 
+	PainterPathToShape(Path);
 
-	listPoints = Path.toSubpathPolygons();
+}
+
+void CurveShape::SetColor(sf::Color color)
+{
+
+	for (int n = 0; n < Curve.getVertexCount(); n++)
+	{
+		Curve[n].color = color;
+	}
+
+}
+
+void CurveShape::PainterPathToShape(QPainterPath path)
+{
+
+	listPoints = path.toSubpathPolygons();
 
 	int x_offset = 8;
 	int y_offset = -4;
@@ -97,7 +112,6 @@ void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 		Curve.append(vertex2);
 	}
 }
-
 
 void CurveShape::AddCurves(QDomElement newElement)
 {
@@ -174,8 +188,9 @@ void GridShapeContainer::SetOffset(int x, int y)
 	for (CurveShape& Shape : this->CurvesHoriz)
 		Shape.move(x, y);
 
-	x_pos += x;
-	y_pos += y;
+	for(CurveShape& Shape : this->ContourShapes)
+		Shape.move(x, y);
+
 }
 
 void GridShapeContainer::SetPosition(int x, int y)
@@ -185,24 +200,44 @@ void GridShapeContainer::SetPosition(int x, int y)
 	for (CurveShape& Shape : this->CurvesHoriz)
 		Shape.setPosition(x, y);
 
-	x_pos = x;
-	y_pos = y;
+	for(CurveShape& Shape : this->ContourShapes)
+		Shape.setPosition(x, y);
+
+}
+
+void GridShapeContainer::DrawContour(sf::RenderWindow& Window)
+{
+	for(CurveShape& Shape : this->ContourShapes)
+		Window.draw(Shape);
 }
 
 void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
 {
+
+//	if (CurvesVert.isEmpty())
+//		return;
 	for (CurveShape Shape : this->CurvesVert)
 		Window.draw(Shape);
 
 	for (CurveShape Shape : this->CurvesHoriz)
 		Window.draw(Shape);
+
+
+//	Window.draw(CurvesHoriz.first());
+//	Window.draw(CurvesHoriz.last());
+
+//	Window.draw(CurvesVert.first());
+//	Window.draw(CurvesVert.last());
+
+//	if(this->draw_contour_flag)
+//	this->DrawContour(Window);
 }
+
 
 void GridShapeContainer::CreateLinePathes()
 {
 	if (CurvesVert.isEmpty())
 		return;
-	qDebug() << "CREATE LINE PATHES TILE AT POS" << x_pos << y_pos;
 
 	QVector<QPainterPath> EdgeVertStart = CurvesVert.first().SubPathEdge;
 	QVector<QPainterPath> EdgeVertEnd = CurvesVert.last().SubPathEdge;
@@ -215,20 +250,33 @@ void GridShapeContainer::CreateLinePathes()
 	QPainterPath PathRibLeft;
 	QPainterPath PathRibRight;
 
+		//=======================================================
+	qDebug() << "CREATE PATH CONTOUR";
 	PathUp = CurvesHoriz.first().Path.toReversed();
 	PathBottom = CurvesHoriz.last().Path;
 	PathRibLeft = CurvesVert.first().Path;
 	PathRibRight = CurvesVert.last().Path.toReversed();
 
-	qDebug() << "CREATE PATH CONTOUR";
+
+	ContourShapes.append(CurvesHoriz.first().GetCopy());
+	ContourShapes.append(CurvesHoriz.last().GetCopy());
+	ContourShapes.append( CurvesVert.first().GetCopy());
+	ContourShapes.append( CurvesVert.last().GetCopy());
+
+//	for(auto Shape: ContourShapes)
+//	Shape.SetColor(sf::Color::Red);
+
+
 		PathRibLeft.connectPath(PathBottom);
 		PathRibLeft.connectPath(PathRibLeft);
 		PathRibLeft.connectPath(PathUp);
 		PathRibLeft.closeSubpath();
 		PathContour = PathRibLeft;
 	
+		//=======================================================
 
 		qDebug() << "CREATE PATH LINE VERT";
+		QVector<CurveShape> StripeShape;
 	for (int n = 0; n < CurvesVert.size()-1; n++)
 	{
 		PathUp = EdgeHorizStart.at(n).toReversed();
@@ -236,6 +284,17 @@ void GridShapeContainer::CreateLinePathes()
 
 		PathRibLeft = CurvesVert.at(n).Path;
 		PathRibRight = CurvesVert.at(n+1).Path.toReversed();
+
+//		CurveShape newShape =  CurvesHoriz.first();
+//		CurveShape newShape2 = CurvesHoriz.last();
+//		CurveShape newShape3 = CurvesVert.first();
+//		CurveShape newShape4=  CurvesVert.last();
+
+
+//	ContourShapes.append(newShape);
+//	ContourShapes.append(newShape2);
+//	ContourShapes.append(newShape3);
+//	ContourShapes.append(newShape4);
 
 		PathRibLeft.connectPath(PathBottom);
 		PathRibLeft.connectPath(PathRibRight);
@@ -263,3 +322,4 @@ void GridShapeContainer::CreateLinePathes()
 	}
 	qDebug() << "PATH LINE HORIZ COUNT -" << PathLineHoriz.size();
 }
+

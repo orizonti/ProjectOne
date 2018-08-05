@@ -18,24 +18,33 @@ public:
 
 		sf::Image img;
 
-	sf::Texture texture;
-	 
-	sf::Sprite sprite;
 
 	QSize MapSize;
 	sf::Texture BorderCellTexture;
 	sf::Sprite BorderCellSprite;
+
 	GameCoord CursorPosition;
 	GameCoord CursorPosition2;
+	GameCoord ShapePosition;
 
-	 bool FLAG_DRAW_GRID = false;
+	PairCoord CurrentCenterCluster;
+	TerrainObjectClass* CurreintTerrain = 0;
+	bool FLAG_DRAW_GRID = false;
 
+	 // resize it to 5 points
 	void CreateMapFromFile(QString MapFilePath = "E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx");
 
 	QMap<int,Terrains> TerrainLayers;
 	QMap<PairCoord, Terrains> ClusteredObjects;
-	QMap<PairCoord, PairCoord> ClustersOffsetFromCenter;
+	QMap<PairCoord,Terrains> CornersCluster ;
+	QMap<PairCoord,sf::ConvexShape> ConvexToClusters ;
+	QMap<PairCoord,QPainterPath> PathToClusters ;
+
 	TileSetClass TileSet;
+
+	PairCoord CalculateNearestCluster(int x, int y);
+	PairCoord DefineBelongPoint(PairCoord NearestCenter, GameCoord Coord);
+
 
 	void TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer);
 

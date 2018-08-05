@@ -20,6 +20,13 @@ public:
 	void SetCoordIsometric(int x, int y);
 	void SetRealCoord(double x, double y);
 
+	void translate(int d_x, int d_y);
+
+	QPair<int, int> GetIsoCoord();
+	QPair<int, int> GetDecCoord();
+
+	 sf::Vector2f GetIsoVector();
+	 sf::Vector2f GetDecVector();
 
 	bool operator==(GameCoord &Coord)
 	{
@@ -29,5 +36,12 @@ public:
 			return false;
 
 	}
+
+
+	void operator=(GameCoord& Coord)
+	{
+		this->SetCoordIsometric(Coord.IsoPos(0), Coord.IsoPos(1));
+	}
+
 };
 

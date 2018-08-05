@@ -15,17 +15,20 @@ MapDisplayEngine::MapDisplayEngine()
 	OffsetCamera(1) = 0;
 	WindowSize.setHeight(640);
 	WindowSize.setWidth(1280);
+
 }
 
 MapContainerClass::MapContainerClass()
 {
 
+
+
+	CurrentCenterCluster.first = 1;
+	CurrentCenterCluster.second = 1;
+
 		BorderCellTexture.loadFromFile((GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/1x1Border.png").toStdString());
 		BorderCellSprite.setTexture(BorderCellTexture);
 
-	bool res = img.loadFromFile((GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/1x1Terrain.png").toStdString());
-	texture.loadFromImage(img);
-	sprite.setTexture(texture);
 
 	TileSet.CreateTileSetFromMap(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
 	this->CreateMapFromFile(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
@@ -52,16 +55,6 @@ void MapContainerClass::DrawCurrentCell(sf::RenderWindow &Window)
 void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 {
 
-//	for (int x = 0; x <= 40; x++)
-//	{
-//		for (int y = 0; y <= 40; y++)
-//		{
-//			CursorPosition.SetCoordIsometric(x, y);
-//			sprite.setPosition(CursorPosition.DecPos(0),CursorPosition.DecPos(1)  - 128);
-//			Window.draw(sprite);
-//		}
-//	}
-
 
 	for (QVector<TerrainObjectClass*> Layer : TerrainLayers)
 	{
@@ -71,9 +64,14 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 
 				if(FLAG_DRAW_GRID)
 				item->DrawGrid(Window);
+
 			}
 
 	}
+
+	    if(CurrentCenterCluster != PairCoord(0,0))
+		Window.draw(ConvexToClusters.value(CurrentCenterCluster));
+
 }
 
 void MapContainerClass::CreateMapFromFile(QString MapFilePath)
@@ -208,13 +206,40 @@ void MapDisplayEngine::MouseControl(sf::Event event)
 
 void MapContainerClass::MapCellPressed(int x, int y)
 {
-	qDebug() << "MapCellPressed - " << x << y;
+	CursorPosition2.SetCoordIsometric(x, y);
+
 }
 
 void MapContainerClass::MapCellMoved(int x, int y)
 {
-	qDebug() << "MapCellMoved - " << x << y;
+	GameCoord Coord; 
+	Coord.SetCoordIsometric(x, y);
+
 	CursorPosition2.SetCoordIsometric(x, y);
+    this->CurrentCenterCluster = DefineBelongPoint(CalculateNearestCluster(x, y),Coord);
+
+	for (auto Terrain : ClusteredObjects.value(CurrentCenterCluster))
+	{
+		PairCoord PosOnTerrain = Terrain->CheckCursorPosition(Coord.DecPos(0), Coord.DecPos(1));
+
+		if (PosOnTerrain != PairCoord(0, 0))
+		{
+			if(this->CurreintTerrain != 0)
+			this->CurreintTerrain->TerrainData->GridLines->draw_contour_flag = false;
+
+			this->CurreintTerrain = Terrain;
+			this->CurreintTerrain->TerrainData->GridLines->draw_contour_flag = true;
+			qDebug() << "Moved terrain - " << Terrain->TerrainType << "pos - " << Terrain->Position.GetIsoCoord();
+			return;
+		}
+		else
+		{
+			this->CurreintTerrain->TerrainData->GridLines->draw_contour_flag = false;
+			this->CurreintTerrain = 0;
+		}
+
+	}
+
 }
 void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer)
 {
@@ -223,50 +248,141 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 	qDebug() << "========================================";
 	qDebug() << "TERRAIN CLASTERIZATION";
 
-	std::function<QPair<double,double>(Terrains)> CalcMassCenter = [](Terrains Cluster) -> PairCoord
-	{
-			double summ_x = 0;
-			double summ_y = 0;
-		for (auto Object : Cluster)
-		{
-			summ_x += Object->Position.IsoPos(0);
-			summ_y += Object->Position.IsoPos(1);
-		}
-		QPair<double,double> Center;
-		Center.first = summ_x / Cluster.size();
-		Center.second = summ_y / Cluster.size();
 
-		qDebug() << "CLUSTER - " << Cluster[0]->Position.IsoPos(0) << Cluster[0]->Position.IsoPos(1) << "CENTER - " << Center.first << Center.second;
-		return Center;
+	std::function<Terrains(Terrains)> GetCornerCoords = [](Terrains Cluster) -> Terrains
+	{
+		Terrains CornerTerrains;
+		for (auto TerrainObject : Cluster)
+		{
+			if (TerrainObject->TerrainType == 5 ||
+				TerrainObject->TerrainType == 7 ||
+				TerrainObject->TerrainType == 22 ||
+				TerrainObject->TerrainType == 2)
+				CornerTerrains.append(TerrainObject);
+		}
+		return CornerTerrains;
 	};
 
-	std::function<PairCoord(PairCoord, Terrains)> DefineCornerObject = [](PairCoord Center, Terrains Cluster)->PairCoord
+				std::function<QPainterPath(sf::ConvexShape)> ConvertConvexToPainterPath = 
+					[](sf::ConvexShape ShapeBorder) -> QPainterPath
+				{
+
+					qDebug() << "=============================================";
+				
+					QPolygonF Polygon;
+					for(int n = 0; n < ShapeBorder.getPointCount();n++)
+					{
+						QPointF newPoint;
+						newPoint.setX(ShapeBorder.getPoint(n).x);
+						newPoint.setY(ShapeBorder.getPoint(n).y);
+						Polygon << newPoint;
+						qDebug() << "ADD POINT - " << newPoint;
+					}
+					QPainterPath PainterPath; 
+					PainterPath.addPolygon(Polygon);
+					PainterPath.closeSubpath();
+					qDebug() << "=============================================";
+					return PainterPath;
+
+				};
+
+				std::function<sf::ConvexShape(Terrains)> CreateClusterConvex = 
+					[](Terrains	CornerTerrains) -> sf::ConvexShape
+				{
+
+					sf::ConvexShape newConvex;
+				 newConvex.setPointCount(4);
+
+				 GameCoord PointCoord;
+							for (auto TerrainObject : CornerTerrains)
+							{
+								switch (TerrainObject->TerrainType)
+								{
+								case 5:
+
+									PointCoord = TerrainObject->Position;
+									PointCoord.translate(3, 0);
+				                    newConvex.setPoint(0,PointCoord.GetDecVector());
+									break;
+								case 7:
+									PointCoord = TerrainObject->Position;
+									PointCoord.translate(4, 2);
+				                    newConvex.setPoint(1,PointCoord.GetDecVector());
+									break;
+								case 2:
+									PointCoord = TerrainObject->Position;
+									PointCoord.translate(0, 3);
+				                    newConvex.setPoint(2,PointCoord.GetDecVector());
+									break;
+								case 22:
+				                    newConvex.setPoint(3,TerrainObject->Position.GetDecVector());
+									break;
+								}
+							};
+							newConvex.setFillColor(sf::Color::Transparent);
+							newConvex.setOutlineColor(sf::Color::Red);
+							newConvex.setOutlineThickness(20);
+
+				 return newConvex;
+				};
+	
+	std::function<PairCoord(Terrains)> CalcCentroid = [](Terrains CornerTerrains) -> PairCoord
 	{
-		QMap<double, TerrainObjectClass*> ObjectsByLength;
-		QVector<double> MassLength;
-			double d_x = 0;
-			double d_y = 0;
-			double Length = 0;
-		for (auto Object : Cluster)
+
+
+		PairCoord Centroid;
+		PairCoord TR;
+		PairCoord TL;
+		PairCoord BR;
+		PairCoord BL;
+
+		double x1, y1;
+		double x2, y2;
+		double x3, y3;
+		double x4, y4;
+
+
+		for (auto TerrainObject : CornerTerrains)
 		{
-			d_x =Center.first - Object->Position.IsoPos(0);
-			d_y =Center.second - Object->Position.IsoPos(1);
-			Length = std::hypot(d_x, d_y);
-			ObjectsByLength.insert(Length,Object);
-			//qDebug() << "LENGHT - "<<Length << Object->TerrainType;
-		}
+			switch (TerrainObject->TerrainType)
+			{
+			case 5:
+				TR = TerrainObject->Position.GetIsoCoord();
+				break;
+			case 7:
+				TL = TerrainObject->Position.GetIsoCoord();
+				break;
+			case 2:
+				BL = TerrainObject->Position.GetIsoCoord();
+				break;
+			case 22:
+				BR = TerrainObject->Position.GetIsoCoord();
+				break;
+			}
+		};
 
+			x1 = (BL.first + TL.first) / 2;
+			y1 = (BL.second + TL.second) / 2;
 
-		//qSort(ObjectsByLength);
+			x2 = (BR.first + TR.first) / 2;
+			y2 = (BR.second + TR.second) / 2;
 
-		
-		PairCoord CornerCoord; 
-		CornerCoord.first = ObjectsByLength.last()->Position.IsoPos(0);
-	    CornerCoord.second=  ObjectsByLength.last()->Position.IsoPos(1);
+			x3 = (TL.first + TR.first) / 2;
+			y3 = (TL.second + TR.second) / 2;
+			
+			x4 = (BL.first + BR.first) / 2;
+			y4 = (BL.second + BR.second) / 2;
 
-		qDebug() << "CORNER OBJECT - "<< CornerCoord.first << CornerCoord.second<< "Type - " << ObjectsByLength.last()->TerrainType;
-		return CornerCoord;
+			double A = x1*y2 - y1*x2;
+			double B = x3*y4 - y3*x4;
+			double C = (x1-x2)*(y3-y4) - (y1-y2)*(x3-x4);
+
+			Centroid.first = (A*(x3 - x4) - B*(x1 - x2))/C +3;
+			Centroid.second = (A*(y3 - y4) - B*(y1 - y2))/C +2;
+
+		return Centroid;
 	};
+
 
 	std::function<QVector<TerrainObjectClass*>(QVector<TerrainObjectClass*>)> DefineCloseObject = 
 		[&TerrainLayer,&DefineCloseObject](QVector<TerrainObjectClass*> SeedObjects) -> QVector<TerrainObjectClass*>
@@ -319,14 +435,63 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 							     NewCluster.prepend(StartSeed.first());
     qDebug() << "*********************************************";
 	qDebug() << "========================================";
-	QPair<double,double> CenterCoord =  CalcMassCenter(NewCluster);
-	PairCoord OffsetFromClustCenter = DefineCornerObject(CenterCoord, NewCluster);
 
-	ClusteredObjects.insert(CenterCoord, NewCluster);
-	ClustersOffsetFromCenter.insert(CenterCoord, OffsetFromClustCenter);
+	Terrains CornerTerrains = GetCornerCoords(NewCluster);
+
+	PairCoord Centroid = CalcCentroid(CornerTerrains);
+
+	sf::ConvexShape convex = CreateClusterConvex(CornerTerrains);
+
+	ClusteredObjects.insert(Centroid, NewCluster);
+	CornersCluster.insert(Centroid, CornerTerrains);
+	ConvexToClusters.insert(Centroid, convex);
+	PathToClusters.insert(Centroid, ConvertConvexToPainterPath(convex));
+
 	qDebug() << "-----------------          -------------";
 	qDebug() << "CREATED NEW CLUSTER SIZE - " << NewCluster.size();
 	qDebug() << "========================================";
 	}
 
+}
+
+PairCoord MapContainerClass::CalculateNearestCluster(int x, int y)
+{
+	QList<PairCoord> ClusterCenters = ClusteredObjects.keys();
+	QMap<double,PairCoord> Lengths;
+	double d_x = 0;
+	double d_y = 0;
+
+	double length = 0;
+	for (auto Center : ClusterCenters)
+	{
+		d_x = Center.first - x;
+		d_y = Center.second - y;
+		length = std::hypot(d_x, d_y);
+		//qDebug() <<"CENTER - " << Center<< " LENGTH - "  << length;
+		Lengths.insert(length,Center);
+	}
+
+	PairCoord NearestCenter = Lengths.values().first();
+	qDebug() << "MIN LENGHT - " << NearestCenter;
+	return NearestCenter;
+}
+
+PairCoord MapContainerClass::DefineBelongPoint(PairCoord NearestCenter, GameCoord Coord)
+{
+	PairCoord Null; Null.first = 0; Null.second = 0;
+
+	QPainterPath path = PathToClusters.value(NearestCenter);
+	QPointF Point; 
+	Point.setX(Coord.DecPos(0));
+	Point.setY(Coord.DecPos(1));
+
+	if (path.contains(Point))
+	{
+	qDebug() << "POINT BELONG TO NEAREST - " << NearestCenter;
+	return NearestCenter;
+	}
+	else
+	qDebug() << "POINT NOT BELONG TO NEAREST - " << NearestCenter;
+
+	return Null;
 }

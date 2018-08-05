@@ -20,6 +20,9 @@ public:
 	QSize TileSize;
 	sf::Sprite* GetSpriteToDraw();
 
+	QPair<int, int> CheckCursorPosition(int x, int y);
+
 	void DrawObject(sf::RenderWindow& Window);
 	void DrawGrid(sf::RenderWindow& Window);
+	void DrawContour(sf::RenderWindow& Window);
 };
