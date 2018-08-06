@@ -77,6 +77,7 @@ void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 }
 void CurveShape::AddCurves(QPainterPath pathShape)
 {
+	Direction = 1;
 	if (!pathShape.toSubpathPolygons().isEmpty())
 	{
 
@@ -106,7 +107,6 @@ void CurveShape::PainterPathToShape(QPainterPath path)
 
 	if (this->Direction == 1)
 		y_offset = 4;
-	qDebug() << "1";
 
 	for (QPointF point : listPoints.at(0))
 	{
@@ -121,7 +121,6 @@ void CurveShape::PainterPathToShape(QPainterPath path)
 		vertex2.color = sf::Color::Black;
 		Curve.append(vertex2);
 	}
-	qDebug() << "2";
 }
 
 void CurveShape::AddCurves(QDomElement newElement)
@@ -231,14 +230,14 @@ void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
 //	for (CurveShape Shape : this->CurvesHoriz)
 //		Window.draw(Shape);
 
-//	if (CurvesVert.isEmpty())
-//		return;
+	if (CurvesVert.isEmpty())
+		return;
 
 //	Window.draw(CurvesHoriz.first());
 //	Window.draw(CurvesHoriz.last());
 
 //	Window.draw(CurvesVert.first());
-//	Window.draw(CurvesVert.last());
+//	Window.draw(CurvesVert.at(CurvesVert.size()-1));
 
 }
 
@@ -254,8 +253,8 @@ QPainterPath GridShapeContainer::GetPathContour()
 		return PathRibLeft;
 		//=======================================================
 	qDebug() << "CREATE PATH CONTOUR";
-	PathBottom = CurvesHoriz.last().Path.toReversed();
-	PathUp = CurvesHoriz.first().Path;
+	PathBottom = CurvesHoriz.first().Path.toReversed();
+	PathUp = CurvesHoriz.last().Path;
 	PathRibLeft = CurvesVert.first().Path;
 	PathRibRight = CurvesVert.last().Path.toReversed();
 
@@ -269,9 +268,9 @@ QPainterPath GridShapeContainer::GetPathContour()
 	Shape.SetColor(sf::Color::Red);
 
 
-		PathRibLeft.connectPath(PathBottom);
-		PathRibLeft.connectPath(PathRibLeft);
 		PathRibLeft.connectPath(PathUp);
+		PathRibLeft.connectPath(PathRibRight);
+		PathRibLeft.connectPath(PathBottom);
 		PathRibLeft.closeSubpath();
 		return PathRibLeft;
 }

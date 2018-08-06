@@ -62,6 +62,16 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 			{
 				item->DrawObject(Window);
 
+
+			}
+
+	}
+
+	for (QVector<TerrainObjectClass*> Layer : TerrainLayers)
+	{
+			for (TerrainObjectClass* item :Layer)
+			{
+
 				if(FLAG_DRAW_GRID)
 				item->DrawGrid(Window);
 
@@ -188,10 +198,6 @@ void MapDisplayEngine::KeyboardControl(sf::Event Keyboard)
 
 void MapContainerClass::DefineCellMoved(int x, int y)
 {
-	
-	TerrainObjectClass* Terrain = 0;
-
-
 
 	for (auto Terrain : ClusteredObjects.value(CurrentCenterCluster))
 	{

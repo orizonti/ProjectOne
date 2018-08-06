@@ -86,6 +86,14 @@ public:
 
 };
 
+class QuadeRangleShape
+{
+public:
+	void AddCurves(QVector<QPainterPath> EdgePaths);
+	void SetColor(sf::Color color);
+	QVector<CurveShape> EdgeShapes;
+	QPainterPath ClosePath;
+};
 
 class GridShapeContainer
 {
