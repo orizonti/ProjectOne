@@ -23,16 +23,15 @@ void GameCoord::SetRealCoord(double x, double y)
 {
 	DecPos(0) = x;
 	DecPos(1) = y;
-	qDebug() << "DecVect - " << DecPos(0) << DecPos(1);
 
 
 				IsoPos = n*DecPos;
+				MousePosReal = m*IsoPos*CellSize.height();
 
 				IsoPos(0) = floor(IsoPos(0));
 				IsoPos(1) = floor(IsoPos(1));
 
 				DecPos = m*IsoPos * CellSize.height();
-	qDebug() << "DecVect - " << DecPos(0) << DecPos(1);
 }
 
 void GameCoord::SetCoordDecart(int x, int y)

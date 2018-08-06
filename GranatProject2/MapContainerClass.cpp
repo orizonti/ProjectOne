@@ -114,9 +114,8 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 											 Type = Digits.at(x).toInt();
 											 if (Type > 0)
 											 {
-											 TerrainObjectClass* newItem = new TerrainObjectClass;
+											 TerrainObjectClass* newItem = new TerrainObjectClass(TileSet.TerrainElementsByType.value(Type));
 											 newItem->TerrainType = Type;
-											 newItem->TerrainData = TileSet.TerrainElementsByType.value(newItem->TerrainType);
 											 newItem->SetCoord(60-y, x);
 											 TerrainLayers[Number_Layer].append(newItem);
 											 }
@@ -186,14 +185,43 @@ void MapDisplayEngine::KeyboardControl(sf::Event Keyboard)
 				Map.FLAG_DRAW_GRID = false;
 			}
 }
+
+void MapContainerClass::DefineCellMoved(int x, int y)
+{
+	
+	TerrainObjectClass* Terrain = 0;
+
+
+
+	for (auto Terrain : ClusteredObjects.value(CurrentCenterCluster))
+	{
+		bool Result = Terrain->CheckCursorPosition(x, y);
+
+		if (Result)
+			this->CurreintTerrain = Terrain;
+		else
+		{
+			if(this->CurreintTerrain != 0)
+			this->CurreintTerrain = 0;
+		}
+
+	}
+}
+
+
+
 void MapDisplayEngine::MouseControl(sf::Event event)
 {
 	            double x_pos_real = double(event.mouseMove.x - WindowSize.width() / 2) / (CellSize.height()*Scale) - OffsetCamera(0);
 				double y_pos_real = double(event.mouseMove.y - WindowSize.height() / 2) / (CellSize.height()*Scale) - OffsetCamera(1);
 				MousePosition.SetRealCoord(x_pos_real,y_pos_real);
 
-			if (event.type == sf::Event::MouseMoved)
+
+				if (event.type == sf::Event::MouseMoved)
+				{
 				this->Map.MapCellMoved(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
+				Map.DefineCellMoved(MousePosition.MousePosReal(0), MousePosition.MousePosReal(1));
+				}
 
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
@@ -212,33 +240,11 @@ void MapContainerClass::MapCellPressed(int x, int y)
 
 void MapContainerClass::MapCellMoved(int x, int y)
 {
+
 	GameCoord Coord; 
 	Coord.SetCoordIsometric(x, y);
-
+    CurrentCenterCluster = DefineBelongPoint(CalculateNearestCluster(x, y),Coord);
 	CursorPosition2.SetCoordIsometric(x, y);
-    this->CurrentCenterCluster = DefineBelongPoint(CalculateNearestCluster(x, y),Coord);
-
-	for (auto Terrain : ClusteredObjects.value(CurrentCenterCluster))
-	{
-		PairCoord PosOnTerrain = Terrain->CheckCursorPosition(Coord.DecPos(0), Coord.DecPos(1));
-
-		if (PosOnTerrain != PairCoord(0, 0))
-		{
-			if(this->CurreintTerrain != 0)
-			this->CurreintTerrain->TerrainData->GridLines->draw_contour_flag = false;
-
-			this->CurreintTerrain = Terrain;
-			this->CurreintTerrain->TerrainData->GridLines->draw_contour_flag = true;
-			qDebug() << "Moved terrain - " << Terrain->TerrainType << "pos - " << Terrain->Position.GetIsoCoord();
-			return;
-		}
-		else
-		{
-			this->CurreintTerrain->TerrainData->GridLines->draw_contour_flag = false;
-			this->CurreintTerrain = 0;
-		}
-
-	}
 
 }
 void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer)
@@ -472,7 +478,7 @@ PairCoord MapContainerClass::CalculateNearestCluster(int x, int y)
 	}
 
 	PairCoord NearestCenter = Lengths.values().first();
-	qDebug() << "MIN LENGHT - " << NearestCenter;
+	//qDebug() << "MIN LENGHT - " << NearestCenter;
 	return NearestCenter;
 }
 
@@ -487,11 +493,11 @@ PairCoord MapContainerClass::DefineBelongPoint(PairCoord NearestCenter, GameCoor
 
 	if (path.contains(Point))
 	{
-	qDebug() << "POINT BELONG TO NEAREST - " << NearestCenter;
+	//qDebug() << "POINT BELONG TO NEAREST - " << NearestCenter;
 	return NearestCenter;
 	}
 	else
-	qDebug() << "POINT NOT BELONG TO NEAREST - " << NearestCenter;
+	//qDebug() << "POINT NOT BELONG TO NEAREST - " << NearestCenter;
 
 	return Null;
 }

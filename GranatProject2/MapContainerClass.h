@@ -53,6 +53,7 @@ public:
 
 	void MapCellPressed(int x, int y);
 	void MapCellMoved(int x, int );
+	 void DefineCellMoved(int x,int y);
 };
 
 class MapDisplayEngine :public EventControlInterface
@@ -74,6 +75,7 @@ public:
 
 	 void KeyboardControl(sf::Event event);
 	 void MouseControl(sf::Event event);
+
 
 	 void DrawMap();
 	 

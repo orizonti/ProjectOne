@@ -15,6 +15,7 @@ class CurveShape : public sf::Shape
 public:
 
 	void AddCurves(QDomElement newElement);
+	void AddCurves(QPainterPath pathShape);
 
 	explicit CurveShape()
 	{
@@ -99,21 +100,19 @@ public:
 
 	void DrawContour(sf::RenderWindow& Window);
 
-	bool draw_contour_flag = false;
 
 	void AddCurves(QString file);
-	void CreateLinePathes();
+	QMap<int,QVector<QPainterPath>> GetStripePathes();
+	QPainterPath GetPathContour();
+
 
 	QList<CurveShape> CurvesVert;
 	QList<CurveShape> CurvesHoriz;
 
 	QList<QVector<CurveShape>> CurveStripeHoriz;
 	QList<QVector<CurveShape>> CurveStripeVert;
-	QVector<CurveShape> ContourShapes;
 
-	QVector<QPainterPath> PathLineVert;
-	QVector<QPainterPath> PathLineHoriz;
-	QPainterPath PathContour;
+	QVector<CurveShape> ContourShapes;
 
 	QVector<sf::Vector2f> Points;
 };

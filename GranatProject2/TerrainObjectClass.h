@@ -9,7 +9,7 @@
 class TerrainObjectClass
 {
 public:
-	TerrainObjectClass();
+	TerrainObjectClass(TerrainTileElement* Terrain);
 	TerrainTileElement* TerrainData = 0;
 
 	void SetCoord(int x, int y);
@@ -20,7 +20,13 @@ public:
 	QSize TileSize;
 	sf::Sprite* GetSpriteToDraw();
 
-	QPair<int, int> CheckCursorPosition(int x, int y);
+	bool FLAG_MOUSE_MOVED = false;
+
+	QMap<int,QVector<QPainterPath>> StripesPath;
+	QPainterPath PathContour;
+	CurveShape ShapeContour;
+
+	bool CheckCursorPosition(int x, int y);
 
 	void DrawObject(sf::RenderWindow& Window);
 	void DrawGrid(sf::RenderWindow& Window);
