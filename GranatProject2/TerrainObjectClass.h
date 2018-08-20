@@ -22,9 +22,11 @@ public:
 
 	bool FLAG_MOUSE_MOVED = false;
 
-	QMap<int,QVector<QPainterPath>> StripesPath;
+	QVector<QPainterPath> CellPathes;
 	QPainterPath PathContour;
 	CurveShape ShapeContour;
+	QVector<CurveShape> ShapesCell;
+	int Number_Cell_Pressed = 0;
 
 	bool CheckCursorPosition(int x, int y);
 

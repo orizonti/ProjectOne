@@ -15,7 +15,11 @@ class CurveShape : public sf::Shape
 public:
 
 	void AddCurves(QDomElement newElement);
-	void AddCurves(QPainterPath pathShape);
+	void AddCurves(QPainterPath pathShape,int Dir);
+	CurveShape(QPainterPath path,int Dir)
+	{
+		AddCurves(Path,Dir);
+	}
 
 	explicit CurveShape()
 	{
@@ -89,10 +93,10 @@ public:
 class QuadeRangleShape
 {
 public:
-	void AddCurves(QVector<QPainterPath> EdgePaths);
+    QuadeRangleShape(QVector<CurveShape> Shapes);
+    explicit QuadeRangleShape();
 	void SetColor(sf::Color color);
 	QVector<CurveShape> EdgeShapes;
-	QPainterPath ClosePath;
 };
 
 class GridShapeContainer
@@ -109,18 +113,20 @@ public:
 	void DrawContour(sf::RenderWindow& Window);
 
 
-	void AddCurves(QString file);
-	QMap<int,QVector<QPainterPath>> GetStripePathes();
+	void AddCurves(QString path);
+	QVector<QPainterPath> GetSubCells();
 	QPainterPath GetPathContour();
 
 
+	QVector<QuadeRangleShape> SubCellShapes;
 	QList<CurveShape> CurvesVert;
 	QList<CurveShape> CurvesHoriz;
 
-	QList<QVector<CurveShape>> CurveStripeHoriz;
-	QList<QVector<CurveShape>> CurveStripeVert;
 
+	QVector<QPainterPath> SubCellPathes;
 	QVector<CurveShape> ContourShapes;
 
 	QVector<sf::Vector2f> Points;
+public:
+	QList<CurveShape> Curves;
 };

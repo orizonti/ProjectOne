@@ -1,9 +1,9 @@
 #include <GridShapeContainer.h>
 
-void GridShapeContainer::AddCurves(QString file)
+void GridShapeContainer::AddCurves(QString path)
 {
 	    QString GameDir = qgetenv("GAME_WORK_DIR");
-		QFile newXMLFile(GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PNG HILL TILES/TilesHill/" + file);
+		QFile newXMLFile(GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PNG HILL TILES/TilesHill/" + path);
 		bool result = newXMLFile.open(QIODevice::ReadOnly);
 		qDebug() << "FILE OPEN - " << newXMLFile.isOpen();
 		QDomDocument newDomDoc;
@@ -15,7 +15,7 @@ void GridShapeContainer::AddCurves(QString file)
 
 		qDebug() << "FIRST CHILD NODE -" << GroupsNodes.size();
 
-
+        //DOWNLOAD SVG GRID LINES
 		for (int n = 0; n <= 1; n++)
 		{
 
@@ -42,7 +42,41 @@ void GridShapeContainer::AddCurves(QString file)
 				currentNod = currentNod.nextSibling();
 			}
 		}
+		qDebug() << "UPLOAD GRIDS LINE COUNT - " << CurvesHoriz.size() << CurvesVert.size();
 		
+		//Create SUBB CELL PATH_PAINTER TO DEFINE CELL PRESSED
+	for (int y = 0; y < CurvesHoriz.size()-1; y++)
+	{
+		for (int x = 0; x < CurvesVert.size()-1; x++)
+		{
+
+				QPainterPath PathBottom = CurvesHoriz[y].SubPathEdge[x].toReversed();
+				QPainterPath PathUp =      CurvesHoriz[y+1].SubPathEdge[x];
+
+				QPainterPath PathRibLeft = CurvesVert[x].SubPathEdge[y];
+				QPainterPath PathRibRight = CurvesVert[x+1].SubPathEdge[y].toReversed();
+
+				QVector<CurveShape> QuadShapes; 
+				QuadShapes.append(CurveShape(PathBottom,0));
+				QuadShapes.append(CurveShape(PathUp,0));
+				QuadShapes.append(CurveShape(PathRibLeft,1));
+				QuadShapes.append(CurveShape(PathRibRight,1));
+
+				QuadeRangleShape QuadRangle(QuadShapes);
+				this->SubCellShapes.append(QuadRangle);
+
+					PathRibLeft.connectPath(PathUp);
+					PathRibLeft.connectPath(PathRibRight);
+					PathRibLeft.connectPath(PathBottom);
+					PathRibLeft.closeSubpath();
+					SubCellPathes.append(PathRibLeft);
+
+		}
+
+	}
+	qDebug() << "         CREATE SUB CELLS !!!!";
+	qDebug() << "         SUB CELLS COUNT - " << SubCellShapes.size() << "PATHES - " << SubCellPathes.size();
+		//Create SUBB CELL PATH_PAINTER TO DEFINE CELL PRESSED
 }
 
 void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
@@ -75,9 +109,9 @@ void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 	PainterPathToShape(Path);
 
 }
-void CurveShape::AddCurves(QPainterPath pathShape)
+void CurveShape::AddCurves(QPainterPath pathShape, int Dir)
 {
-	Direction = 1;
+	Direction = Dir;
 	if (!pathShape.toSubpathPolygons().isEmpty())
 	{
 
@@ -224,20 +258,16 @@ void GridShapeContainer::DrawContour(sf::RenderWindow& Window)
 void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
 {
 
-//	for (CurveShape Shape : this->CurvesVert)
-//		Window.draw(Shape);
-
-//	for (CurveShape Shape : this->CurvesHoriz)
-//		Window.draw(Shape);
-
 	if (CurvesVert.isEmpty())
 		return;
 
-//	Window.draw(CurvesHoriz.first());
-//	Window.draw(CurvesHoriz.last());
+	for (CurveShape Shape : this->CurvesVert)
+		Window.draw(Shape);
 
-//	Window.draw(CurvesVert.first());
-//	Window.draw(CurvesVert.at(CurvesVert.size()-1));
+	for (CurveShape Shape : this->CurvesHoriz)
+		Window.draw(Shape);
+
+
 
 }
 
@@ -275,67 +305,24 @@ QPainterPath GridShapeContainer::GetPathContour()
 		return PathRibLeft;
 }
 
-QMap<int,QVector<QPainterPath>> GridShapeContainer::GetStripePathes()
+QVector<QPainterPath> GridShapeContainer::GetSubCells()
 {
-	QMap<int, QVector<QPainterPath>> Stripes;
-	if (CurvesVert.isEmpty())
-		return Stripes;
-
-	QVector<QPainterPath> EdgeVertStart = CurvesVert.first().SubPathEdge;
-	QVector<QPainterPath> EdgeVertEnd = CurvesVert.last().SubPathEdge;
-
-	QVector<QPainterPath> EdgeHorizStart = CurvesHoriz.first().SubPathEdge;
-	QVector<QPainterPath> EdgeHorizEnd   = CurvesHoriz.last().SubPathEdge;
-	
-
-	QPainterPath PathUp;
-	QPainterPath PathBottom;
-	QPainterPath PathRibLeft;
-	QPainterPath PathRibRight;
-
-	QVector<QPainterPath> StripesVert; 
-	QVector<QPainterPath> StripesHoriz; 
-
-	
-		//=======================================================
-
-		qDebug() << "CREATE PATH LINE VERT";
-	//	QVector<CurveShape> StripeShape;
-	for (int n = 0; n < CurvesVert.size()-1; n++)
-	{
-		PathUp = EdgeHorizStart.at(n).toReversed();
-		PathBottom = EdgeHorizEnd.at(n);
-
-		PathRibLeft = CurvesVert.at(n).Path;
-		PathRibRight = CurvesVert.at(n+1).Path.toReversed();
-
-		PathRibLeft.connectPath(PathBottom);
-		PathRibLeft.connectPath(PathRibRight);
-		PathRibLeft.connectPath(PathUp);
-		PathRibLeft.closeSubpath();
-		StripesVert.append(PathRibLeft);
-	}
-	qDebug() << "PATH LINE VERT COUNT - " << StripesVert.size();
-	Stripes.insert(0, StripesVert);
 
 
-	qDebug() << "CREATE PATH LINE HORIZ";
-	for (int n = 0; n < CurvesHoriz.size()-1; n++)
-	{
-		PathUp = CurvesHoriz.at(n).Path.toReversed();
-		PathBottom = CurvesHoriz.at(n+1).Path;
+		return SubCellPathes;
 
-		PathRibLeft = EdgeVertStart.at(n);
-		PathRibRight = EdgeVertEnd.at(n).toReversed();
-
-		PathRibLeft.connectPath(PathBottom);
-		PathRibLeft.connectPath(PathRibLeft);
-		PathRibLeft.connectPath(PathUp);
-		PathRibLeft.closeSubpath();
-		StripesHoriz.append(PathRibLeft);
-	}
-	qDebug() << "PATH LINE HORIZ COUNT -" << StripesHoriz.size();
-	Stripes.insert(1, StripesHoriz);
-	return Stripes;
 }
 
+QuadeRangleShape::QuadeRangleShape(QVector<CurveShape> Shapes)
+{
+	this->EdgeShapes = Shapes;
+}
+
+QuadeRangleShape::QuadeRangleShape()
+{
+}
+
+void QuadeRangleShape::SetColor(sf::Color color)
+{
+
+}

@@ -7,7 +7,7 @@ TerrainObjectClass::TerrainObjectClass(TerrainTileElement* Terrain)
 		if (Terrain->GridLines != 0)
 		{
 		PathContour = Terrain->GridLines->GetPathContour();
-		StripesPath = Terrain->GridLines->GetStripePathes();
+		CellPathes = Terrain->GridLines->GetSubCells();
 		}
 		TerrainData = Terrain;
 	}
@@ -22,7 +22,11 @@ void TerrainObjectClass::SetCoord(int x, int y)
 	Position.SetCoordIsometric(x, y);
 	PathContour.translate(Position.DecPos(0) + TerrainData->offset.first, 
 		                  Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
-	ShapeContour.AddCurves(PathContour);
+	for (QPainterPath& Path : CellPathes)
+	{
+	Path.translate(Position.DecPos(0) + TerrainData->offset.first, 
+		           Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
+	}
 	qDebug() << "ELEMENT -  "<< TerrainData->Name <<"COORD - " << x << y << "Dec - " << Position.DecPos(0) << Position.DecPos(1) << "Offset - " << this->TerrainData->offset.first << this->TerrainData->offset.second;
 	}
 }
@@ -51,10 +55,11 @@ void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 	{
 		TerrainData->GridLines->SetPosition(this->Position.DecPos(0) + TerrainData->offset.first, 
 			                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
-		TerrainData->GridLines->DrawGrid(Window);
+		//TerrainData->GridLines->DrawGrid(Window);
 
 		if (FLAG_MOUSE_MOVED)
-			Window.draw(ShapeContour);
+			Window.draw(ShapesCell.at(Number_Cell_Pressed-1));
+		//TerrainData->GridLines->DrawContour(Window);
 	}
 }
 
@@ -68,8 +73,20 @@ bool TerrainObjectClass::CheckCursorPosition(int x, int y)
 
 	    bool result = PathContour.contains(QPointF(x, y));
 
-		if(result)
-			qDebug() << "COORD - " << x << y << "CONTAINS IN - " << TerrainType << "AT POS - " << this->Position.GetIsoCoord() << result;
+		if (result)
+		{
+
+			int n = 0;
+					for (QPainterPath& Path : CellPathes)
+					{
+						if (Path.contains(QPointF(x, y)))
+							break;
+						n++;
+						
+					}
+					qDebug() << "NUMBER SUBB CELL - " << n << "count cells - " << ShapesCell.size();
+					this->Number_Cell_Pressed = n;
+		}
 
 		this->FLAG_MOUSE_MOVED = result;
 
