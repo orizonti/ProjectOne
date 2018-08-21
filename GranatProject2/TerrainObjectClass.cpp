@@ -27,7 +27,7 @@ void TerrainObjectClass::SetCoord(int x, int y)
 	Path.translate(Position.DecPos(0) + TerrainData->offset.first, 
 		           Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
 	}
-	qDebug() << "ELEMENT -  "<< TerrainData->Name <<"COORD - " << x << y << "Dec - " << Position.DecPos(0) << Position.DecPos(1) << "Offset - " << this->TerrainData->offset.first << this->TerrainData->offset.second;
+	//qDebug() << "ELEMENT -  "<< TerrainData->Name <<"COORD - " << x << y << "Dec - " << Position.DecPos(0) << Position.DecPos(1) << "Offset - " << this->TerrainData->offset.first << this->TerrainData->offset.second;
 	}
 }
 
@@ -58,8 +58,7 @@ void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 		//TerrainData->GridLines->DrawGrid(Window);
 
 		if (FLAG_MOUSE_MOVED)
-			Window.draw(ShapesCell.at(Number_Cell_Pressed-1));
-		//TerrainData->GridLines->DrawContour(Window);
+		TerrainData->GridLines->DrawCell(Window,Number_Cell_Pressed-1);
 	}
 }
 
@@ -76,7 +75,7 @@ bool TerrainObjectClass::CheckCursorPosition(int x, int y)
 		if (result)
 		{
 
-			int n = 0;
+			int n = 1;
 					for (QPainterPath& Path : CellPathes)
 					{
 						if (Path.contains(QPointF(x, y)))

@@ -86,7 +86,7 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 
 void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 {
-		qDebug() << "CREATE MAP FROM FILE - " << MapFilePath;
+		//qDebug() << "CREATE MAP FROM FILE - " << MapFilePath;
 		QFile XMLMapFile(MapFilePath);
 		bool result = XMLMapFile.open(QIODevice::ReadOnly);
 
@@ -105,7 +105,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 				if (newElement.tagName() == "layer" && newElement.attribute("name") != "GridHill" && newElement.attribute("name") != "Grid")
 				{
-					qDebug() << "ADD LAYER - " << newElement.attribute("name") << "NUMBER - " << Number_Layer;
+					//qDebug() << "ADD LAYER - " << newElement.attribute("name") << "NUMBER - " << Number_Layer;
 					TerrainLayers.insert(Number_Layer, QVector<TerrainObjectClass*>());
 
 							QDomNode dataNode = newElement.firstChild();
@@ -143,7 +143,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 		//	qDebug() << "At coord - " << item->Position.DecPos(0) << item->Position.DecPos(1) << "terrain - " << item->TerrainType;
 		}
 
-		qDebug() << "CREATE MAP END - " << MapFilePath;
+		//qDebug() << "CREATE MAP END - " << MapFilePath;
 
 }
 
@@ -256,9 +256,9 @@ void MapContainerClass::MapCellMoved(int x, int y)
 void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer)
 {
 
-	qDebug() << "========================================";
-	qDebug() << "========================================";
-	qDebug() << "TERRAIN CLASTERIZATION";
+	//qDebug() << "========================================";
+	//qDebug() << "========================================";
+	//qDebug() << "TERRAIN CLASTERIZATION";
 
 
 	std::function<Terrains(Terrains)> GetCornerCoords = [](Terrains Cluster) -> Terrains
@@ -279,7 +279,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 					[](sf::ConvexShape ShapeBorder) -> QPainterPath
 				{
 
-					qDebug() << "=============================================";
+					//qDebug() << "=============================================";
 				
 					QPolygonF Polygon;
 					for(int n = 0; n < ShapeBorder.getPointCount();n++)
@@ -288,12 +288,12 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 						newPoint.setX(ShapeBorder.getPoint(n).x);
 						newPoint.setY(ShapeBorder.getPoint(n).y);
 						Polygon << newPoint;
-						qDebug() << "ADD POINT - " << newPoint;
+						//qDebug() << "ADD POINT - " << newPoint;
 					}
 					QPainterPath PainterPath; 
 					PainterPath.addPolygon(Polygon);
 					PainterPath.closeSubpath();
-					qDebug() << "=============================================";
+					//qDebug() << "=============================================";
 					return PainterPath;
 
 				};
@@ -442,11 +442,11 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 	{
 	QVector<TerrainObjectClass*> StartSeed;
     StartSeed.append(TerrainLayer.takeFirst());
-    qDebug() << "*********************************************";
+   // qDebug() << "*********************************************";
 	QVector<TerrainObjectClass*> NewCluster = DefineCloseObject(StartSeed);
 							     NewCluster.prepend(StartSeed.first());
-    qDebug() << "*********************************************";
-	qDebug() << "========================================";
+   // qDebug() << "*********************************************";
+	//qDebug() << "========================================";
 
 	Terrains CornerTerrains = GetCornerCoords(NewCluster);
 
@@ -459,9 +459,9 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 	ConvexToClusters.insert(Centroid, convex);
 	PathToClusters.insert(Centroid, ConvertConvexToPainterPath(convex));
 
-	qDebug() << "-----------------          -------------";
-	qDebug() << "CREATED NEW CLUSTER SIZE - " << NewCluster.size();
-	qDebug() << "========================================";
+	//qDebug() << "-----------------          -------------";
+	//qDebug() << "CREATED NEW CLUSTER SIZE - " << NewCluster.size();
+	//qDebug() << "========================================";
 	}
 
 }

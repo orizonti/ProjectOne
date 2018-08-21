@@ -5,7 +5,6 @@ void GridShapeContainer::AddCurves(QString path)
 	    QString GameDir = qgetenv("GAME_WORK_DIR");
 		QFile newXMLFile(GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/PNG HILL TILES/TilesHill/" + path);
 		bool result = newXMLFile.open(QIODevice::ReadOnly);
-		qDebug() << "FILE OPEN - " << newXMLFile.isOpen();
 		QDomDocument newDomDoc;
 		result = newDomDoc.setContent(&newXMLFile);
 
@@ -13,7 +12,6 @@ void GridShapeContainer::AddCurves(QString path)
 
 		QDomNodeList GroupsNodes = newDomDoc.documentElement().firstChild().nextSibling().toElement().elementsByTagName("g");
 
-		qDebug() << "FIRST CHILD NODE -" << GroupsNodes.size();
 
         //DOWNLOAD SVG GRID LINES
 		for (int n = 0; n <= 1; n++)
@@ -23,10 +21,8 @@ void GridShapeContainer::AddCurves(QString path)
 
 			while (!currentNod.isNull())
 			{
-				qDebug() << "New shape direction - " << n;
 				QDomElement newElement = currentNod.toElement();
 
-				qDebug() << "*************************************";
 				if (newElement.tagName() == "path")
 				{
 					CurveShape newShape;
@@ -42,19 +38,21 @@ void GridShapeContainer::AddCurves(QString path)
 				currentNod = currentNod.nextSibling();
 			}
 		}
-		qDebug() << "UPLOAD GRIDS LINE COUNT - " << CurvesHoriz.size() << CurvesVert.size();
 		
-		//Create SUBB CELL PATH_PAINTER TO DEFINE CELL PRESSED
+		qDebug() << "=====================================================";
+		qDebug() << "CREATE SUBB CELL PATH_PAINTER TO DEFINE CELL PRESSED";
+		
+
 	for (int y = 0; y < CurvesHoriz.size()-1; y++)
 	{
 		for (int x = 0; x < CurvesVert.size()-1; x++)
 		{
 
-				QPainterPath PathBottom = CurvesHoriz[y].SubPathEdge[x].toReversed();
-				QPainterPath PathUp =      CurvesHoriz[y+1].SubPathEdge[x];
+				QPainterPath PathBottom = CurvesHoriz[y].SubPathEdge[x+1].toReversed();
+				QPainterPath PathUp =      CurvesHoriz[y+1].SubPathEdge[x+1];
 
-				QPainterPath PathRibLeft = CurvesVert[x].SubPathEdge[y];
-				QPainterPath PathRibRight = CurvesVert[x+1].SubPathEdge[y].toReversed();
+				QPainterPath PathRibLeft = CurvesVert[x].SubPathEdge[y+1];
+				QPainterPath PathRibRight = CurvesVert[x+1].SubPathEdge[y+1].toReversed();
 
 				QVector<CurveShape> QuadShapes; 
 				QuadShapes.append(CurveShape(PathBottom,0));
@@ -74,37 +72,43 @@ void GridShapeContainer::AddCurves(QString path)
 		}
 
 	}
-	qDebug() << "         CREATE SUB CELLS !!!!";
-	qDebug() << "         SUB CELLS COUNT - " << SubCellShapes.size() << "PATHES - " << SubCellPathes.size();
-		//Create SUBB CELL PATH_PAINTER TO DEFINE CELL PRESSED
+		qDebug() << "=====================================================";
 }
 
 void CurveShape::DrawPainterPath(int offset_x = 0, int offset_y = 0)
 {
-
-	QPainterPath sub_path_rib;
+	QPointF LastPoint;
 	for (PathPoints sub_path : this->PathMassive)
 	{
+	QPainterPath sub_path_rib;
 		if (sub_path.typePath == "MOVE")
 		{
 			Path.moveTo(sub_path.Points.at(0));
-			sub_path_rib.moveTo(sub_path.Points.at(0));
+
+			LastPoint = sub_path.Points.at(0);
 		}
 
 		if (sub_path.typePath == "LINE")
 		{
 			Path.lineTo(sub_path.Points.at(0));
+
+			sub_path_rib.moveTo(LastPoint);
 			sub_path_rib.lineTo(sub_path.Points.at(0));
+
+			LastPoint = sub_path.Points.at(0);
 		}
 
 		if (sub_path.typePath == "CUBIC")
 		{
 			Path.cubicTo(sub_path.Points.at(0), sub_path.Points.at(1), sub_path.Points.at(2));
+
+			sub_path_rib.moveTo(LastPoint);
 			sub_path_rib.cubicTo(sub_path.Points.at(0), sub_path.Points.at(1), sub_path.Points.at(2));
+
+			LastPoint = sub_path.Points.at(2);
      	}
 	SubPathEdge.append(sub_path_rib);
 	}
-	qDebug() << "SUB PATH EDGE SIZE  - " << SubPathEdge.size();
 
 	PainterPathToShape(Path);
 
@@ -183,7 +187,6 @@ void CurveShape::AddCurves(QDomElement newElement)
 			newPath.Points.append(Point);
 
 			this->PathMassive.append(newPath);
-			qDebug() << "MOVE TO - " << Point;
 		}
 
 		if (str[0] == 'L')
@@ -193,7 +196,6 @@ void CurveShape::AddCurves(QDomElement newElement)
 			newPath.typePath = "LINE";
 			newPath.Points.append(Point);
 			this->PathMassive.append(newPath);
-			qDebug() << "LINE TO - " << Point;
 		}
 
 		if (str[0] == 'C')
@@ -216,7 +218,6 @@ void CurveShape::AddCurves(QDomElement newElement)
 
 			newPath.typePath = "CUBIC";
 			this->PathMassive.append(newPath);
-			qDebug() << "CUBIC BEZIER - " << newPath.Points.at(0) << newPath.Points.at(1) << newPath.Points.at(2);
 		}
 
 	}
@@ -247,6 +248,9 @@ void GridShapeContainer::SetPosition(int x, int y)
 	for(CurveShape& Shape : this->ContourShapes)
 		Shape.setPosition(x, y);
 
+	for(QuadeRangleShape& Shape : this->SubCellShapes)
+		Shape.SetPosition(x, y);
+
 }
 
 void GridShapeContainer::DrawContour(sf::RenderWindow& Window)
@@ -255,18 +259,27 @@ void GridShapeContainer::DrawContour(sf::RenderWindow& Window)
 		Window.draw(Shape);
 }
 
+void GridShapeContainer::DrawCell(sf::RenderWindow& Window, int NumberCell)
+{
+	this->SubCellShapes[NumberCell].DrawShape(Window);
+}
+
 void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
 {
 
-	if (CurvesVert.isEmpty())
-		return;
+//	if (CurvesVert.isEmpty())
+//		return;
 
-	for (CurveShape Shape : this->CurvesVert)
-		Window.draw(Shape);
+//	for (CurveShape Shape : this->CurvesVert)
+//		Window.draw(Shape);
 
-	for (CurveShape Shape : this->CurvesHoriz)
-		Window.draw(Shape);
+//	for (CurveShape Shape : this->CurvesHoriz)
+//		Window.draw(Shape);
+//	if (SubCellShapes.size() == 0)
+//		return;
 
+//	for (QuadeRangleShape& QuadeShape : this->SubCellShapes)
+//		QuadeShape.DrawShape(Window);
 
 
 }
@@ -282,7 +295,6 @@ QPainterPath GridShapeContainer::GetPathContour()
 	if (CurvesVert.isEmpty())
 		return PathRibLeft;
 		//=======================================================
-	qDebug() << "CREATE PATH CONTOUR";
 	PathBottom = CurvesHoriz.first().Path.toReversed();
 	PathUp = CurvesHoriz.last().Path;
 	PathRibLeft = CurvesVert.first().Path;
@@ -325,4 +337,20 @@ QuadeRangleShape::QuadeRangleShape()
 void QuadeRangleShape::SetColor(sf::Color color)
 {
 
+}
+
+void QuadeRangleShape::SetPosition(int x, int y)
+{
+	for (CurveShape& Shape : EdgeShapes)
+		Shape.setPosition(x, y);
+
+}
+
+void QuadeRangleShape::DrawShape(sf::RenderWindow& Window)
+{
+	if (EdgeShapes.size() == 0)
+		return;
+
+	for (CurveShape& Shape : EdgeShapes)
+		Window.draw(Shape);
 }

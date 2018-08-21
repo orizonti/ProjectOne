@@ -16,9 +16,10 @@ public:
 
 	void AddCurves(QDomElement newElement);
 	void AddCurves(QPainterPath pathShape,int Dir);
-	CurveShape(QPainterPath path,int Dir)
+	CurveShape(QPainterPath& path,int Dir)
 	{
-		AddCurves(Path,Dir);
+		Curve.setPrimitiveType(sf::TrianglesStrip);
+		AddCurves(path,Dir);
 	}
 
 	explicit CurveShape()
@@ -97,6 +98,9 @@ public:
     explicit QuadeRangleShape();
 	void SetColor(sf::Color color);
 	QVector<CurveShape> EdgeShapes;
+
+	void SetPosition(int x, int y);
+	void DrawShape(sf::RenderWindow& Window);
 };
 
 class GridShapeContainer
@@ -109,7 +113,7 @@ public:
 	void SetOffset(int x, int y);
 	void SetPosition(int x, int y);
 	void DrawGrid(sf::RenderWindow& Window);
-
+	void DrawCell(sf::RenderWindow& Window, int NumberCell);
 	void DrawContour(sf::RenderWindow& Window);
 
 
