@@ -39,7 +39,7 @@ void MapDisplayEngine::DrawMap()
 {
 	Window->clear();
 	this->Map.DrawTerrain(*Window);
-	this->Map.DrawCurrentCell(*Window);
+	//this->Map.DrawCurrentCell(*Window);
 
 	Window->setView(*Camera);
 	Window->display();

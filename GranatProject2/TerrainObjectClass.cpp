@@ -55,7 +55,7 @@ void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 	{
 		TerrainData->GridLines->SetPosition(this->Position.DecPos(0) + TerrainData->offset.first, 
 			                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
-		//TerrainData->GridLines->DrawGrid(Window);
+		TerrainData->GridLines->DrawGrid(Window);
 
 		if (FLAG_MOUSE_MOVED)
 		TerrainData->GridLines->DrawCell(Window,Number_Cell_Pressed-1);

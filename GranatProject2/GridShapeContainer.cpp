@@ -261,7 +261,9 @@ void GridShapeContainer::DrawContour(sf::RenderWindow& Window)
 
 void GridShapeContainer::DrawCell(sf::RenderWindow& Window, int NumberCell)
 {
+	this->SubCellShapes[NumberCell].SetColor(sf::Color::Red);
 	this->SubCellShapes[NumberCell].DrawShape(Window);
+	this->SubCellShapes[NumberCell].SetColor(sf::Color::Black);
 }
 
 void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
@@ -278,8 +280,8 @@ void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
 //	if (SubCellShapes.size() == 0)
 //		return;
 
-//	for (QuadeRangleShape& QuadeShape : this->SubCellShapes)
-//		QuadeShape.DrawShape(Window);
+	for (QuadeRangleShape& QuadeShape : this->SubCellShapes)
+		QuadeShape.DrawShape(Window);
 
 
 }
@@ -337,6 +339,8 @@ QuadeRangleShape::QuadeRangleShape()
 void QuadeRangleShape::SetColor(sf::Color color)
 {
 
+	for (CurveShape& Shape : EdgeShapes)
+		Shape.SetColor(color);
 }
 
 void QuadeRangleShape::SetPosition(int x, int y)
