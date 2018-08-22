@@ -18,17 +18,18 @@ public:
 
 		sf::Image img;
 
-
+		bool FLAG_CURSOR_ON_HILL = false;
 	QSize MapSize;
 	sf::Texture BorderCellTexture;
 	sf::Sprite BorderCellSprite;
+	QuadeRangleShape BorderCell;
 
 	GameCoord CursorPosition;
 	GameCoord CursorPosition2;
 	GameCoord ShapePosition;
 
 	PairCoord CurrentCenterCluster;
-	TerrainObjectClass* CurreintTerrain = 0;
+	TerrainObjectClass* CurrentTerrain = 0;
 	bool FLAG_DRAW_GRID = false;
 
 	 // resize it to 5 points
@@ -39,6 +40,8 @@ public:
 	QMap<PairCoord,Terrains> CornersCluster ;
 	QMap<PairCoord,sf::ConvexShape> ConvexToClusters ;
 	QMap<PairCoord,QPainterPath> PathToClusters ;
+	
+	QVector<CurveShape> PlainGridLines;
 
 	TileSetClass TileSet;
 

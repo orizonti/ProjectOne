@@ -161,6 +161,38 @@ void CurveShape::PainterPathToShape(QPainterPath path)
 	}
 }
 
+void CurveShape::AddLine(sf::Vector2f Start, sf::Vector2f End, int Dir)
+{
+	this->Direction = Dir;
+
+	int x_offset = 8;
+	int y_offset = -4;
+
+	if (this->Direction == 1)
+		y_offset = 4;
+
+
+		sf::Vertex vertex;
+		vertex.position = sf::Vector2f(Start.x, Start.y);
+		vertex.color = sf::Color::Black;
+		Curve.append(vertex);
+
+		sf::Vertex vertex2;
+		vertex2.position = sf::Vector2f(Start.x + x_offset, Start.y + y_offset);
+		vertex2.color = sf::Color::Black;
+		Curve.append(vertex2);
+
+		sf::Vertex vertex3;
+		vertex3.position = sf::Vector2f(End.x, End.y);
+		vertex3.color = sf::Color::Black;
+		Curve.append(vertex3);
+
+		sf::Vertex vertex4;
+		vertex4.position = sf::Vector2f(End.x + x_offset, End.y + y_offset);
+		vertex4.color = sf::Color::Black;
+		Curve.append(vertex4);
+}
+
 void CurveShape::AddCurves(QDomElement newElement)
 {
 
@@ -264,6 +296,7 @@ void GridShapeContainer::DrawCell(sf::RenderWindow& Window, int NumberCell)
 	this->SubCellShapes[NumberCell].SetColor(sf::Color::Red);
 	this->SubCellShapes[NumberCell].DrawShape(Window);
 	this->SubCellShapes[NumberCell].SetColor(sf::Color::Black);
+	
 }
 
 void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
@@ -325,6 +358,11 @@ QVector<QPainterPath> GridShapeContainer::GetSubCells()
 
 		return SubCellPathes;
 
+}
+
+void QuadeRangleShape::SetQuadeShapes(QVector<CurveShape> Shapes)
+{
+	this->EdgeShapes = Shapes;
 }
 
 QuadeRangleShape::QuadeRangleShape(QVector<CurveShape> Shapes)

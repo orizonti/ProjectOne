@@ -16,6 +16,7 @@ public:
 
 	void AddCurves(QDomElement newElement);
 	void AddCurves(QPainterPath pathShape,int Dir);
+	void AddLine(sf::Vector2f Start, sf::Vector2f End, int Dir);
 	CurveShape(QPainterPath& path,int Dir)
 	{
 		Curve.setPrimitiveType(sf::TrianglesStrip);
@@ -95,6 +96,7 @@ class QuadeRangleShape
 {
 public:
     QuadeRangleShape(QVector<CurveShape> Shapes);
+	void SetQuadeShapes(QVector<CurveShape> Shapes);
     explicit QuadeRangleShape();
 	void SetColor(sf::Color color);
 	QVector<CurveShape> EdgeShapes;

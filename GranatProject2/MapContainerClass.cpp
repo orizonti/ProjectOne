@@ -7,14 +7,14 @@ MapDisplayEngine::~MapDisplayEngine()
 }
 MapDisplayEngine::MapDisplayEngine()
 {
-	 Window = new sf::RenderWindow(sf::VideoMode(1280, 640), "SFML works!");
-	 Camera = new sf::View(sf::Vector2f(0, 0), sf::Vector2f(1280, 640));
+	 Window = new sf::RenderWindow(sf::VideoMode(1800, 1000), "SFML works!");
+	 Camera = new sf::View(sf::Vector2f(0, 0), sf::Vector2f(1800, 1000));
 	 CellSize = QSize(512, 256);
 	Window->setView(*Camera);
 	OffsetCamera(0) = 0;
 	OffsetCamera(1) = 0;
-	WindowSize.setHeight(640);
-	WindowSize.setWidth(1280);
+	WindowSize.setHeight(1000);
+	WindowSize.setWidth(1800);
 
 }
 
@@ -29,6 +29,51 @@ MapContainerClass::MapContainerClass()
 		BorderCellTexture.loadFromFile((GameDir + "/WORK_DIR/TERRAIN_ISOMETRIC_TILES/Tiles/1x1Border.png").toStdString());
 		BorderCellSprite.setTexture(BorderCellTexture);
 
+		GameCoord Point0; Point0.SetCoordIsometric(0, 0);
+		GameCoord Point1; Point1.SetCoordIsometric(0, 1);
+		GameCoord Point2; Point2.SetCoordIsometric(1, 1);
+		GameCoord Point3; Point3.SetCoordIsometric(1, 0);
+		QVector<CurveShape> QuadeLines;
+CurveShape Line1;
+CurveShape Line2;
+CurveShape Line3;
+CurveShape Line4;
+
+		  Line1.AddLine(Point0.GetDecVector(), Point1.GetDecVector(),0);
+		  Line2.AddLine(Point1.GetDecVector(), Point2.GetDecVector(),1);
+		  Line3.AddLine(Point2.GetDecVector(), Point3.GetDecVector(),0);
+		  Line4.AddLine(Point3.GetDecVector(), Point0.GetDecVector(),1);
+
+		QuadeLines.append(Line1);
+		QuadeLines.append(Line2);
+		QuadeLines.append(Line3);
+		QuadeLines.append(Line4);
+
+		BorderCell.SetQuadeShapes(QuadeLines);
+		BorderCell.SetColor(sf::Color::Red);
+
+		GameCoord StartLine;
+		GameCoord EndLine;
+		for (int x = 0; x < 60; x++)
+		{
+			StartLine.SetCoordIsometric(x, 0);
+			EndLine.SetCoordIsometric(x, 59);
+
+		  CurveShape Line;
+		  Line.AddLine(StartLine.GetDecVector(), EndLine.GetDecVector(),0);
+		  PlainGridLines.append(Line);
+		}
+
+		for (int y = 0; y < 60; y++)
+		{
+			StartLine.SetCoordIsometric(0, y);
+			EndLine.SetCoordIsometric(59, y);
+
+		  CurveShape Line;
+		  Line.AddLine(StartLine.GetDecVector(), EndLine.GetDecVector(),1);
+		  PlainGridLines.append(Line);
+		}
+
 
 	TileSet.CreateTileSetFromMap(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
 	this->CreateMapFromFile(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
@@ -39,33 +84,44 @@ void MapDisplayEngine::DrawMap()
 {
 	Window->clear();
 	this->Map.DrawTerrain(*Window);
-	//this->Map.DrawCurrentCell(*Window);
+	this->Map.DrawCurrentCell(*Window);
 
 	Window->setView(*Camera);
 	Window->display();
 }
 void MapContainerClass::DrawCurrentCell(sf::RenderWindow &Window)
 {
-
-	BorderCellSprite.setPosition(CursorPosition2.DecPos(0), CursorPosition2.DecPos(1)-128);
+	if (!FLAG_CURSOR_ON_HILL)
+	{
+	BorderCell.SetPosition(CursorPosition2.DecPos(0), CursorPosition2.DecPos(1));
 	//BorderCellSprite.setPosition(0,0);
-	Window.draw(BorderCellSprite);
+	BorderCell.DrawShape(Window);
+
+	}
 }
 
 void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 {
 
 
-	for (QVector<TerrainObjectClass*> Layer : TerrainLayers)
-	{
-			for (TerrainObjectClass* item :Layer)
-			{
+			QVector<TerrainObjectClass*> Ground = TerrainLayers.value(0);
+
+			QVector<TerrainObjectClass*> Hill = TerrainLayers.value(1);
+
+			for (TerrainObjectClass* item :Ground)
+				item->DrawObject(Window);
+
+					if (FLAG_DRAW_GRID)
+					{
+					for (CurveShape& Shape : PlainGridLines)
+						Window.draw(Shape);
+					}
+
+			for (TerrainObjectClass* item :Hill)
 				item->DrawObject(Window);
 
 
-			}
 
-	}
 
 	for (QVector<TerrainObjectClass*> Layer : TerrainLayers)
 	{
@@ -79,7 +135,7 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 
 	}
 
-	    if(CurrentCenterCluster != PairCoord(0,0))
+	    if(FLAG_CURSOR_ON_HILL)
 		Window.draw(ConvexToClusters.value(CurrentCenterCluster));
 
 }
@@ -105,7 +161,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 				if (newElement.tagName() == "layer" && newElement.attribute("name") != "GridHill" && newElement.attribute("name") != "Grid")
 				{
-					//qDebug() << "ADD LAYER - " << newElement.attribute("name") << "NUMBER - " << Number_Layer;
+					qDebug() << "ADD LAYER - " << newElement.attribute("name") << "NUMBER - " << Number_Layer;
 					TerrainLayers.insert(Number_Layer, QVector<TerrainObjectClass*>());
 
 							QDomNode dataNode = newElement.firstChild();
@@ -201,14 +257,20 @@ void MapContainerClass::DefineCellMoved(int x, int y)
 
 	for (auto Terrain : ClusteredObjects.value(CurrentCenterCluster))
 	{
-		bool Result = Terrain->CheckCursorPosition(x, y);
 
-		if (Result)
-			this->CurreintTerrain = Terrain;
+		if (FLAG_CURSOR_ON_HILL)
+		{
+		 if(Terrain->CheckCursorPosition(x, y))
+			this->CurrentTerrain = Terrain;
+
+		}
 		else
 		{
-			if(this->CurreintTerrain != 0)
-			this->CurreintTerrain = 0;
+			if (this->CurrentTerrain != 0)
+			{
+			this->CurrentTerrain->FLAG_MOUSE_MOVED = false;
+			this->CurrentTerrain = 0;
+			}
 		}
 
 	}
@@ -221,7 +283,6 @@ void MapDisplayEngine::MouseControl(sf::Event event)
 	            double x_pos_real = double(event.mouseMove.x - WindowSize.width() / 2) / (CellSize.height()*Scale) - OffsetCamera(0);
 				double y_pos_real = double(event.mouseMove.y - WindowSize.height() / 2) / (CellSize.height()*Scale) - OffsetCamera(1);
 				MousePosition.SetRealCoord(x_pos_real,y_pos_real);
-
 
 				if (event.type == sf::Event::MouseMoved)
 				{
@@ -251,6 +312,23 @@ void MapContainerClass::MapCellMoved(int x, int y)
 	Coord.SetCoordIsometric(x, y);
     CurrentCenterCluster = DefineBelongPoint(CalculateNearestCluster(x, y),Coord);
 	CursorPosition2.SetCoordIsometric(x, y);
+
+
+	if (CurrentCenterCluster != PairCoord(0, 0))
+	{
+		FLAG_CURSOR_ON_HILL = true;
+	}
+	else
+	{
+
+		    FLAG_CURSOR_ON_HILL = false;
+
+			if (this->CurrentTerrain != 0)
+			{
+			this->CurrentTerrain->FLAG_MOUSE_MOVED = false;
+			this->CurrentTerrain = 0;
+			}
+	}
 
 }
 void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer)

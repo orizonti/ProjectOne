@@ -36,8 +36,6 @@ sf::Sprite* TerrainObjectClass::GetSpriteToDraw()
 	
 	TerrainData->Sprite->setPosition(Position.DecPos(0) + TerrainData->offset.first,
 		                             Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
-	//qDebug() << "DrawType - " << TerrainType << "Offset - " << this->TerrainData->offset.first << this->TerrainData->offset.second;
-	//TerrainData->Sprite->setPosition(Position.DecPos(0), Position.DecPos(1));
 
 	return TerrainData->Sprite;
 }
@@ -59,6 +57,7 @@ void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 
 		if (FLAG_MOUSE_MOVED)
 		TerrainData->GridLines->DrawCell(Window,Number_Cell_Pressed-1);
+
 	}
 }
 
@@ -70,9 +69,8 @@ bool TerrainObjectClass::CheckCursorPosition(int x, int y)
 
 	QPainterPath path_line;
 
-	    bool result = PathContour.contains(QPointF(x, y));
-
-		if (result)
+    FLAG_MOUSE_MOVED = PathContour.contains(QPointF(x, y));
+		if (FLAG_MOUSE_MOVED)
 		{
 
 			int n = 1;
@@ -83,25 +81,7 @@ bool TerrainObjectClass::CheckCursorPosition(int x, int y)
 						n++;
 						
 					}
-					qDebug() << "NUMBER SUBB CELL - " << n << "count cells - " << ShapesCell.size();
 					this->Number_Cell_Pressed = n;
 		}
-
-		this->FLAG_MOUSE_MOVED = result;
-
-//	for (int n = 0; n < TerrainData->GridLines->PathLineHoriz.size(); n++)
-//	{
-//		path_line = TerrainData->GridLines->PathLineHoriz.at(n).translated(Position.DecPos(0), Position.DecPos(1));
-//		if (path_line.contains(QPointF(x, y)))
-//			CoordPointer.first = n;
-//	}
-
-//	for (int n = 0; n < TerrainData->GridLines->PathLineVert.size(); n++)
-//	{
-//		path_line = TerrainData->GridLines->PathLineVert.at(n).translated(Position.DecPos(0), Position.DecPos(1));
-//		if (path_line.contains(QPointF(x, y)))
-//			CoordPointer.second = n;
-//	}
-
-	return result;
+		return FLAG_MOUSE_MOVED;
 }
