@@ -16,47 +16,43 @@ public:
 	{	
 	}
 
-		sf::Image img;
 
-		bool FLAG_CURSOR_ON_HILL = false;
+	bool FLAG_CURSOR_ON_HILL = false;
+	bool FLAG_DRAW_GRID      = false;
+
 	QSize MapSize;
-	sf::Texture BorderCellTexture;
-	sf::Sprite BorderCellSprite;
-	QuadeRangleShape BorderCell;
 
-	GameCoord CursorPosition;
-	GameCoord CursorPosition2;
-	GameCoord ShapePosition;
+	GameCoord CursorPosition; 
 
-	PairCoord CurrentCenterCluster;
-	TerrainObjectClass* CurrentTerrain = 0;
-	bool FLAG_DRAW_GRID = false;
+	PairCoord           CurrentCenterCluster;//COORD POINT TO CURRENT TERRAIN IN CLUSTERED HILL OBJECTS USING AT DEFINE CELL METHON AND WHEN DRAWING CLUSTER BORDER CONVEX
+	TerrainObjectClass* CurrentTerrain = 0;  //IS NEEDED TO DRAW CURRENT CELL IN TERRAIN UNDER CURSOR
 
-	 // resize it to 5 points
+	//CREATING TERRAIN OBJECTS AND SORTING THEM BY GROUPS GROUND AND HILLS
 	void CreateMapFromFile(QString MapFilePath = "E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx");
 
-	QMap<int,Terrains> TerrainLayers;
-	QMap<PairCoord, Terrains> ClusteredObjects;
-	QMap<PairCoord,Terrains> CornersCluster ;
-	QMap<PairCoord,sf::ConvexShape> ConvexToClusters ;
-	QMap<PairCoord,QPainterPath> PathToClusters ;
+	QuadeRangleShape BorderCell                      ;
+	QMap<int,Terrains>              TerrainLayers    ;//TERRAIN OBJECTS DEVIDED TO LAYERS, GROUNDS and HILLS 
+	QMap<PairCoord,sf::ConvexShape> ConvexToClusters ;//QUADERANGLE OF HILL CLUSTER TO DRAW RED BORDER AROUND HILLS WHEN CURSOR MOVING ON THEM
+	QVector<CurveShape>             PlainGridLines   ;//BLACK LINES THAT BEING DRAWED ON ALL MAP UNDER HILLS LAYER
+
+	QMap<PairCoord, Terrains>       ClusteredObjects ;//OBJECTS IS WANTED TO DEFINE CURRENT TERRAIN AND CELL IN HILL 
+	QMap<PairCoord,QPainterPath>    PathToClusters   ;//PAINTER PATH QUADRANGLE TO DEFINE THAT CURSOR POSITION IS IN HILL BOUND
 	
-	QVector<CurveShape> PlainGridLines;
-
-	TileSetClass TileSet;
-
-	PairCoord CalculateNearestCluster(int x, int y);
-	PairCoord DefineBelongPoint(PairCoord NearestCenter, GameCoord Coord);
-
-
-	void TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer);
+	TileSetClass TileSet; //CONTAINER WITH TERRAIN ELEMENT OBJECTS THAT HAS IMAGE, GRID SHAPE BUT NOT ATTACHED TO ANY COORD IN MAP, IT IS IN TERRAIN_OBJECT_CLASS
 
 	void DrawTerrain(sf::RenderWindow &Window);
 	void DrawCurrentCell(sf::RenderWindow &Window);
 
 	void MapCellPressed(int x, int y);
 	void MapCellMoved(int x, int );
-	 void DefineCellMoved(int x,int y);
+	void DefineCellMoved(int x,int y); //DEFINE THAT CURSOR IS MOVING UNDER ANY HILL TO DRAW CELL BORDER ON HILL
+
+				private:
+				//UTILITY METHODS TO DEFINE CURRENT HILL UNDER CURSOR
+				PairCoord CalculateNearestCluster(int x, int y);
+				PairCoord DefineBelongPoint(PairCoord NearestCenter, GameCoord Coord);//DEFINE IF CURRENT COORD IS CONTAINED IN HILL'S BOUND USING PATH_TO_CLUSTERS MAP 
+				void TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer);//TERRAIN CLUSTERIZATION TO LOCATE TERRAIN CURRENT HILL UNDER CURSOR
+
 };
 
 class MapDisplayEngine :public EventControlInterface
