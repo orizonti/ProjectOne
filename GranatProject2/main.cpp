@@ -29,23 +29,11 @@ int main(int argc, char *argv[])
 {
 	//QCoreApplication a(argc, argv);
 
-	int width_window = 1280;
-	int height_window = 640;
 
-	//QCoreApplication a(argc, argv);
-	//sf::RenderWindow Window(sf::VideoMode(width_window, height_window), "SFML works!");
-	//sf::CircleShape shape(100.f);
-	//shape.setFillColor(sf::Color::Green);
-
-	//double Scale_Value = 1;
-	//sf::View view2(sf::Vector2f(0, 0), sf::Vector2f(width_window / Scale_Value, height_window / Scale_Value));
 
 	GameDir = qgetenv("GAME_WORK_DIR");
 
-
 	sf::Clock clock; // starts the clock
-	double Period;
-
 	MapDisplayEngine Map;
 
 
@@ -60,8 +48,6 @@ int main(int argc, char *argv[])
 		if (clock.getElapsedTime().asMilliseconds() >= 50)
 		{
 			Map.DrawMap();
-		//	Window.setView(view2);
-		//	Window.display();
 			clock.restart();
 		}
 	}

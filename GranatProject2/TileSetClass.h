@@ -7,15 +7,18 @@ class TerrainTileElement
 public:
 	TerrainTileElement();
 	~TerrainTileElement();
-	sf::Texture* Texture;
-	sf::Sprite* Sprite;
-	GridShapeContainer* GridLines = 0;
-	int type_id;
+
+	sf::Texture* Texture;//TEXTURE AND SPRITE TO DRAW TILE ON MAP
+	sf::Sprite*  Sprite ;
+
+	int     type_id;
 	QString Name = "";
-	QSize size;
-	QPair<int, int> offset;
+	QSize   size;
+
+	QPair<int, int> offset;//OFFSET OF TILE IN IMAGE TO CUNJUGATION OF CONTIGOUS TILES
 	QPair<int, int> offsetGrid;
 
+	GridShapeContainer* GridLines = 0;
 };
 
 
@@ -25,7 +28,7 @@ public:
 	TileSetClass();
 	void CreateTileSetFromMap(QString MapFilePath);
 
-	QMap<int,TerrainTileElement*> TerrainElementsByType;
+	QMap<int,TerrainTileElement*>     TerrainElementsByType;
 	QMap<QString,TerrainTileElement*> TerrainElementsByName;
 
 

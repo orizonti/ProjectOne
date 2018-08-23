@@ -25,7 +25,7 @@ MapContainerClass::MapContainerClass()
 
 
 		//===============================================================================================
-		GameCoord Point0; Point0.SetCoordIsometric(0, 0);
+		GameCoord Point0; Point0.SetCoordIsometric(0, 0);    //CREATING RED RHOMBUS SHAPE THAT IS USED TO HIGHLIGTH CELL IS POINTED BY MOUSE CURSOR
 		GameCoord Point1; Point1.SetCoordIsometric(0, 1);
 		GameCoord Point2; Point2.SetCoordIsometric(1, 1);
 		GameCoord Point3; Point3.SetCoordIsometric(1, 0);
@@ -45,7 +45,7 @@ MapContainerClass::MapContainerClass()
 		//===============================================================================================
 
 		//===============================================================================================
-		GameCoord StartLine;
+		GameCoord StartLine;   //CREATING BLACK LINES WITH WITH AND HEIGHT OF GLOBAL MAP THAT IS USED TO DRAW GRID ON MAP
 		GameCoord EndLine;
 		for (int x = 0; x < 60; x++)
 		{
@@ -56,7 +56,7 @@ MapContainerClass::MapContainerClass()
 		  Line.AddLine(StartLine.GetDecVector(), EndLine.GetDecVector(),0);
 		  PlainGridLines.append(Line);
 		}
-		//===============================================================================================
+		//------------------------------------------------------------------------------------------------
 
 		for (int y = 0; y < 60; y++)
 		{
@@ -71,8 +71,8 @@ MapContainerClass::MapContainerClass()
 
 
 		//===============================================================================================
-	TileSet.CreateTileSetFromMap(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
-	this->CreateMapFromFile(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");
+	TileSet.CreateTileSetFromMap(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx"); // TILE ELEMENT HAS SPRITE OF TERRAIN THAT COMMON TO ALL TERRAINS OF SAME TYPE, EACH TERRAIN HAS POINTER TO RESPECTIE TILE ELEMENT
+	this->CreateMapFromFile(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");      // CREATING TERRAIN OBJECTS THAT ARE USED TO DRAWING MAP, EACH TERRAINS OBJECT HAS IT'S COORD AND LINK TO RESPECTIVE TILE
 	TerrainClasterization(this->TerrainLayers.value(1));  // CLASTERIZATION HILLS LAYER
 		//===============================================================================================
 }
@@ -80,48 +80,41 @@ MapContainerClass::MapContainerClass()
 void MapDisplayEngine::DrawMap()
 {
 	Window->clear();
-	this->Map.DrawTerrain(*Window);
-	this->Map.DrawCurrentCell(*Window);
+	this->Map.DrawTerrain(*Window);    //DRAW TERRAIN TILES, GRID, AND RED QUADERANGLE OF CURRENT CELL WHEN CURSOR IS MOVING ON HILL CLUSTER
+	this->Map.DrawCurrentCell(*Window);//IF CURSOR IS MOVING ON PLAIN TERRAIN OBJECT THEN DRAWING RED RHOMBUS CELL
 
 	Window->setView(*Camera);
 	Window->display();
 }
 void MapContainerClass::DrawCurrentCell(sf::RenderWindow &Window)
 {
-	if (!FLAG_CURSOR_ON_HILL)
+	if (!FLAG_CURSOR_ON_HILL) // DRAW RED RHOMBUS ON CURRENT PLAIN CELL, IF CURSOV MOVING ON HILL CURVE RED CELL IS DRAWING IN TERRAIN TERRAIN DRAWING METHOD DRAW
 	{
 	BorderCell.SetPosition(CursorPosition.DecPos(0), CursorPosition.DecPos(1));
 	BorderCell.DrawShape(Window);
-
 	}
 }
 
 void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 {
 
-
 			QVector<TerrainObjectClass*> Ground = TerrainLayers.value(0);
-
 			QVector<TerrainObjectClass*> Hill = TerrainLayers.value(1);
 
 		//===============================================================================================
-			for (TerrainObjectClass* item :Ground)
+			for (TerrainObjectClass* item :Ground)   //DRAW PLAIN TERRAIN
 				item->DrawObject(Window);
-
-					if (FLAG_DRAW_GRID)
+		//------------------------------------------------------------------------
+					if (FLAG_DRAW_GRID)              //DRAW PLAIN RHOMBUS GRID 
 					{
 					for (CurveShape& Shape : PlainGridLines)
 						Window.draw(Shape);
 					}
-
-			for (TerrainObjectClass* item :Hill)
+		//------------------------------------------------------------------------
+			for (TerrainObjectClass* item :Hill)    //DRAW HILL TERRAIN OBJECTS
 				item->DrawObject(Window);
-
-
-
-
 		//===============================================================================================
-	for (QVector<TerrainObjectClass*> Layer : TerrainLayers)
+	for (QVector<TerrainObjectClass*> Layer : TerrainLayers)  //DRAW CURVE GRID ON HILL
 	{
 			for (TerrainObjectClass* item :Layer)
 			{
@@ -134,16 +127,17 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 	}
 
 		//===============================================================================================
-	    if(FLAG_CURSOR_ON_HILL)
+	    if(FLAG_CURSOR_ON_HILL)  //DRAW RED BORDER AROUND CURRENT HILL'S CLUSTER, IT MUST BE REMOVED, USED TO DEBUGING
 		Window.draw(ConvexToClusters.value(CurrentCenterCluster));
 
 }
 
 void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 {
+	    // CREATING TERRAIN OBJECTS THAT ARE USED TO DRAWING MAP, EACH TERRAINS OBJECT HAS IT'S COORD AND LINK TO RESPECTIVE TILE
 		//===============================================================================================
 		QFile XMLMapFile(MapFilePath);
-		bool result = XMLMapFile.open(QIODevice::ReadOnly);
+		bool result = XMLMapFile.open(QIODevice::ReadOnly); // OPEN XML FILE THAT CONTAINS TEXT DATA OF TERRAIN POSITION AND TILE TYPES
 
 		QDomDocument newDomDoc;
 		result = newDomDoc.setContent(&XMLMapFile);
@@ -154,6 +148,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 		//===============================================================================================
 		if (result)
 		{
+			//ITERATE THROGH XML DOM NODE STRUCTURE AND FOR ALL LAYER NODE CREATE VECTOR MASSIVE OF TERRAIN OBJECTS
 			QDomNode currentNod = newDomDoc.documentElement().firstChild();
 			while (!currentNod.isNull())
 			{
@@ -161,6 +156,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 				if (newElement.tagName() == "layer" && newElement.attribute("name") != "GridHill" && newElement.attribute("name") != "Grid")
 				{
+					//GRID LAYERS IS NOT USED BECOUSE PLAING GRID IS DRAWED BY PROGRAMMING METHOD WITH CURVE SHAPE
 					TerrainLayers.insert(Number_Layer, QVector<TerrainObjectClass*>());
 
 							QDomNode dataNode = newElement.firstChild();
@@ -277,22 +273,25 @@ void MapContainerClass::DefineCellMoved(int x, int y)
 
 void MapDisplayEngine::MouseControl(sf::Event event)
 {
+	            //GET POSITION IN GLOBAL MAP COORD SYSTEM 
+	            //THAT IS DEFINED AS OFFSET CENTER OF CAMERA ON CELLS COUNT + LENGTH FROM CENTER VIEW TO CURSOR IN CELL MEASUREMENT UNIT
 	            double x_pos_real = double(event.mouseMove.x - WindowSize.width() / 2) / (CellSize.height()*Scale) - OffsetCamera(0);
 				double y_pos_real = double(event.mouseMove.y - WindowSize.height() / 2) / (CellSize.height()*Scale) - OffsetCamera(1);
+
 				MousePosition.SetRealCoord(x_pos_real,y_pos_real);
 
 		//===============================================================================================
 				if (event.type == sf::Event::MouseMoved)
 				{
-				this->Map.MapCellMoved(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
+				Map.MapCellMoved(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
 				Map.DefineCellMoved(MousePosition.MousePosReal(0), MousePosition.MousePosReal(1));
 				}
 
 		//===============================================================================================
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
-				this->Map.MapCellPressed(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
-				this->Units.MapCellPressed(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
+				Map.MapCellPressed(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
+				Units.MapCellPressed(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
 			}
 		//===============================================================================================
 
@@ -307,7 +306,8 @@ void MapContainerClass::MapCellPressed(int x, int y)
 
 void MapContainerClass::MapCellMoved(int x, int y)
 {
-
+	//GET CURRENT CURSOR POINT AND DEFINE NEAREST CLUSTER CENTER, THEN CHECK IF CURSOR POINT COINTAINS IN BOUND OF CLUSTER,
+	//IF CURSOR IS IN BOUND OF CLUSTER, THAN FLAG_MOUSE_MOVED IS TRUE, IT IS SIGNAL TO DRAW CURRENT RED CELL IN HILL TILE INSTEAD OF PLAIN CELL RHOMBUS BORDER
 	GameCoord Coord; 
 	Coord.SetCoordIsometric(x, y);
     CurrentCenterCluster = DefineBelongPoint(CalculateNearestCluster(x, y),Coord);
@@ -334,7 +334,8 @@ void MapContainerClass::MapCellMoved(int x, int y)
 void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer)
 {
 
-	//TERRAIN CLASTERIZATION TO DEFINE HILL UNDER CURSOR
+	//TERRAIN CLASTERIZATION TO DEFINE HILL UNDER CURSOR LATER
+	//=================================================================================
 	//=================================================================================
 	std::function<Terrains(Terrains)> GetCornerCoords = [](Terrains Cluster) -> Terrains
 	{
@@ -350,7 +351,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 		}
 		return CornerTerrains;
 	};
-	//=================================================================================
+	//--------------------------------------------------------------------------------------------------------
 				std::function<QPainterPath(sf::ConvexShape)> ConvertConvexToPainterPath = 
 					[](sf::ConvexShape ShapeBorder) -> QPainterPath
 				{
@@ -371,6 +372,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 
 				};
 
+	//=================================================================================
 	//=================================================================================
 				std::function<sf::ConvexShape(Terrains)> CreateClusterConvex = 
 					[](Terrains	CornerTerrains) -> sf::ConvexShape
@@ -414,6 +416,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 				};
 	
 	//=================================================================================
+	//=================================================================================
 	std::function<PairCoord(Terrains)> CalcCentroid = [](Terrains CornerTerrains) -> PairCoord
 	{
 
@@ -430,7 +433,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 		double x4, y4;
 
 
-		//===============================================================================================
+	//--------------------------------------------------------------------------------------------------------
 		for (auto TerrainObject : CornerTerrains)
 		{
 			switch (TerrainObject->TerrainType)
@@ -449,7 +452,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 				break;
 			}
 		};
-		//===============================================================================================
+	//--------------------------------------------------------------------------------------------------------
 
 			x1 = (BL.first + TL.first) / 2;
 			y1 = (BL.second + TL.second) / 2;
@@ -473,13 +476,12 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 		return Centroid;
 	};
 	//=================================================================================
-
+	//=================================================================================
 	std::function<QVector<TerrainObjectClass*>(QVector<TerrainObjectClass*>)> DefineCloseObject = 
 		[&TerrainLayer,&DefineCloseObject](QVector<TerrainObjectClass*> SeedObjects) -> QVector<TerrainObjectClass*>
 	    {
 		QVector<TerrainObjectClass*> NewSet;
-		//CREATE CLUSTER OF TERRAIN OBJECT BY MININUM LENGTH TO FIRST ELEMENT IN LAYER MASSIVE
-		//THIS FUNCTION SHALL BE REDEFINED
+		//GET ARBITRARY TERRAIN ELEMENT, GET CLOSEST ELEMENTS TO THIS ELEMENT, APPEND ITS TO CLUSTER SET
 		double d_x = 0;
 		double d_y = 0;
 		double lenght = 0;
@@ -494,26 +496,28 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 
 				if (lenght < 8)
 				{
-					TerrainLayer.remove(n);
+					TerrainLayer.remove(n);      //REMOVE ELEMENTS FROM COMMON SET AND PLACE IT TO CLUSTER SET
 					NewSet.append(DefineObject);
 				}
 				
 			}
 		}
-	   //=================================================================================
+		  //--------------------------------------------------------------------------------------------------------
 
 		
-		QVector<TerrainObjectClass*> ChildSet;
+				QVector<TerrainObjectClass*> ChildSet;
+        //GET AVAIBLE CLUSTER SET OF TERRAINS AND RECURSIVELY DEFINE CLOSEST TERRAINS TO EACH ELEMENTS IN AVAIBLE SET
+	    //IF ELEMENTS WITHIN MIN LENGHT BOUND IS NOT AVABILE THEN CLUSTER SET IS FULL 
+						if (NewSet.size() != 0)
+						{
+						ChildSet = DefineCloseObject(NewSet);
+						NewSet.append(ChildSet);
+						}
 
-		if (NewSet.size() != 0)
-		{
-		ChildSet = DefineCloseObject(NewSet);
-		NewSet.append(ChildSet);
-		}
-
-		return NewSet;
+				qDebug() << "CHILD SET UNDEFINED CODE INVOKE";
+				return NewSet;
 		};
-		
+	   //=================================================================================
 	   //=================================================================================
 
 	while (TerrainLayer.size() != 0)
@@ -525,7 +529,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 
 	Terrains CornerTerrains = GetCornerCoords(NewCluster);                   //GETTING CORNERS OF TERRAINS CLUSTER TO CALC CENTROID AND CREATE BORDER OF CLUSTER
 
-	PairCoord Centroid = CalcCentroid(CornerTerrains);                       //CALCULATING CENTROID OF CLASTER THAT WILL BE USED TO DEFINE CURRENT OF NEAREST CLUSTER TO CURSOR POSITION
+	PairCoord Centroid = CalcCentroid(CornerTerrains);                       //CALCULATING CENTROID OF CLASTER THAT WILL BE USED TO DEFINE CURRENT OR NEAREST CLUSTER TO CURSOR POSITION
 
 	sf::ConvexShape convex = CreateClusterConvex(CornerTerrains);            //CREATING QUADERANGLE CONVEX TO DRAWING BORDER OF CURRENT CLASTER 
 
