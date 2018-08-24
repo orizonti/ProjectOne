@@ -271,10 +271,10 @@ void CurveShape::CreateCurvesFromSVG(QDomElement newElement,int Dir)
 			newPath.typePath = "CUBIC";
 			this->PathMassive.append(newPath);
 		}
+		    if(!newPath.Points.isEmpty())
 			NodePoints.append(newPath.Points.last()); // GETTING NODE POINTS TO GENERATE HEIGTH MAP OF TERRAIN
 
 	}
-
 	CreateCurvesFromPathes();
 }
 
