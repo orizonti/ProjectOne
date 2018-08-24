@@ -271,10 +271,43 @@ void CurveShape::CreateCurvesFromSVG(QDomElement newElement,int Dir)
 			newPath.typePath = "CUBIC";
 			this->PathMassive.append(newPath);
 		}
+			NodePoints.append(newPath.Points.last()); // GETTING NODE POINTS TO GENERATE HEIGTH MAP OF TERRAIN
 
 	}
 
 	CreateCurvesFromPathes();
+}
+
+
+QVector<QVector<double>> GridShapeContainer::GetHeightMap()
+{
+	GameCoord LineCoord;
+	QVector<QVector<double>> QuadeHeights;
+	QVector<QVector<double>> LineHeights;
+
+
+	int iso_pos_y = 0;
+	int x_cathetus = 0;
+	int y_cathetus = 0;
+	QPair<int,int> ShapePoint;
+	for (CurveShape& Shape : CurvesVert)
+	{
+		QVector<double> LineOfDots;
+		for (QPointF& Point : Shape.NodePoints)
+		{
+			LineCoord.SetCoordIsometric(0, iso_pos_y);
+			ShapePoint = LineCoord.GetDecCoord();
+			x_cathetus = Point.x() - ShapePoint.first;
+			y_cathetus = Point.y() - ShapePoint.second;
+			double Height = std::hypot(x_cathetus, y_cathetus);
+			LineOfDots.append(Height);
+			iso_pos_y++;
+		}
+		LineHeights.append(LineOfDots);
+
+	}
+
+	return QuadeHeights;
 }
 
 void GridShapeContainer::SetOffset(int x, int y)

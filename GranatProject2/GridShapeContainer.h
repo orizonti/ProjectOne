@@ -1,5 +1,6 @@
 #pragma once
 #include <HeaderAndStructures.h>
+#include <GameCoord.h>
 
 class PathPoints
 {
@@ -31,6 +32,7 @@ public:
 	virtual sf::Vector2f getPoint(std::size_t index) const;
 
 
+	QVector<QPointF>       NodePoints; //POINTS IS USED TO GENERATE HEIGHT MAP OF TERRAIN, IT IS GETTING WHEN CURVES IS CREATING FROM SVG FILE, ELSE NodePoints IS EMPTY
 	QVector<QPainterPath>  SubPathEdge;//USED TO COMPOSE QUADRANGLE
 	QPainterPath           Path       ;
 private:
@@ -76,12 +78,12 @@ public:
 	QVector<QPainterPath> GetSubCells();
 	QPainterPath          GetPathContour();
 
+	QVector<QVector<double>> GetHeightMap();
 
 private:
+
 	QList<CurveShape>         CurvesVert; //LINES
 	QList<CurveShape>         CurvesHoriz;
-
-
 	QVector<QuadeRangleShape> SubCellShapes;//QUADERANGLES
 	QVector<QPainterPath>     SubCellPathes;
 	QVector<CurveShape>       ContourShapes;

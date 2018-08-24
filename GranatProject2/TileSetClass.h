@@ -1,6 +1,7 @@
 #pragma once
 #include <HeaderAndStructures.h>
 #include <GridShapeContainer.h>
+#include <GameCoord.h>
 
 class TerrainTileElement
 {
@@ -19,6 +20,8 @@ public:
 	QPair<int, int> offsetGrid;
 
 	GridShapeContainer* GridLines = 0;
+	QVector<QVector<double> > HeightMap;
+
 };
 
 
