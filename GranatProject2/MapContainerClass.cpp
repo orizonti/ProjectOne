@@ -1,4 +1,5 @@
 #include "MapContainerClass.h"
+sf::Font Font;
 
 MapDisplayEngine::~MapDisplayEngine()
 {
@@ -15,6 +16,8 @@ MapDisplayEngine::MapDisplayEngine()
 	OffsetCamera(1) = 0;
 	WindowSize.setHeight(1000);
 	WindowSize.setWidth(1800);
+
+	Font.loadFromFile("E:/WorkDir/Gc05002t.ttf");
 
 }
 
@@ -83,6 +86,7 @@ void MapDisplayEngine::DrawMap()
 	this->Map.DrawTerrain(*Window);    //DRAW TERRAIN TILES, GRID, AND RED QUADERANGLE OF CURRENT CELL WHEN CURSOR IS MOVING ON HILL CLUSTER
 	this->Map.DrawCurrentCell(*Window);//IF CURSOR IS MOVING ON PLAIN TERRAIN OBJECT THEN DRAWING RED RHOMBUS CELL
 
+
 	Window->setView(*Camera);
 	Window->display();
 }
@@ -126,6 +130,8 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 
 	}
 
+			for (TerrainObjectClass* item :Hill)    //DRAW HILL TERRAIN OBJECTS
+				item->DrawTerrainHeight(Window);
 		//===============================================================================================
 	    if(FLAG_CURSOR_ON_HILL)  //DRAW RED BORDER AROUND CURRENT HILL'S CLUSTER, IT MUST BE REMOVED, USED TO DEBUGING
 		Window.draw(ConvexToClusters.value(CurrentCenterCluster));

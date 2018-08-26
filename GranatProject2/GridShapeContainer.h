@@ -62,6 +62,22 @@ private:
 	QVector<CurveShape> EdgeShapes;
 };
 
+class Draw_Height_Node
+{
+public:
+	Draw_Height_Node()
+	{
+	DrawHeight.setFont(Font); // font is a sf::Font
+	DrawHeight.setFillColor(sf::Color::Red);
+	DrawHeight.setStyle(sf::Text::Bold | sf::Text::Underlined);
+	DrawHeight.setCharacterSize(18); // in pixels, not points!
+	}
+
+
+	QPointF NodePoint;
+	sf::Text DrawHeight;
+};
+
 class GridShapeContainer
 {
 public:
@@ -72,18 +88,17 @@ public:
 	void DrawCell(sf::RenderWindow& Window, int NumberCell);
 	void DrawContour(sf::RenderWindow& Window);
 
+	void DrawTerrainHeight(sf::RenderWindow& Window);
 	void SetOffset(int x, int y);
 	void SetPosition(int x, int y);
 
 	QVector<QPainterPath> GetSubCells();
 	QPainterPath          GetPathContour();
 
-	QVector<QVector<double>> GetHeightMap();
-
-private:
 
 	QList<CurveShape>         CurvesVert; //LINES
 	QList<CurveShape>         CurvesHoriz;
+private:
 	QVector<QuadeRangleShape> SubCellShapes;//QUADERANGLES
 	QVector<QPainterPath>     SubCellPathes;
 	QVector<CurveShape>       ContourShapes;

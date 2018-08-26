@@ -9,6 +9,8 @@ public:
 	TerrainTileElement();
 	~TerrainTileElement();
 
+	void GetHeightMap();
+
 	sf::Texture* Texture;//TEXTURE AND SPRITE TO DRAW TILE ON MAP
 	sf::Sprite*  Sprite ;
 
@@ -20,7 +22,8 @@ public:
 	QPair<int, int> offsetGrid;
 
 	GridShapeContainer* GridLines = 0;
-	QVector<QVector<double> > HeightMap;
+	QVector<QVector<double>>  HeightMap;
+	QVector<Draw_Height_Node> HeightMapToDraw;
 
 };
 

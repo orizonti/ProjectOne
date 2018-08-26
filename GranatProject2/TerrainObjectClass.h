@@ -20,6 +20,7 @@ public:
 	QSize TileSize;
 	sf::Sprite* GetSpriteToDraw();
 
+	static int OFFSET_HEIGHT_TEXT;
 	bool FLAG_MOUSE_MOVED = false;
 
 	QVector<QPainterPath> CellPathes;
@@ -33,4 +34,7 @@ public:
 	void DrawObject(sf::RenderWindow& Window);
 	void DrawGrid(sf::RenderWindow& Window);
 	void DrawContour(sf::RenderWindow& Window);
+
+	void DrawTerrainHeight(sf::RenderWindow& Window);
+
 };

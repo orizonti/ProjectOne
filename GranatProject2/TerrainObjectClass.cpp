@@ -1,5 +1,6 @@
 #include "TerrainObjectClass.h"
 
+int TerrainObjectClass::OFFSET_HEIGHT_TEXT = -20;
 TerrainObjectClass::TerrainObjectClass(TerrainTileElement* Terrain)
 {
 	if (Terrain != 0)
@@ -27,8 +28,22 @@ void TerrainObjectClass::SetCoord(int x, int y)
 	Path.translate(Position.DecPos(0) + TerrainData->offset.first, 
 		           Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
 	}
+
 	//qDebug() << "ELEMENT -  "<< TerrainData->Name <<"COORD - " << x << y << "Dec - " << Position.DecPos(0) << Position.DecPos(1) << "Offset - " << this->TerrainData->offset.first << this->TerrainData->offset.second;
 	}
+}
+
+void TerrainObjectClass::DrawTerrainHeight(sf::RenderWindow& Window)
+{
+	this->OFFSET_HEIGHT_TEXT *= -1;
+	for (Draw_Height_Node& Node : TerrainData->HeightMapToDraw)
+	{
+			                                
+		Node.DrawHeight.setPosition(Node.NodePoint.x() + Position.DecPos(0) + TerrainData->offset.first - OFFSET_HEIGHT_TEXT, 
+			                        Node.NodePoint.y() + Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128 + OFFSET_HEIGHT_TEXT);
+		Window.draw(Node.DrawHeight);
+	}
+
 }
 
 sf::Sprite* TerrainObjectClass::GetSpriteToDraw()

@@ -12,7 +12,7 @@ void GridShapeContainer::AddCurves(QString path)
 		QDomDocument newDomDoc;
 		result = newDomDoc.setContent(&newXMLFile);
 
-
+		qDebug() << "ADD CURVES - " << path;
 
 		QDomNodeList GroupsNodes = newDomDoc.documentElement().firstChild().nextSibling().toElement().elementsByTagName("g");
 
@@ -279,36 +279,6 @@ void CurveShape::CreateCurvesFromSVG(QDomElement newElement,int Dir)
 }
 
 
-QVector<QVector<double>> GridShapeContainer::GetHeightMap()
-{
-	GameCoord LineCoord;
-	QVector<QVector<double>> QuadeHeights;
-	QVector<QVector<double>> LineHeights;
-
-
-	int iso_pos_y = 0;
-	int x_cathetus = 0;
-	int y_cathetus = 0;
-	QPair<int,int> ShapePoint;
-	for (CurveShape& Shape : CurvesVert)
-	{
-		QVector<double> LineOfDots;
-		for (QPointF& Point : Shape.NodePoints)
-		{
-			LineCoord.SetCoordIsometric(0, iso_pos_y);
-			ShapePoint = LineCoord.GetDecCoord();
-			x_cathetus = Point.x() - ShapePoint.first;
-			y_cathetus = Point.y() - ShapePoint.second;
-			double Height = std::hypot(x_cathetus, y_cathetus);
-			LineOfDots.append(Height);
-			iso_pos_y++;
-		}
-		LineHeights.append(LineOfDots);
-
-	}
-
-	return QuadeHeights;
-}
 
 void GridShapeContainer::SetOffset(int x, int y)
 {
@@ -323,6 +293,7 @@ void GridShapeContainer::SetOffset(int x, int y)
 
 }
 
+
 void GridShapeContainer::SetPosition(int x, int y)
 {
 	//ALL SHAPES IS CREATED AT BEGINING OF MAP COORD SYSTEM, BEFORE DRAWING SetOffset or SetPosition MUST BE INVOKED TO DRAW IT IN PROPER PLACE
@@ -336,6 +307,7 @@ void GridShapeContainer::SetPosition(int x, int y)
 
 	for(QuadeRangleShape& Shape : this->SubCellShapes)
 		Shape.SetPosition(x, y);
+
 
 }
 

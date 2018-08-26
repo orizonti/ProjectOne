@@ -27,4 +27,6 @@ public:
 	friend void operator >> (sf::Event event, EventControlInterface& Interface);
 };
 
+extern sf::Font Font;
+
 
