@@ -17,7 +17,7 @@ MapDisplayEngine::MapDisplayEngine()
 	WindowSize.setHeight(1000);
 	WindowSize.setWidth(1800);
 
-	Font.loadFromFile("E:/WorkDir/Gc05002t.ttf");
+	Font.loadFromFile("D:/WorkDir/Gc05002t/Gc05002t.ttf");
 
 }
 
@@ -401,7 +401,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 									break;
 								case 7:
 									PointCoord = TerrainObject->Position;
-									PointCoord.translate(4, 2);
+									PointCoord.translate(3, 3);
 				                    newConvex.setPoint(1,PointCoord.GetDecVector());
 									break;
 								case 2:

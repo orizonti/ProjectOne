@@ -36,12 +36,29 @@ void TerrainObjectClass::SetCoord(int x, int y)
 void TerrainObjectClass::DrawTerrainHeight(sf::RenderWindow& Window)
 {
 	this->OFFSET_HEIGHT_TEXT *= -1;
+	QVector<QPoint> QuadeOffset;
+
+	QPoint OffsetPoint;  OffsetPoint.setX(-30); OffsetPoint.setY(-15);
+	QPoint OffsetPoint2; OffsetPoint2.setX(0); OffsetPoint2.setY(-30);
+	QPoint OffsetPoint3; OffsetPoint3.setX(0); OffsetPoint3.setY(0);
+	QPoint OffsetPoint4; OffsetPoint4.setX(30); OffsetPoint4.setY(-15);
+	QuadeOffset.append(OffsetPoint);
+	QuadeOffset.append(OffsetPoint2);
+	QuadeOffset.append(OffsetPoint3);
+	QuadeOffset.append(OffsetPoint4);
+
+	int n = 0;
 	for (Draw_Height_Node& Node : TerrainData->HeightMapToDraw)
 	{
-			                                
-		Node.DrawHeight.setPosition(Node.NodePoint.x() + Position.DecPos(0) + TerrainData->offset.first - OFFSET_HEIGHT_TEXT, 
-			                        Node.NodePoint.y() + Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128 + OFFSET_HEIGHT_TEXT);
+		if (n == 4)
+			n = 0;
+
+		Node.DrawHeight.setPosition(Node.NodePoint.x() + Position.DecPos(0) + TerrainData->offset.first  - QuadeOffset[n].x(), 
+			                        Node.NodePoint.y() + Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128 + QuadeOffset[n].y());
 		Window.draw(Node.DrawHeight);
+
+		n++;
+
 	}
 
 }
