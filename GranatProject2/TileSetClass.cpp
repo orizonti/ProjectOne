@@ -132,14 +132,14 @@ void TileSetClass::UploadGridLines(QString PathXMLSprite,TerrainTileElement* ele
 
 void TerrainTileElement::GetHeightMap()
 {
-	qDebug() << "GET HEIGHT MAP";
+	//qDebug() << "GET HEIGHT MAP";
 	GameCoord LineCoord;
 	if (GridLines->CurvesVert.isEmpty())
 		return;
 	
 	int height_grid = GridLines->CurvesHoriz.size() - 1;
 	int width_grid  = GridLines->CurvesVert.size() - 1;
-	qDebug() << "SECTOR COUNT - " << width_grid*height_grid << "HEIGHT GRID - " << height_grid;
+	//qDebug() << "SECTOR COUNT - " << width_grid*height_grid << "HEIGHT GRID - " << height_grid;
 
 	int x_cathetus = 0;
 	int y_cathetus = 0;
@@ -157,7 +157,7 @@ void TerrainTileElement::GetHeightMap()
 							HeightMap.append(QVector<double>());
 							line = sector / height_grid;
 							node = sector - line*height_grid;
-							qDebug() << "          ADD SECTOR NUMBER - " << sector << "LINE - " << line << "NODE - " << node;
+							//qDebug() << "          ADD SECTOR NUMBER - " << sector << "LINE - " << line << "NODE - " << node;
 
 							for(int corner = 0; corner < 4; corner++)
 								{
@@ -183,6 +183,6 @@ void TerrainTileElement::GetHeightMap()
 								}
 
 						}
-qDebug() << "          HEIGHT MAP SIZE - " << HeightMap.size() << "HEIGHT MAP TO DRAW - " << HeightMapToDraw.size() <<"TERR SIZE - " << width_grid << height_grid;
+//qDebug() << "          HEIGHT MAP SIZE - " << HeightMap.size() << "HEIGHT MAP TO DRAW - " << HeightMapToDraw.size() <<"TERR SIZE - " << width_grid << height_grid;
 
 }

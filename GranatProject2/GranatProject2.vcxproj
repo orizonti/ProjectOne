@@ -90,6 +90,7 @@
     </QtMoc>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimationSetContainer.cpp" />
     <ClCompile Include="GameCoord.cpp" />
     <ClCompile Include="GameImageClass.cpp" />
     <ClCompile Include="GameViewUnitContainer.cpp" />
@@ -101,6 +102,7 @@
     <ClCompile Include="UnitObjectClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimationSetContainer.h" />
     <ClInclude Include="GameCoord.h" />
     <ClInclude Include="GameImageClass.h" />
     <ClInclude Include="GameViewUnitContainer.h" />

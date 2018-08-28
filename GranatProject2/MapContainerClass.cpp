@@ -17,7 +17,8 @@ MapDisplayEngine::MapDisplayEngine()
 	WindowSize.setHeight(1000);
 	WindowSize.setWidth(1800);
 
-	Font.loadFromFile("D:/WorkDir/Gc05002t/Gc05002t.ttf");
+	QString GameDir = qgetenv("GAME_WORK_DIR");
+	Font.loadFromFile(GameDir.toStdString() + "/Gc05002t.ttf");
 
 }
 
@@ -105,34 +106,29 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 			QVector<TerrainObjectClass*> Ground = TerrainLayers.value(0);
 			QVector<TerrainObjectClass*> Hill = TerrainLayers.value(1);
 
-		//===============================================================================================
+//===============================================================================================
 			for (TerrainObjectClass* item :Ground)   //DRAW PLAIN TERRAIN
 				item->DrawObject(Window);
-		//------------------------------------------------------------------------
-					if (FLAG_DRAW_GRID)              //DRAW PLAIN RHOMBUS GRID 
-					{
-					for (CurveShape& Shape : PlainGridLines)
-						Window.draw(Shape);
-					}
-		//------------------------------------------------------------------------
-			for (TerrainObjectClass* item :Hill)    //DRAW HILL TERRAIN OBJECTS
+//------------------------------------------------------------------------
+			if (FLAG_DRAW_GRID)                      //DRAW PLAIN RHOMBUS GRID 
+			for (CurveShape& Shape : PlainGridLines)
+				Window.draw(Shape);
+//------------------------------------------------------------------------
+			for (TerrainObjectClass* item :Hill)     //DRAW HILL TERRAIN OBJECTS
 				item->DrawObject(Window);
-		//===============================================================================================
-	for (QVector<TerrainObjectClass*> Layer : TerrainLayers)  //DRAW CURVE GRID ON HILL
-	{
-			for (TerrainObjectClass* item :Layer)
+//===============================================================================================
+			for (QVector<TerrainObjectClass*> Layer : TerrainLayers)  //DRAW CURVE GRID ON HILL
 			{
-
-				if(FLAG_DRAW_GRID)
-				item->DrawGrid(Window);
-
+					for (TerrainObjectClass* item :Layer)
+					{
+						if(FLAG_DRAW_GRID)
+						item->DrawGrid(Window);
+					}
 			}
-
-	}
 
 			for (TerrainObjectClass* item :Hill)    //DRAW HILL TERRAIN OBJECTS
 				item->DrawTerrainHeight(Window);
-		//===============================================================================================
+//===============================================================================================
 	    if(FLAG_CURSOR_ON_HILL)  //DRAW RED BORDER AROUND CURRENT HILL'S CLUSTER, IT MUST BE REMOVED, USED TO DEBUGING
 		Window.draw(ConvexToClusters.value(CurrentCenterCluster));
 

@@ -4,7 +4,6 @@
 
 UnitObjectClass::UnitObjectClass(QString TypeUnit)
 {
-	UnitImage.SetImage(TypeUnit);
 }
 
 
@@ -38,7 +37,7 @@ void ClassHero::MoveHero()
 	this->CurrentPosition.DecPos(1) = (-(x1*y2 - x2*y1) - (y1 - y2)*(CurrentPosition.DecPos(0))) / (x2 - x1);
 
 	UnitImage.SetPositionImage(CurrentPosition.DecPos(0), CurrentPosition.DecPos(1));
-	UnitImage.IterateAnimation();
+	UnitImage.IterateAnimation(Direction::Left);
 }
 
 void ClassHero::SetDestination(int x,int y )
@@ -50,5 +49,7 @@ void ClassHero::SetDestination(int x,int y )
 void ClassHero::SetPosition(int x,int y )
 {
 	this->CurrentPosition.SetCoordIsometric(x, y);
-	this->UnitImage.UnitSprite.setPosition(CurrentPosition.DecPos(0),CurrentPosition.DecPos(1));
+	this->UnitImage.CurrentSprite.setPosition(CurrentPosition.DecPos(0),CurrentPosition.DecPos(1));
 }
+
+
