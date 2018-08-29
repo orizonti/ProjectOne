@@ -1,9 +1,25 @@
 #include "UnitObjectClass.h"
 
+std::shared_ptr<AnimationSetContainer> UnitObjectClass::Animations = NULL;
 
 
-UnitObjectClass::UnitObjectClass(QString TypeUnit)
+UnitObjectClass::UnitObjectClass(QString Type)
 {
+	qDebug() << "CREATE UNIT of TYPE - " << Type;
+	TypeUnit = Type;
+	CurrentPosition.SetCoordIsometric(4, 4);
+	Destination.SetCoordIsometric(4, 4);
+
+	UnitAnimation = Animations->GetUnitAnimationSet(Animations->UnitsType.value(Type));
+
+	if (UnitAnimation == NULL)
+	{
+		qDebug() << "NO ANIMATION";
+		return;
+	}
+
+	UnitImage.SetTexture(UnitAnimation->GetTexture(Direction::Right, 3));
+	UnitImage.SetPositionImage(CurrentPosition.GetDecCoord());
 }
 
 
@@ -11,14 +27,14 @@ UnitObjectClass::~UnitObjectClass()
 {
 }
 
-ClassHero::ClassHero(QString TypeUnit) : UnitObjectClass(TypeUnit)
+ClassWarriorUnit::ClassWarriorUnit(QString TypeUnit) : UnitObjectClass(TypeUnit)
 {
 
 }
 
 
 
-void ClassHero::MoveHero()
+void UnitObjectClass::MoveUnit()
 {
 
 	if (this->CurrentPosition == this->Destination)
@@ -40,16 +56,25 @@ void ClassHero::MoveHero()
 	UnitImage.IterateAnimation(Direction::Left);
 }
 
-void ClassHero::SetDestination(int x,int y )
+void UnitObjectClass::SetDestination(int x,int y )
 {
 	Destination.SetCoordIsometric(x, y);
 }
 
 
-void ClassHero::SetPosition(int x,int y )
+void UnitObjectClass::SetPosition(int x,int y )
 {
 	this->CurrentPosition.SetCoordIsometric(x, y);
 	this->UnitImage.CurrentSprite.setPosition(CurrentPosition.DecPos(0),CurrentPosition.DecPos(1));
 }
 
 
+void ClassWarriorUnit::Attack()
+{
+
+}
+
+sf::Vector2i UnitObjectClass::GetCoord()
+{
+	return CurrentPosition.GetIsoVector();
+}

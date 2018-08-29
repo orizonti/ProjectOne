@@ -29,13 +29,16 @@ public:
 	~GameImage();
 
 
+	void SetTexture(sf::Texture& Texture);
 	void SetPositionImage(int x, int y);
+	void SetPositionImage(QPair<int,int> Coord);
+	void LinkAnimationSet(std::shared_ptr<ClassAnimationSet> Animation);
 
 	void SetDiretionMoving(Direction Dir);
 
 	void IterateAnimation(Direction Dir);
 
-	ClassAnimationSet* AnimationSet;
+	std::shared_ptr<ClassAnimationSet> AnimationSet = NULL;
 
 	sf::Sprite  CurrentSprite;
 	int         CurrentFrame = 0;

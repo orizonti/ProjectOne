@@ -13,8 +13,15 @@ GameImage::~GameImage()
 {
 }
 
+void GameImage::LinkAnimationSet(std::shared_ptr<ClassAnimationSet> Animation)
+{
+	AnimationSet = Animation;
+}
+
 void GameImage::IterateAnimation(Direction Dir)
 {
+	if (AnimationSet == NULL)
+		return;
 
 	if (Dir != CurrentDir)
 	{
@@ -36,6 +43,10 @@ sf::Texture& ClassAnimationSet::GetTexture(Direction Dir, int Frame)
 	return *TexturesSet[Dir][Frame].get();
 }
 
+void GameImage::SetPositionImage(QPair<int, int> Coord)
+{
+		CurrentSprite.setPosition(Coord.first,Coord.second);
+}
 void GameImage::SetPositionImage(int x, int y)
 {
 		CurrentSprite.setPosition(x, y);
@@ -77,3 +88,8 @@ void ClassAnimationSet::UploadAnimation(QString Name, QString SetDir)
 		}
 }
 
+
+void GameImage::SetTexture(sf::Texture& Texture)
+{
+	this->CurrentSprite.setTexture(Texture);
+}

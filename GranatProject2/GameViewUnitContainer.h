@@ -9,8 +9,9 @@ public:
 	GameViewUnitContainer();
 	~GameViewUnitContainer();
 
-	QMap<sf::Vector2i,UnitObjectClass*> UnitOnMapContainer;
-	AnimationSetContainer Animation_Units_Objects;
+	QMap<QPair<int,int>,std::shared_ptr<UnitObjectClass>> UnitOnMapContainer;
+
+	std::shared_ptr<AnimationSetContainer> Animation_Units_Objects;
 	int Scale = 1;
 
 	void DrawUnits(sf::RenderWindow &Window);

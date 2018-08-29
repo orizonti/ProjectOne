@@ -11,7 +11,7 @@
 #include "qfile.h"
 #include "QtXml\qxml.h"
 #include "QtXml\qdom.h"
-#include "MapContainerClass.h"
+#include "MapDisplayEngine.h"
 
 QSize GameCoord::CellSize = QSize(512, 256);
 QString GameDir = "";
@@ -38,6 +38,7 @@ int main(int argc, char *argv[])
 
 
 
+
 	while (Map.Window->isOpen())
 	{
 		sf::Event event;
@@ -49,6 +50,7 @@ int main(int argc, char *argv[])
 		if (clock.getElapsedTime().asMilliseconds() >= 50)
 		{
 			Map.DrawMap();
+			Map.DrawUnits();
 			clock.restart();
 		}
 	}

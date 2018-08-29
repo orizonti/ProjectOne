@@ -26,7 +26,7 @@ public:
 	QPair<int, int> GetIsoCoord();
 	QPair<int, int> GetDecCoord();
 
-	 sf::Vector2f GetIsoVector();
+	 sf::Vector2i GetIsoVector();
 	 sf::Vector2f GetDecVector();
 
 	bool operator==(GameCoord &Coord)

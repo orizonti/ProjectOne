@@ -63,9 +63,9 @@ QPair<int, int> GameCoord::GetDecCoord()
 				Coord.second = DecPos(1);
 				return Coord;
 }
-sf::Vector2f GameCoord::GetIsoVector()
+sf::Vector2i GameCoord::GetIsoVector()
 {
-	sf::Vector2f Coord;
+	sf::Vector2i Coord;
 	Coord.x = IsoPos(0);
 	Coord.y = IsoPos(1);
 	return Coord;

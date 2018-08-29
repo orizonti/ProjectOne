@@ -13,6 +13,6 @@ public:
 	QMap<QString, int> UnitsType;
 	QMap<QString, int> ObjectType;
 
-	ClassAnimationSet &GetUnitAnimationSet(TypeUnit Unit);
-	ClassAnimationSet &GetObjectAnimationSet(TypeObject Unit);
+	std::shared_ptr<ClassAnimationSet> &GetUnitAnimationSet(int Unit);
+	std::shared_ptr<ClassAnimationSet> &GetObjectAnimationSet(int Object);
 };
