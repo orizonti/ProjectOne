@@ -17,16 +17,16 @@ public:
 	Eigen::Vector2d IsoPos;
 
 
-	void SetCoordDecart(int x, int y);
-	void SetCoordIsometric(int x, int y);
+	void SetCoordDecart(float x, float y);
+	void SetCoordIsometric(float x, float y);
 	void SetRealCoord(double x, double y);
 
 	void translate(int d_x, int d_y);
 
-	QPair<int, int> GetIsoCoord();
-	QPair<int, int> GetDecCoord();
+	QPair<float, float> GetIsoCoord();
+	QPair<float, float> GetDecCoord();
 
-	 sf::Vector2i GetIsoVector();
+	 sf::Vector2f GetIsoVector();
 	 sf::Vector2f GetDecVector();
 
 	bool operator==(GameCoord &Coord)

@@ -2,25 +2,104 @@
 
 
 
-GameImage::GameImage()
+StaticImage::StaticImage()
 {
 
 
 }
 
 
-GameImage::~GameImage()
+StaticImage::~StaticImage()
 {
 }
 
-void GameImage::LinkAnimationSet(std::shared_ptr<ClassAnimationSet> Animation)
+void AnimationImage::LinkAnimationSet(std::shared_ptr<AnimationSet> Animation)
 {
-	AnimationSet = Animation;
+	AnimationImages = Animation;
 }
 
-void GameImage::IterateAnimation(Direction Dir)
+GroupImage::GroupImage()
 {
-	if (AnimationSet == NULL)
+
+}
+
+GroupImage::GroupImage(int Size, std::shared_ptr<AnimationImage> Animation)
+{
+	this->GroupSize = Size;
+	for (int n = 0; n < Size; n++)
+	{
+
+		Images.append(Animation);
+		ImagesPos.append(GameCoord());
+	}
+}
+
+void GroupImage::IterateAnimation(Direction Dir)
+{
+	for (auto Image : Images)
+	{
+		Image->IterateAnimation(Dir);
+	}
+}
+
+void GroupImage::SetTexture(sf::Texture& Texture)
+{
+	for (auto Image : Images)
+	{
+		Image->SetTexture(Texture);
+	}
+}
+
+void GroupImage::SetImage(int Size, std::shared_ptr<AnimationImage> Image)
+{
+
+	this->GroupSize = Size;
+	for (int n = 0; n < Size; n++)
+	{
+
+		Images.append(Image);
+		ImagesPos.append(GameCoord());
+	}
+}
+
+void GroupImage::SetPositionImage(int x, int y)
+{
+	ImagesPos[0].SetCoordIsometric(x, y);
+	ImagesPos[1].SetCoordIsometric(x+0.5, y);
+	ImagesPos[2].SetCoordIsometric(x, y+0.5);
+	ImagesPos[3].SetCoordIsometric(x+0.5, y+0.5);
+	
+	for (int n = 0; n < GroupSize; n++)
+	{
+		Images[n]->SetPositionImage(ImagesPos[n].DecPos(0),ImagesPos[n].DecPos(1));
+	}
+
+}
+
+void GroupImage::SetPositionImage(QPair<int, int> Coord)
+{
+	ImagesPos[0].SetCoordIsometric(Coord.first, Coord.second);
+	ImagesPos[1].SetCoordIsometric(Coord.first+0.5, Coord.second);
+	ImagesPos[2].SetCoordIsometric(Coord.first, Coord.second+0.5);
+	ImagesPos[3].SetCoordIsometric(Coord.first+0.5, Coord.second+0.5);
+	
+	for (int n = 0; n < GroupSize; n++)
+	{
+		Images[n]->SetPositionImage(ImagesPos[n].DecPos(0),ImagesPos[n].DecPos(1));
+	}
+}
+
+void GroupImage::SetDiretionMoving(Direction Dir)
+{
+	for (auto Image : Images)
+	{
+		Image->SetDiretionMoving(Dir);
+	}
+}
+
+void AnimationImage::IterateAnimation(Direction Dir)
+{
+	if (this->AnimationImages == NULL)
 		return;
 
 	if (Dir != CurrentDir)
@@ -32,76 +111,34 @@ void GameImage::IterateAnimation(Direction Dir)
 		if (CurrentFrame == 18)
 			CurrentFrame = 0;
 
-		this->CurrentSprite.setTexture(AnimationSet->GetTexture(Dir,CurrentFrame));
-		this->CurrentSprite1.setTexture(AnimationSet->GetTexture(Dir,CurrentFrame));
-		this->CurrentSprite2.setTexture(AnimationSet->GetTexture(Dir,CurrentFrame));
-		this->CurrentSprite3.setTexture(AnimationSet->GetTexture(Dir,CurrentFrame));
+		this->Sprite.setTexture(AnimationImages->GetTexture(Dir,CurrentFrame));
 
 		CurrentFrame++;
 
 }
 
-sf::Texture& ClassAnimationSet::GetTexture(Direction Dir, int Frame)
-{
-	return *TexturesSet[Dir][Frame].get();
-}
 
-void GameImage::SetPositionImage(QPair<int, int> Coord)
+void StaticImage::SetPositionImage(QPair<int, int> Coord)
 {
-		CurrentSprite.setPosition(Coord.first - 10,Coord.second-5);
-		CurrentSprite1.setPosition(Coord.first - 240,Coord.second - 5);
-		CurrentSprite2.setPosition(Coord.first - 120 ,Coord.second + 60);
-		CurrentSprite3.setPosition(Coord.first - 120,Coord.second -65);
+		Sprite.setPosition(Coord.first,Coord.second);
 }
-void GameImage::SetPositionImage(int x, int y)
+void StaticImage::SetPositionImage(int x, int y)
 {
-		CurrentSprite.setPosition( x - 10  ,y - 5);
-		CurrentSprite1.setPosition(x - 240 ,y - 5);
-		CurrentSprite2.setPosition(x - 120 ,y + 60);
-		CurrentSprite3.setPosition(x - 120 ,y - 65);
+		Sprite.setPosition(x,y);
 }
 
 
-void GameImage::SetDiretionMoving(Direction Dir)
+void StaticImage::SetDiretionMoving(Direction Dir)
 {
 	this->CurrentDir = Dir;
 }
 
-void ClassAnimationSet::UploadAnimation(QString Name, QString SetDir)
+
+
+void StaticImage::SetTexture(sf::Texture& Texture)
 {
-	qDebug() << "UPLOAD ANIMATION - " << SetDir <<"NAME - " <<Name << "FRAME COUNT - " << FrameCount << "SET COUNT - " << SetCount;
-
-		QString FileName;
-		for (int set_number = 1; set_number <= SetCount; set_number++)
-		{
-			QVector<std::shared_ptr<sf::Texture>> NewTexturesGroup;
-
-		    QString PathToSet = SetDir + Name + QString("/%1/").arg(set_number) + "320/";
-			qDebug() << "         LOAD SET NUMBER - " << set_number;
-			for (int frame_number = 1; frame_number <= FrameCount; frame_number++)
-			{
-				auto NewTexture = std::make_shared<sf::Texture>(sf::Texture());
-				NewTexturesGroup.append(NewTexture);
-
-				if (frame_number < 10)
-					FileName = QString("000%1.png").arg(frame_number);
-				else
-					FileName = QString("00%1.png").arg(frame_number);
-
-				qDebug() << "LOADE IMAGE - " << FileName;
-				QString Full_Path = PathToSet + FileName;
-
-				NewTexturesGroup.last()->loadFromFile(Full_Path.toStdString());
-			}
-			TexturesSet.append(NewTexturesGroup);
-		}
-}
-
-
-void GameImage::SetTexture(sf::Texture& Texture)
-{
-	this->CurrentSprite.setTexture(Texture);
-	this->CurrentSprite1.setTexture(Texture);
-	this->CurrentSprite2.setTexture(Texture);
-	this->CurrentSprite3.setTexture(Texture);
+//	this->CurrentSprite.setTexture(Texture);
+//	this->CurrentSprite1.setTexture(Texture);
+//	this->CurrentSprite2.setTexture(Texture);
+//	this->CurrentSprite3.setTexture(Texture);
 }

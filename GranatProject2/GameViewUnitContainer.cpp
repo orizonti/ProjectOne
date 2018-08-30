@@ -28,11 +28,11 @@ void GameViewUnitContainer::DrawUnits(sf::RenderWindow &Window)
 {
 	for (auto Unit : UnitOnMapContainer.values())
 	{
-		Window.draw(Unit->UnitImage.CurrentSprite);
-		Window.draw(Unit->UnitImage.CurrentSprite1);
-		Window.draw(Unit->UnitImage.CurrentSprite2);
-		Window.draw(Unit->UnitImage.CurrentSprite3);
-		Unit->UnitImage.IterateAnimation(Direction::Right);
+//		Window.draw(Unit->UnitImage.CurrentSprite);
+//		Window.draw(Unit->UnitImage.CurrentSprite1);
+//		Window.draw(Unit->UnitImage.CurrentSprite2);
+//		Window.draw(Unit->UnitImage.CurrentSprite3);
+//		Unit->UnitImage.IterateAnimation(Direction::Right);
 	}
 }
 

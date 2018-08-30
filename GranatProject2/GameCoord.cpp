@@ -34,14 +34,14 @@ void GameCoord::SetRealCoord(double x, double y)
 				DecPos = m*IsoPos * CellSize.height();
 }
 
-void GameCoord::SetCoordDecart(int x, int y)
+void GameCoord::SetCoordDecart(float x, float y)
 {
 	DecPos(0) = x;
 	DecPos(1) = y;
 	IsoPos = n*DecPos;
 }
 
-void GameCoord::SetCoordIsometric(int x, int y)
+void GameCoord::SetCoordIsometric(float x, float y)
 {
 	IsoPos(0) = x;
 	IsoPos(1) = y;
@@ -49,23 +49,23 @@ void GameCoord::SetCoordIsometric(int x, int y)
 	DecPos = m*IsoPos * CellSize.height();
 }
 
-QPair<int, int> GameCoord::GetIsoCoord()
+QPair<float, float> GameCoord::GetIsoCoord()
 {
-	QPair<int, int> Coord;
+	QPair<float, float> Coord;
 				Coord.first = IsoPos(0);
 				Coord.second = IsoPos(1);
 				return Coord;
 }
-QPair<int, int> GameCoord::GetDecCoord()
+QPair<float, float> GameCoord::GetDecCoord()
 {
-	QPair<int, int> Coord;
+	QPair<float, float> Coord;
 				Coord.first = DecPos(0);
 				Coord.second = DecPos(1);
 				return Coord;
 }
-sf::Vector2i GameCoord::GetIsoVector()
+sf::Vector2f GameCoord::GetIsoVector()
 {
-	sf::Vector2i Coord;
+	sf::Vector2f Coord;
 	Coord.x = IsoPos(0);
 	Coord.y = IsoPos(1);
 	return Coord;

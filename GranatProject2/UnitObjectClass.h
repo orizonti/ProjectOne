@@ -13,7 +13,7 @@ public:
 	~UnitObjectClass();
 
 	static std::shared_ptr<AnimationSetContainer> Animations;
-	std::shared_ptr<ClassAnimationSet> UnitAnimation = NULL;
+	std::shared_ptr<AnimationSet> UnitAnimation = NULL;
 
 	QString TypeUnit;
 
@@ -24,8 +24,8 @@ public:
 	void SetDestination(int x,int y);
 	void MoveUnit();
 
-	sf::Vector2i GetCoord();
-	GameImage UnitImage;
+	sf::Vector2f GetCoord();
+	GroupImage UnitImage;
 	GameCoord CurrentPosition;
 	GameCoord Destination;
 	static MapContainerClass *TerrainMap;

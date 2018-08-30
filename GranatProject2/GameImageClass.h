@@ -1,52 +1,60 @@
 #pragma once
 #include "HeaderAndStructures.h"
+#include "AnimationSet.h"
+#include "GameCoord.h"
 
-class ClassAnimationSet
+
+class StaticImage
 {
 public:
-	ClassAnimationSet(int CountFrame, int CountSet)
-	{
-		FrameCount = CountFrame;
-		SetCount = CountSet;
-	}
-	int FrameCount = 20;
-	int SetCount   = 8;
-
-	void UploadAnimation(QString Name, QString SetDir);
-
-	
-	sf::Texture& GetTexture(Direction Dir, int Frame);
-	QVector<QVector< std::shared_ptr<sf::Texture> >> TexturesSet;
-
-
-};
-
-class GameImage
-{
-public:
-public:
-	GameImage();
-	~GameImage();
+	StaticImage();
+	~StaticImage();
 
 
 	void SetTexture(sf::Texture& Texture);
 	void SetPositionImage(int x, int y);
 	void SetPositionImage(QPair<int,int> Coord);
-	void LinkAnimationSet(std::shared_ptr<ClassAnimationSet> Animation);
 
 	void SetDiretionMoving(Direction Dir);
 
-	void IterateAnimation(Direction Dir);
+	sf::Sprite  Sprite;
 
-	std::shared_ptr<ClassAnimationSet> AnimationSet = NULL;
-
-	sf::Sprite  CurrentSprite;
-	sf::Sprite  CurrentSprite1;
-	sf::Sprite  CurrentSprite2;
-	sf::Sprite  CurrentSprite3;
-
-	int         CurrentFrame = 0;
 	Direction CurrentDir = Right;
 
+};
+
+class AnimationImage : public StaticImage
+{
+public:
+	void IterateAnimation(Direction Dir);
+	void LinkAnimationSet(std::shared_ptr<AnimationSet> Animation);
+	std::shared_ptr<AnimationSet> AnimationImages = NULL;
+	int         CurrentFrame = 0;
+};
+
+
+class GroupImage : public AnimationImage
+{
+public:
+	GroupImage();
+	GroupImage(int Size, std::shared_ptr<AnimationImage> Animation = 0);
+
+	~GroupImage()
+	{
+	}
+
+	void IterateAnimation(Direction Dir);
+
+	void SetTexture(sf::Texture& Texture);
+	void SetImage(int Size, std::shared_ptr<AnimationImage> Image);
+
+
+	void SetPositionImage(int x, int y);
+	void SetPositionImage(QPair<int,int> Coord);
+	void SetDiretionMoving(Direction Dir);
+private:
+	QVector<GameCoord>      ImagesPos;
+	QVector<std::shared_ptr<AnimationImage>> Images;
+	int GroupSize;
 };
 

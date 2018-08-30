@@ -1,12 +1,12 @@
 #include "AnimationSetContainer.h"
 
-std::shared_ptr<ClassAnimationSet> &AnimationSetContainer::GetUnitAnimationSet(int Unit)
+std::shared_ptr<AnimationSet> &AnimationSetContainer::GetUnitAnimationSet(int Unit)
 {
 	qDebug() << "GET UNIT NUMBER - " << Unit;
 	return this->AnimationSetsToUnits[Unit];
 }
 
-std::shared_ptr<ClassAnimationSet> &AnimationSetContainer::GetObjectAnimationSet(int Object)
+std::shared_ptr<AnimationSet> &AnimationSetContainer::GetObjectAnimationSet(int Object)
 {
 	return this->AnimationSetsToMapObjects[Object];
 }
@@ -31,7 +31,7 @@ void AnimationSetContainer::UploadAnimationSets(QString PathToAnimation)
 
 	for (QString NameUnit : UnitsType.keys())
 	{
-		auto NewAnimationSet = std::make_shared<ClassAnimationSet>(ClassAnimationSet(20, 8));
+		auto NewAnimationSet = std::make_shared<AnimationSet>(AnimationSet(20, 8));
 		NewAnimationSet->UploadAnimation(NameUnit, PathToAnimation);
 		AnimationSetsToUnits.insert(AnimationSetsToUnits.size() + 1, NewAnimationSet);
 	}
