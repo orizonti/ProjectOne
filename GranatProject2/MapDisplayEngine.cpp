@@ -29,6 +29,7 @@ void MapDisplayEngine::DrawMap()
 	Window->clear();
 	this->Map.DrawTerrain(*Window);    //DRAW TERRAIN TILES, GRID, AND RED QUADERANGLE OF CURRENT CELL WHEN CURSOR IS MOVING ON HILL CLUSTER
 	this->Map.DrawCurrentCell(*Window);//IF CURSOR IS MOVING ON PLAIN TERRAIN OBJECT THEN DRAWING RED RHOMBUS CELL
+	this->DrawUnits();
 
 
 	Window->setView(*Camera);

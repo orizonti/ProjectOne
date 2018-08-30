@@ -1,16 +1,23 @@
 #include "UnitObjectClass.h"
+#include "MapContainerClass.h"
 
+MapContainerClass* UnitObjectClass::TerrainMap = 0;
 std::shared_ptr<AnimationSetContainer> UnitObjectClass::Animations = NULL;
 
+void UnitObjectClass::CheckHeightMap(int x, int y)
+{
 
-UnitObjectClass::UnitObjectClass(QString Type)
+}
+
+UnitObjectClass::UnitObjectClass(QString Type )
 {
 	qDebug() << "CREATE UNIT of TYPE - " << Type;
 	TypeUnit = Type;
-	CurrentPosition.SetCoordIsometric(4, 4);
-	Destination.SetCoordIsometric(4, 4);
+	CurrentPosition.SetCoordIsometric(8, 8);
+	Destination.SetCoordIsometric(8, 8);
 
 	UnitAnimation = Animations->GetUnitAnimationSet(Animations->UnitsType.value(Type));
+	UnitImage.AnimationSet = UnitAnimation; // it must be rewrited !!!!!
 
 	if (UnitAnimation == NULL)
 	{
@@ -18,7 +25,7 @@ UnitObjectClass::UnitObjectClass(QString Type)
 		return;
 	}
 
-	UnitImage.SetTexture(UnitAnimation->GetTexture(Direction::Right, 3));
+	UnitImage.SetTexture(UnitAnimation->GetTexture(Direction::Right, 19));
 	UnitImage.SetPositionImage(CurrentPosition.GetDecCoord());
 }
 
@@ -56,13 +63,13 @@ void UnitObjectClass::MoveUnit()
 	UnitImage.IterateAnimation(Direction::Left);
 }
 
-void UnitObjectClass::SetDestination(int x,int y )
+void UnitObjectClass::SetDestination(int x,int y  )
 {
 	Destination.SetCoordIsometric(x, y);
 }
 
 
-void UnitObjectClass::SetPosition(int x,int y )
+void UnitObjectClass::SetPosition(int x,int y  )
 {
 	this->CurrentPosition.SetCoordIsometric(x, y);
 	this->UnitImage.CurrentSprite.setPosition(CurrentPosition.DecPos(0),CurrentPosition.DecPos(1));

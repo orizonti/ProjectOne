@@ -29,10 +29,13 @@ void GameImage::IterateAnimation(Direction Dir)
 		Dir = CurrentDir;
 	}
 
-		if (CurrentFrame == 20)
+		if (CurrentFrame == 18)
 			CurrentFrame = 0;
 
 		this->CurrentSprite.setTexture(AnimationSet->GetTexture(Dir,CurrentFrame));
+		this->CurrentSprite1.setTexture(AnimationSet->GetTexture(Dir,CurrentFrame));
+		this->CurrentSprite2.setTexture(AnimationSet->GetTexture(Dir,CurrentFrame));
+		this->CurrentSprite3.setTexture(AnimationSet->GetTexture(Dir,CurrentFrame));
 
 		CurrentFrame++;
 
@@ -45,11 +48,17 @@ sf::Texture& ClassAnimationSet::GetTexture(Direction Dir, int Frame)
 
 void GameImage::SetPositionImage(QPair<int, int> Coord)
 {
-		CurrentSprite.setPosition(Coord.first,Coord.second);
+		CurrentSprite.setPosition(Coord.first - 10,Coord.second-5);
+		CurrentSprite1.setPosition(Coord.first - 240,Coord.second - 5);
+		CurrentSprite2.setPosition(Coord.first - 120 ,Coord.second + 60);
+		CurrentSprite3.setPosition(Coord.first - 120,Coord.second -65);
 }
 void GameImage::SetPositionImage(int x, int y)
 {
-		CurrentSprite.setPosition(x, y);
+		CurrentSprite.setPosition( x - 10  ,y - 5);
+		CurrentSprite1.setPosition(x - 240 ,y - 5);
+		CurrentSprite2.setPosition(x - 120 ,y + 60);
+		CurrentSprite3.setPosition(x - 120 ,y - 65);
 }
 
 
@@ -67,7 +76,7 @@ void ClassAnimationSet::UploadAnimation(QString Name, QString SetDir)
 		{
 			QVector<std::shared_ptr<sf::Texture>> NewTexturesGroup;
 
-		    QString PathToSet = SetDir + Name + QString("/%1/").arg(set_number) + "256/";
+		    QString PathToSet = SetDir + Name + QString("/%1/").arg(set_number) + "320/";
 			qDebug() << "         LOAD SET NUMBER - " << set_number;
 			for (int frame_number = 1; frame_number <= FrameCount; frame_number++)
 			{
@@ -75,9 +84,9 @@ void ClassAnimationSet::UploadAnimation(QString Name, QString SetDir)
 				NewTexturesGroup.append(NewTexture);
 
 				if (frame_number < 10)
-					FileName = QString("NEW_ANIMATION") + QString("000%1.png").arg(frame_number);
+					FileName = QString("000%1.png").arg(frame_number);
 				else
-					FileName = QString("NEW_ANIMATION") + QString("00%1.png").arg(frame_number);
+					FileName = QString("00%1.png").arg(frame_number);
 
 				qDebug() << "LOADE IMAGE - " << FileName;
 				QString Full_Path = PathToSet + FileName;
@@ -92,4 +101,7 @@ void ClassAnimationSet::UploadAnimation(QString Name, QString SetDir)
 void GameImage::SetTexture(sf::Texture& Texture)
 {
 	this->CurrentSprite.setTexture(Texture);
+	this->CurrentSprite1.setTexture(Texture);
+	this->CurrentSprite2.setTexture(Texture);
+	this->CurrentSprite3.setTexture(Texture);
 }

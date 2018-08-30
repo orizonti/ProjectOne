@@ -41,6 +41,10 @@ public:
 	std::shared_ptr<ClassAnimationSet> AnimationSet = NULL;
 
 	sf::Sprite  CurrentSprite;
+	sf::Sprite  CurrentSprite1;
+	sf::Sprite  CurrentSprite2;
+	sf::Sprite  CurrentSprite3;
+
 	int         CurrentFrame = 0;
 	Direction CurrentDir = Right;
 

@@ -59,6 +59,8 @@ MapContainerClass::MapContainerClass()
 	this->CreateMapFromFile(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");      // CREATING TERRAIN OBJECTS THAT ARE USED TO DRAWING MAP, EACH TERRAINS OBJECT HAS IT'S COORD AND LINK TO RESPECTIVE TILE
 	TerrainClasterization(this->TerrainLayers.value(1));  // CLASTERIZATION HILLS LAYER
 		//===============================================================================================
+
+	UnitObjectClass::TerrainMap = this;
 }
 
 void MapContainerClass::DrawCurrentCell(sf::RenderWindow &Window)

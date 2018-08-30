@@ -50,7 +50,6 @@ int main(int argc, char *argv[])
 		if (clock.getElapsedTime().asMilliseconds() >= 50)
 		{
 			Map.DrawMap();
-			Map.DrawUnits();
 			clock.restart();
 		}
 	}
