@@ -6,6 +6,16 @@ std::shared_ptr<AnimationSet> &AnimationSetContainer::GetUnitAnimationSet(int Un
 	return this->AnimationSetsToUnits[Unit];
 }
 
+std::shared_ptr<AnimationSet>& AnimationSetContainer::GetUnitAnimationSet(QString TypeUnit)
+{
+	return this->AnimationSetsToUnits[UnitsType[TypeUnit]];
+}
+
+std::shared_ptr<AnimationSet>& AnimationSetContainer::GetObjectAnimationSet(QString TypeObject)
+{
+	return this->AnimationSetsToUnits[UnitsType[TypeObject]];
+}
+
 std::shared_ptr<AnimationSet> &AnimationSetContainer::GetObjectAnimationSet(int Object)
 {
 	return this->AnimationSetsToMapObjects[Object];

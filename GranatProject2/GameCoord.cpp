@@ -80,8 +80,8 @@ sf::Vector2f GameCoord::GetDecVector()
 
 void GameCoord::translate(int d_x, int d_y)
 {
-	int new_x_iso = IsoPos(0) + d_x;
-	int new_y_iso = IsoPos(1) + d_y;
+	float new_x_iso = IsoPos(0) + d_x;
+	float new_y_iso = IsoPos(1) + d_y;
 
 	this->SetCoordIsometric(new_x_iso, new_y_iso);
 }

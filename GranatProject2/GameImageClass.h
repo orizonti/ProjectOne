@@ -3,58 +3,88 @@
 #include "AnimationSet.h"
 #include "GameCoord.h"
 
-
-class StaticImage
+class AnimationSetContainer;
+class SimpleImage
 {
 public:
-	StaticImage();
-	~StaticImage();
+	SimpleImage();
+	SimpleImage(const SimpleImage& Image);
+	SimpleImage(SimpleImage&& Image);
+	~SimpleImage();
 
+virtual	void DisplayImage(sf::RenderWindow& Window);
 
 	void SetTexture(sf::Texture& Texture);
-	void SetPositionImage(int x, int y);
-	void SetPositionImage(QPair<int,int> Coord);
+	void SetPositionImage(float x, float y);
+	void SetPositionImage(QPair<float,float> Coord);
 
-	void SetDiretionMoving(Direction Dir);
+	void SetPositionOnMap(float iso_x, float iso_y);
+	void SetPositionOnMap(QPair<float,float> IsoCoord);
 
-	sf::Sprite  Sprite;
+	void SetObjectDirection(Direction Dir);
 
+protected:
+	QString Type = "None";
+	GameCoord ImagePosOnMap;
 	Direction CurrentDir = Right;
+	std::shared_ptr<sf::Sprite>  Sprite;
 
 };
 
-class AnimationImage : public StaticImage
+class AnimationImage : public SimpleImage
 {
 public:
-	void IterateAnimation(Direction Dir);
+	AnimationImage();
+	~AnimationImage();
+	AnimationImage(QString UnitType);
+	AnimationImage(const AnimationImage& Image);
+	AnimationImage(AnimationImage&& Image);
+
+	static std::shared_ptr<AnimationSetContainer> Animations;
+
+	void DisplayImage(sf::RenderWindow& Window);
 	void LinkAnimationSet(std::shared_ptr<AnimationSet> Animation);
+
+private:
 	std::shared_ptr<AnimationSet> AnimationImages = NULL;
 	int         CurrentFrame = 0;
+
+	void IterateAnimation();
 };
 
 
-class GroupImage : public AnimationImage
+class GroupImage
 {
 public:
 	GroupImage();
-	GroupImage(int Size, std::shared_ptr<AnimationImage> Animation = 0);
+	GroupImage(const SimpleImage& Image, int Size = 1);
+	GroupImage(const AnimationImage& Image, int Size = 1);
+	GroupImage(const GroupImage& Image);
+	GroupImage(const GroupImage&& Image);
+
 
 	~GroupImage()
 	{
+		qDebug() << "GROUP IMAGE DESTRUCTOR";
 	}
 
-	void IterateAnimation(Direction Dir);
+	void operator=(const GroupImage& Image);
+	void operator=(const GroupImage&& Image);
 
-	void SetTexture(sf::Texture& Texture);
-	void SetImage(int Size, std::shared_ptr<AnimationImage> Image);
+	void AppendImage(AnimationImage&& Image);
+	void AppendImage(SimpleImage&& Image);
 
+	void AppendImage(std::shared_ptr<SimpleImage> Image);
 
-	void SetPositionImage(int x, int y);
-	void SetPositionImage(QPair<int,int> Coord);
+	void DisplayImage(sf::RenderWindow& Window);
+
+	void SetPositionOnMap(float iso_x, float iso_y);
+	void SetPositionOnMap(QPair<float,float> IsoCoord);
+
 	void SetDiretionMoving(Direction Dir);
 private:
-	QVector<GameCoord>      ImagesPos;
-	QVector<std::shared_ptr<AnimationImage>> Images;
-	int GroupSize;
+	QVector<QPair<float,float> > OffsetToImage;
+	QVector<std::shared_ptr<SimpleImage>> Images;
+	int GroupSize = 0;
 };
 
