@@ -175,6 +175,36 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 }
 
+QVector<double>& MapContainerClass::GetCellHeightMap(int x, int y)
+{
+	qDebug() << "CHECK COORD  - " << x << y;
+	GameCoord Coord; 
+	Coord.SetCoordIsometric(x, y);
+    PairCoord CenterCluster = DefineBelongPoint(CalculateNearestCluster(x, y),Coord);
+
+	QVector<double> Heights;
+
+	if (CenterCluster != PairCoord(0, 0))
+	{
+		qDebug() << "UNIT ON HILL";
+			for (auto Terrain : ClusteredObjects.value(CenterCluster))
+			{
+				     if (Terrain->ContainsMapPoint(x, y))
+					 {
+					 qDebug() << "Terrain - " << Terrain->TerrainData->Name << "POS - " << Terrain->Position.GetIsoCoord() << "contains - " << x << y << "SIZE - " << Terrain->TileSize;
+					 Heights = Terrain->GetHeightMapOnCell(x,y);
+					 }
+
+					 if (!Heights.isEmpty())
+						 return Heights;
+
+			}
+	}
+
+	qDebug() << "NO HEIGHT MAP";
+	return QVector<double>();
+
+}
 
 void MapContainerClass::DefineCellMoved(int x, int y)
 {
@@ -205,18 +235,18 @@ void MapContainerClass::DefineCellMoved(int x, int y)
 
 void MapContainerClass::MapCellPressed(int x, int y)
 {
-//	PressedPosition.SetCoordIsometric(x, y);
+	PressedPosition.SetCoordIsometric(x, y);
 
-//	if (CurrentTerrain != 0)
-//	BorderCellPressed = CurrentTerrain->GetCellBorderMoved();
-//	else
-//	{
+	if (CurrentTerrain != 0)
+	BorderCellPressed = CurrentTerrain->GetCellBorderMoved();
+	else
+	{
 
-//	BorderCellPressed = BorderCell;
-//	BorderCellPressed.SetPosition(PressedPosition.DecPos(0), PressedPosition.DecPos(1));
-//	}
+	BorderCellPressed = BorderCell;
+	BorderCellPressed.SetPosition(PressedPosition.DecPos(0), PressedPosition.DecPos(1));
+	}
 
-//	BorderCellPressed.SetColor(sf::Color::Yellow);
+	BorderCellPressed.SetColor(sf::Color::Yellow);
 
 }
 
@@ -297,7 +327,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 					//CREATE QUADERANGLE TO DRAW RED BORDER WHEN CURSOR POINT TO HILL TERRAINS CLUSTER
 					sf::ConvexShape newConvex;
 					newConvex.setPointCount(4);
-
+					qDebug() << "CREATE CLUSTER CONVEX";
 				 GameCoord PointCoord;
 							for (auto TerrainObject : CornerTerrains)
 							{                                          //GET CORNER TYPE TERRAIN ELEMENT 5,7,2 or 22 AND SET IT'S COORD TO CONVEX
@@ -479,7 +509,7 @@ PairCoord MapContainerClass::CalculateNearestCluster(int x, int y)
 	return NearestCenter;
 }
 
-PairCoord MapContainerClass::DefineBelongPoint(PairCoord NearestCenter, GameCoord Coord)
+PairCoord MapContainerClass::DefineBelongPoint(PairCoord NearestCenter, GameCoord& Coord)
 {
 	//TAKE NEAREST TO CURSOR CLUSTER AND CHECK IF POINT CONTAINS IN CLUSTER BOUND
 	PairCoord Null; Null.first = 0; Null.second = 0;

@@ -16,6 +16,7 @@ public:
 private:
 public:
 	GameCoord Position;
+	GameCoord PositionTopRight;
 	int TerrainType;
 	QSize TileSize;
 	sf::Sprite* GetSpriteToDraw();
@@ -32,6 +33,10 @@ public:
 	QuadeRangleShape& GetCellBorderMoved();
 
 	bool CheckCursorPosition(int x, int y);
+	bool ContainsMapPoint(int x, int y);
+
+	QVector<double>& GetHeightMapOnCell(int x, int y);
+	
 
 	void DrawObject(sf::RenderWindow& Window);
 	void DrawGrid(sf::RenderWindow& Window);

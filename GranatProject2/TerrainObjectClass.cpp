@@ -11,6 +11,8 @@ TerrainObjectClass::TerrainObjectClass(TerrainTileElement* Terrain)
 		CellPathes = Terrain->GridLines->GetSubCells();
 		}
 		TerrainData = Terrain;
+		this->TileSize = TerrainData->Size_By_Cell;
+		qDebug() << "  >>>>>>>>>>CREATE TERRAIN wit TYPE - " << TerrainData->Name << "SIZE - " << TileSize;
 	}
 
 }
@@ -21,6 +23,7 @@ void TerrainObjectClass::SetCoord(int x, int y)
 	if (TerrainData != 0)
 	{
 	Position.SetCoordIsometric(x, y);
+	PositionTopRight.SetCoordIsometric(x + TileSize.width(), y + TileSize.height());
 	PathContour.translate(Position.DecPos(0) + TerrainData->offset.first, 
 		                  Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
 	for (QPainterPath& Path : CellPathes)
@@ -99,27 +102,49 @@ void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 	}
 }
 
+bool TerrainObjectClass::ContainsMapPoint(int x, int y)
+{
+	qDebug() << "CHECK - " << x << y << "BL - " << Position.GetIsoCoord() << "TR - " << PositionTopRight.GetIsoCoord() << "NAME - " << this->TerrainData->Name;
+	bool Lager_BL   =         (Position.IsoPos(0) <= x) &&         (Position.IsoPos(1) <= y);
+	bool Smaller_TR = (PositionTopRight.IsoPos(0) >= x) && (PositionTopRight.IsoPos(1) >= y);
+	qDebug() << Lager_BL << Smaller_TR << (Lager_BL && Smaller_TR);
+
+	return (Lager_BL && Smaller_TR);
+}
+
+QVector<double>&  TerrainObjectClass::GetHeightMapOnCell(int x, int y)
+{
+	int x_relative = x -Position.IsoPos(0);
+	int y_relative = y -Position.IsoPos(1);
+    qDebug() << "UNIT GET HEIGTH MAP ON POS RELATIVE - " << x_relative << y_relative;
+
+		int n = x_relative*TileSize.height() + y_relative;
+		qDebug() << x << y << "IT NUMBER - " << n << "IN - " << TerrainData->HeightMap.size();
+
+//		if (n > 0)
+//			return TerrainData->HeightMap[n - 1];
+//		else
+			return QVector<double>();
+
+}
+
+
 bool TerrainObjectClass::CheckCursorPosition(int x, int y)
 {
-	QPair<int, int> CoordPointer;
-	CoordPointer.first = 0;
-	CoordPointer.second = 0;
-
-	QPainterPath path_line;
 
     FLAG_MOUSE_MOVED = PathContour.contains(QPointF(x, y));
-		if (FLAG_MOUSE_MOVED)
+	if (FLAG_MOUSE_MOVED)
+	{
+		int n = 1;
+		for (QPainterPath& Path : CellPathes)
 		{
-
-			int n = 1;
-					for (QPainterPath& Path : CellPathes)
-					{
-						if (Path.contains(QPointF(x, y)))
-							break;
-						n++;
-						
-					}
-					this->Number_Cell_Moved = n;
+			if (Path.contains(QPointF(x, y)))
+				break;
+			n++;
+			
 		}
+		this->Number_Cell_Moved = n;
+	}
+
 		return FLAG_MOUSE_MOVED;
 }

@@ -9,7 +9,7 @@ public:
 	TerrainTileElement();
 	~TerrainTileElement();
 
-	void GetHeightMap();
+	void GetHeightMap(); // IT SHOULD BE REWRITED, GetHeightMap -> CreateHeightMap in private block
 
 	sf::Texture* Texture;//TEXTURE AND SPRITE TO DRAW TILE ON MAP
 	sf::Sprite*  Sprite ;
@@ -17,6 +17,7 @@ public:
 	int     type_id;
 	QString Name = "";
 	QSize   size;
+	QSize   Size_By_Cell;
 
 	QPair<int, int> offset;//OFFSET OF TILE IN IMAGE TO CUNJUGATION OF CONTIGOUS TILES
 	QPair<int, int> offsetGrid;

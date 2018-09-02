@@ -12,11 +12,14 @@ public:
 	UnitObjectClass(QString Type);
 	~UnitObjectClass();
 
+	static MapContainerClass *TerrainMap;
 	static std::shared_ptr<AnimationSetContainer> Animations;
 	static QMap<QPair<int, int>, Direction> DirectionTable;
 	std::shared_ptr<AnimationSet> UnitAnimation = NULL;
 
 	bool FLAG_UNIT_AT_MOVING = false;
+
+	double CountMove = 0;
 
 	int d_x = 0;
 	int d_y = 0;
@@ -39,7 +42,6 @@ public:
 	GroupImage UnitImage;
 	GameCoord CurrentPosition;
 	GameCoord Destination;
-	static MapContainerClass *TerrainMap;
 };
 
 class ClassWarriorUnit :

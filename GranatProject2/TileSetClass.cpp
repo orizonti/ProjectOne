@@ -73,8 +73,12 @@ void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 
 							QString name = tileset.attribute("name");
 
+
 							newTileElement->size.setWidth(tileset.attribute("tilewidth").toInt()); 
 							newTileElement->size.setHeight(tileset.attribute("tileheight").toInt());
+
+							newTileElement->Size_By_Cell.setWidth(newTileElement->size.width()/512); 
+							newTileElement->Size_By_Cell.setHeight(newTileElement->size.height()/256);
 
 							newTileElement->offset.first = tileoffset.attribute("x").toInt(); 
 							newTileElement->offset.second = tileoffset.attribute("y").toInt();
@@ -95,7 +99,6 @@ void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 											 newTileElement->Sprite = spriteTerrain;
 											 newTileElement->type_id = type_id;
 											 newTileElement->Name = name;
-
 
 											 UploadGridLines(PathXMLFile, newTileElement);
 											 newTileElement->GetHeightMap();
@@ -183,6 +186,8 @@ void TerrainTileElement::GetHeightMap()
 								}
 
 						}
-//qDebug() << "          HEIGHT MAP SIZE - " << HeightMap.size() << "HEIGHT MAP TO DRAW - " << HeightMapToDraw.size() <<"TERR SIZE - " << width_grid << height_grid;
+							Size_By_Cell.setWidth(width_grid); 
+							Size_By_Cell.setHeight(height_grid);
+qDebug() << "          HEIGHT MAP SIZE - " << HeightMap.size() << "HEIGHT MAP TO DRAW - " << HeightMapToDraw.size() <<"TERR SIZE - " << width_grid << height_grid;
 
 }

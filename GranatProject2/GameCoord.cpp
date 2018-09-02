@@ -1,7 +1,6 @@
 #include "GameCoord.h"
 
 
-
 GameCoord::GameCoord()
 {
 		m << 1, 1,
@@ -85,3 +84,12 @@ void GameCoord::translate(float d_x, float d_y)
 
 	this->SetCoordIsometric(new_x_iso, new_y_iso);
 }
+
+
+//void GameCoord::translate(int d_x, int d_y)
+//{
+//	float new_x_iso = IsoPos(0) + d_x;
+//	float new_y_iso = IsoPos(1) + d_y;
+
+//	this->SetCoordIsometric(new_x_iso, new_y_iso);
+//}

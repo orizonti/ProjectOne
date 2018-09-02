@@ -82,6 +82,22 @@ void UnitObjectClass::MoveUnit()
 			if (dir_x != 0)
 				CurrentPosition.translate(0.02*dir_x, 0);
 
+			float remain_x_edge =std::abs(CurrentPosition.IsoPos(0) - std::floor(CurrentPosition.IsoPos(0)));
+			float remain_y_edge =std::abs(CurrentPosition.IsoPos(1) - std::floor(CurrentPosition.IsoPos(1)));
+			//qDebug() << "remain - " << remain_x_edge << remain_y_edge;
+
+			QVector<double> CellHeightMap;
+			if (remain_x_edge < 0.02 &&
+				remain_y_edge < 0.02)
+			{
+				CellHeightMap = this->TerrainMap->GetCellHeightMap(CurrentPosition.IsoPos(0),CurrentPosition.IsoPos(1));
+
+				if (CellHeightMap.isEmpty())
+					qDebug() << "UNIT ON PLAIN CELL";
+				else
+					qDebug() << "HEIGHT MAP - " << CellHeightMap;
+			}
+
 
 
 	UnitImage.SetPositionOnMap(CurrentPosition.IsoPos(0), CurrentPosition.IsoPos(1));

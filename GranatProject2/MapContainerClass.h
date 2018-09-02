@@ -48,11 +48,12 @@ public:
 	void MapCellPressed(int x, int y);
 	void MapCellMoved(int x, int );
 	void DefineCellMoved(int x,int y); //DEFINE THAT CURSOR IS MOVING UNDER ANY HILL TO DRAW CELL BORDER ON HILL
+	QVector<double>& GetCellHeightMap(int x, int y);
 
 				private:
 				//UTILITY METHODS TO DEFINE CURRENT HILL UNDER CURSOR
 				PairCoord CalculateNearestCluster(int x, int y);
-				PairCoord DefineBelongPoint(PairCoord NearestCenter, GameCoord Coord);//DEFINE IF CURRENT COORD IS CONTAINED IN HILL'S BOUND USING PATH_TO_CLUSTERS MAP 
+				PairCoord DefineBelongPoint(PairCoord NearestCenter, GameCoord& Coord);//DEFINE IF CURRENT COORD IS CONTAINED IN HILL'S BOUND USING PATH_TO_CLUSTERS MAP 
 				void TerrainClasterization(QVector<TerrainObjectClass*> TerrainLayer);//TERRAIN CLUSTERIZATION TO LOCATE TERRAIN CURRENT HILL UNDER CURSOR
 
 };
