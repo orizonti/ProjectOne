@@ -27,7 +27,9 @@ public:
 	QPainterPath PathContour;
 	CurveShape ShapeContour;
 	QVector<CurveShape> ShapesCell;
-	int Number_Cell_Pressed = 0;
+	int Number_Cell_Moved = 0;
+
+	QuadeRangleShape& GetCellBorderMoved();
 
 	bool CheckCursorPosition(int x, int y);
 

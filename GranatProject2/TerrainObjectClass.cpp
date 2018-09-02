@@ -77,6 +77,12 @@ void TerrainObjectClass::DrawObject(sf::RenderWindow& Window)
 	Window.draw(*this->GetSpriteToDraw());
 }
 
+QuadeRangleShape& TerrainObjectClass::GetCellBorderMoved()
+{
+	TerrainData->GridLines->SetPosition(this->Position.DecPos(0) + TerrainData->offset.first, 
+		                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
+	return TerrainData->GridLines->SubCellShapes[Number_Cell_Moved - 1];  
+}
 
 void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 {
@@ -88,7 +94,7 @@ void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 		TerrainData->GridLines->DrawGrid(Window);
 
 		if (FLAG_MOUSE_MOVED)
-		TerrainData->GridLines->DrawCell(Window,Number_Cell_Pressed-1);
+		TerrainData->GridLines->DrawCell(Window,Number_Cell_Moved-1);
 
 	}
 }
@@ -113,7 +119,7 @@ bool TerrainObjectClass::CheckCursorPosition(int x, int y)
 						n++;
 						
 					}
-					this->Number_Cell_Pressed = n;
+					this->Number_Cell_Moved = n;
 		}
 		return FLAG_MOUSE_MOVED;
 }

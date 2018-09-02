@@ -389,6 +389,10 @@ void QuadeRangleShape::SetQuadeShapes(QVector<CurveShape> Shapes)
 	this->EdgeShapes = Shapes;
 }
 
+QuadeRangleShape::QuadeRangleShape(const QuadeRangleShape& Shape)
+{
+	this->EdgeShapes.append(Shape.EdgeShapes);
+}
 QuadeRangleShape::QuadeRangleShape(QVector<CurveShape> Shapes)
 {
 	this->EdgeShapes = Shapes;

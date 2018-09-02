@@ -8,6 +8,7 @@ class SimpleImage
 {
 public:
 	SimpleImage();
+	SimpleImage(sf::Texture& tex);
 	SimpleImage(const SimpleImage& Image);
 	SimpleImage(SimpleImage&& Image);
 	~SimpleImage();

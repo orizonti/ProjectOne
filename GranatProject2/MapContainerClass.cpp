@@ -26,6 +26,9 @@ MapContainerClass::MapContainerClass()
 
 		BorderCell.SetQuadeShapes(QuadeLines);
 		BorderCell.SetColor(sf::Color::Red);
+
+		BorderCellPressed = BorderCell;
+		BorderCellPressed.SetColor(sf::Color::Yellow);
 		//===============================================================================================
 
 		//===============================================================================================
@@ -68,8 +71,11 @@ void MapContainerClass::DrawCurrentCell(sf::RenderWindow &Window)
 	if (!FLAG_CURSOR_ON_HILL) // DRAW RED RHOMBUS ON CURRENT PLAIN CELL, IF CURSOV MOVING ON HILL CURVE RED CELL IS DRAWING IN TERRAIN TERRAIN DRAWING METHOD DRAW
 	{
 	BorderCell.SetPosition(CursorPosition.DecPos(0), CursorPosition.DecPos(1));
+
+
 	BorderCell.DrawShape(Window);
 	}
+	BorderCellPressed.DrawShape(Window);
 }
 
 void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
@@ -199,7 +205,18 @@ void MapContainerClass::DefineCellMoved(int x, int y)
 
 void MapContainerClass::MapCellPressed(int x, int y)
 {
-	CursorPosition.SetCoordIsometric(x, y);
+	PressedPosition.SetCoordIsometric(x, y);
+
+	if (CurrentTerrain != 0)
+	BorderCellPressed = CurrentTerrain->GetCellBorderMoved();
+	else
+	{
+
+	BorderCellPressed = BorderCell;
+	BorderCellPressed.SetPosition(PressedPosition.DecPos(0), PressedPosition.DecPos(1));
+	}
+
+	BorderCellPressed.SetColor(sf::Color::Yellow);
 
 }
 
@@ -277,7 +294,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 					[](Terrains	CornerTerrains) -> sf::ConvexShape
 				{
 
-					//CREATE QUADERANGLE TO DRAW RED BORDER WHEN CURSOR POING TO HILL TERRAINS CLUSTER
+					//CREATE QUADERANGLE TO DRAW RED BORDER WHEN CURSOR POINT TO HILL TERRAINS CLUSTER
 					sf::ConvexShape newConvex;
 					newConvex.setPointCount(4);
 

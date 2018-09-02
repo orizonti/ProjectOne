@@ -39,27 +39,63 @@ ClassWarriorUnit::ClassWarriorUnit(QString TypeUnit) : UnitObjectClass(TypeUnit)
 void UnitObjectClass::MoveUnit()
 {
 
-//	if (this->CurrentPosition == this->Destination)
-//		return;
+	if (this->CurrentPosition == this->Destination)
+		return;
+
+	    //qDebug() << "MOVING " << this->CurrentPosition.GetIsoCoord() << "DESTINATION - " << Destination.GetIsoCoord();
+	int dir_x = 0;
+	int dir_y = 0;
 
 
+	    if(d_x != 0)
+    	dir_x = d_x / std::abs(d_x);
+		if(d_y != 0)
+		dir_y = d_y / std::abs(d_y);
 
-//	double x1 = this->CurrentPosition.DecPos(0);
-//	double y1 = this->CurrentPosition.DecPos(1);
+			if (CurrentPosition.IsoPos(1) != RoutePoints.first().IsoPos(1))
+				CurrentPosition.translate(0, -0.02*dir_y);
+			else
+				CurrentPosition.translate(-0.02*dir_x, 0);
 
+			Direction Dir = Direction::Right;
 
-//	double x2 = Destination.DecPos(0);
-//	double y2 = Destination.DecPos(1);
+			if (dir_y == 0)
+			{
+				if (dir_x == 1)
+					Dir = Direction::Right;
+			    if (dir_x == -1)
+					Dir = Direction::Left;
+			}
 
-//	this->CurrentPosition.DecPos(0) = CurrentPosition.DecPos(0) + 4;
-//	this->CurrentPosition.DecPos(1) = (-(x1*y2 - x2*y1) - (y1 - y2)*(CurrentPosition.DecPos(0))) / (x2 - x1);
+				if (dir_x == 0)
+				{
+						if (dir_y == 1)
+							Dir = Direction::Up;
+						if (dir_y == -1)
+							Dir = Direction::Down;
+				}
 
-//	UnitImage.SetPositionImage(CurrentPosition.DecPos(0), CurrentPosition.DecPos(1));
+	UnitImage.SetDiretionMoving(Dir);
+
+	UnitImage.SetPositionOnMap(CurrentPosition.IsoPos(0), CurrentPosition.IsoPos(1));
 }
 
 void UnitObjectClass::SetDestination(int x,int y  )
 {
+	RoutePoints.clear();
+	qDebug() << "UNIT SET DESTINATION - " << x << y;
 	Destination.SetCoordIsometric(x, y);
+
+
+	 d_x = CurrentPosition.IsoPos(0) - Destination.IsoPos(0);
+	 d_y = CurrentPosition.IsoPos(1) - Destination.IsoPos(1);
+
+	 GameCoord RouteNode = CurrentPosition;
+			   RouteNode.translate(0, d_y);
+			   qDebug() << "ADD ROUTE NODE - " << RouteNode.GetIsoCoord();
+	 RoutePoints.append(RouteNode);
+
+
 }
 
 

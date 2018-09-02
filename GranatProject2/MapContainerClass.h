@@ -23,6 +23,7 @@ public:
 	QSize MapSize;
 
 	GameCoord CursorPosition; 
+	GameCoord PressedPosition; 
 
 	PairCoord           CurrentCenterCluster;//COORD POINT TO CURRENT TERRAIN IN CLUSTERED HILL OBJECTS USING AT DEFINE CELL METHOD AND WHEN DRAWING CLUSTER BORDER CONVEX
 	TerrainObjectClass* CurrentTerrain = 0;  //IS NEEDED TO DRAW CURRENT CELL IN TERRAIN UNDER CURSOR
@@ -31,6 +32,7 @@ public:
 	void CreateMapFromFile(QString MapFilePath = "E:/WorkDir/WORK_DIR/MAPS_TILED/TestMapBig.tmx");
 
 	QuadeRangleShape BorderCell                      ;
+	QuadeRangleShape BorderCellPressed               ;
 	QMap<int,Terrains>              TerrainLayers    ;//TERRAIN OBJECTS DEVIDED TO LAYERS, GROUNDS and HILLS 
 	QMap<PairCoord,sf::ConvexShape> ConvexToClusters ;//QUADERANGLE OF HILL CLUSTER TO DRAW RED BORDER AROUND HILLS WHEN CURSOR MOVING ON THEM
 	QVector<CurveShape>             PlainGridLines   ;//BLACK LINES THAT IS DRAWED ON ALL MAP UNDER HILLS LAYER

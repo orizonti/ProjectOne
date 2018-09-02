@@ -51,6 +51,7 @@ class QuadeRangleShape
 {
 public:
     QuadeRangleShape(QVector<CurveShape> Shapes);
+	QuadeRangleShape(const QuadeRangleShape& Shape);
     explicit QuadeRangleShape();
 	void SetQuadeShapes(QVector<CurveShape> Shapes);
 
@@ -98,8 +99,8 @@ public:
 
 	QList<CurveShape>         CurvesVert; //LINES
 	QList<CurveShape>         CurvesHoriz;
-private:
 	QVector<QuadeRangleShape> SubCellShapes;//QUADERANGLES
+private:
 	QVector<QPainterPath>     SubCellPathes;
 	QVector<CurveShape>       ContourShapes;
 

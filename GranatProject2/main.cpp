@@ -29,13 +29,48 @@ int main(int argc, char *argv[])
 {
 	//QCoreApplication a(argc, argv);
 
+	GameCoord Coord1;
+	GameCoord Coord2;
+	GameCoord Coord3;
+	Coord1.SetCoordIsometric(2, 4);
+	Coord2.SetCoordIsometric(2, 4);
+	Coord3.SetCoordIsometric(2, 3);
 
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	Coord3.translate(0, 0.1);
+	qDebug() << "COORD 3 - " << Coord3.GetIsoCoord();
+
+	qDebug() << "COORD1 == COORD2 - " << (Coord1 == Coord2);
+	qDebug() << "COORD1 == COORD3 - " << (Coord1 == Coord3);
+
+	double x = 1.1;
+	double x1 = 0.1;
+	x1 = x1 + double(0.1);
+	x1 = x1 + double(0.1);
+	x1 = x1 + double(0.1);
+	x1 = x1 + double(0.1);
+	x1 = x1 + double(0.1);
+
+	x1 = x1 + double(0.1);
+	x1 = x1 + double(0.1);
+	x1 = x1 + double(0.1);
+	x1 = x1 + double(0.1);
+	x1 = x1 + double(0.1);
+
+	qDebug() << "Test == " << (std::floor(10*x) == std::floor(10*x1));
 
 	GameDir = qgetenv("GAME_WORK_DIR");
 
 	sf::Clock clock; // starts the clock
 	MapDisplayEngine Map;
-
 
 
 
@@ -49,6 +84,7 @@ int main(int argc, char *argv[])
 
 		if (clock.getElapsedTime().asMilliseconds() >= 50)
 		{
+			Map.Units.MoveUnits();
 			Map.DrawMap();
 			clock.restart();
 		}

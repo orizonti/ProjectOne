@@ -11,7 +11,7 @@ GameViewUnitContainer::GameViewUnitContainer()
 		auto TestUnit  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
 		
 		UnitOnMapContainer.insert(TestUnit->CurrentPosition.GetIsoCoord(), TestUnit);
-		qDebug() << "GAME VIEW UNIT CONTAINER CREATE END";
+		qDebug() << "UNIT HAS BEEN ADDED - " <<  TestUnit->CurrentPosition.GetIsoCoord();
 
 }
 GameViewUnitContainer::~GameViewUnitContainer()
@@ -20,6 +20,19 @@ GameViewUnitContainer::~GameViewUnitContainer()
 
 void GameViewUnitContainer::MapCellPressed(int x, int y)
 {
+	qDebug() << "MAP CELL PRESSED - " << x << y;
+
+	if (UnitOnMapContainer.contains(QPair<float, float>(x, y)))
+	{
+		CurrentUnit = UnitOnMapContainer[QPair<float, float>(x, y)];
+		qDebug() << "CURRENT UNIT - " << CurrentUnit->TypeUnit <<"POS- " << CurrentUnit->CurrentPosition.GetIsoCoord();
+	}
+	else
+	{
+		CurrentUnit->SetDestination(x, y);
+
+	}
+
 
 
 }
@@ -29,6 +42,14 @@ void GameViewUnitContainer::DrawUnits(sf::RenderWindow &Window)
 	for (auto Unit : UnitOnMapContainer.values())
 	{
 		Unit->UnitImage.DisplayImage(Window);
+	}
+}
+
+void GameViewUnitContainer::MoveUnits()
+{
+	for (auto Unit : UnitOnMapContainer.values())
+	{
+		Unit->MoveUnit();
 	}
 }
 
