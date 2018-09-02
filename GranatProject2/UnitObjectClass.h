@@ -13,12 +13,15 @@ public:
 	~UnitObjectClass();
 
 	static std::shared_ptr<AnimationSetContainer> Animations;
+	static QMap<QPair<int, int>, Direction> DirectionTable;
 	std::shared_ptr<AnimationSet> UnitAnimation = NULL;
 
 	bool FLAG_UNIT_AT_MOVING = false;
 
 	int d_x = 0;
 	int d_y = 0;
+	int dir_x = 0;
+	int dir_y = 0;
 
 	QVector<GameCoord> RoutePoints;
 
@@ -28,6 +31,7 @@ public:
 
 	void SetPosition(int x,int y);
 	void CheckHeightMap(int x, int y);
+	void GetMoveDirection();
 	void SetDestination(int x,int y);
 	void MoveUnit();
 

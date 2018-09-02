@@ -205,18 +205,18 @@ void MapContainerClass::DefineCellMoved(int x, int y)
 
 void MapContainerClass::MapCellPressed(int x, int y)
 {
-	PressedPosition.SetCoordIsometric(x, y);
+//	PressedPosition.SetCoordIsometric(x, y);
 
-	if (CurrentTerrain != 0)
-	BorderCellPressed = CurrentTerrain->GetCellBorderMoved();
-	else
-	{
+//	if (CurrentTerrain != 0)
+//	BorderCellPressed = CurrentTerrain->GetCellBorderMoved();
+//	else
+//	{
 
-	BorderCellPressed = BorderCell;
-	BorderCellPressed.SetPosition(PressedPosition.DecPos(0), PressedPosition.DecPos(1));
-	}
+//	BorderCellPressed = BorderCell;
+//	BorderCellPressed.SetPosition(PressedPosition.DecPos(0), PressedPosition.DecPos(1));
+//	}
 
-	BorderCellPressed.SetColor(sf::Color::Yellow);
+//	BorderCellPressed.SetColor(sf::Color::Yellow);
 
 }
 

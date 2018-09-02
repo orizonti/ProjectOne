@@ -11,6 +11,18 @@ GameViewUnitContainer::GameViewUnitContainer()
 		auto TestUnit  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
 		
 		UnitOnMapContainer.insert(TestUnit->CurrentPosition.GetIsoCoord(), TestUnit);
+
+
+		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 1, 0), Direction::Right);
+		UnitObjectClass::DirectionTable.insert(QPair<int, int>(-1, 0), Direction::Left);
+		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 0, 1), Direction::Up);
+		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 0,-1), Direction::Down);
+
+		UnitObjectClass::DirectionTable.insert(QPair<int, int>(-1, 1), Direction::DownRight);
+		UnitObjectClass::DirectionTable.insert(QPair<int, int>(-1,-1), Direction::DownLeft);
+		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 1, 1), Direction::UpRight);
+		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 1,-1), Direction::UpLeft);
+
 		qDebug() << "UNIT HAS BEEN ADDED - " <<  TestUnit->CurrentPosition.GetIsoCoord();
 
 }

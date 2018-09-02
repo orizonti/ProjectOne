@@ -2,12 +2,16 @@
 #include "MapContainerClass.h"
 
 MapContainerClass* UnitObjectClass::TerrainMap = 0;
+QMap<QPair<int, int>, Direction> UnitObjectClass::DirectionTable;
+
+
 std::shared_ptr<AnimationSetContainer> UnitObjectClass::Animations = NULL;
 
 void UnitObjectClass::CheckHeightMap(int x, int y)
 {
 
 }
+
 
 UnitObjectClass::UnitObjectClass(QString Type )
 {
@@ -22,6 +26,8 @@ UnitObjectClass::UnitObjectClass(QString Type )
 	UnitImage = GroupImage(AnimationImage("MaceMan"), 4);
 	UnitImage.SetPositionOnMap(CurrentPosition.GetIsoCoord());
 	qDebug() << "================================================";
+
+
 }
 
 
@@ -35,16 +41,17 @@ ClassWarriorUnit::ClassWarriorUnit(QString TypeUnit) : UnitObjectClass(TypeUnit)
 }
 
 
-
-void UnitObjectClass::MoveUnit()
+void UnitObjectClass::GetMoveDirection()
 {
+	 dir_x = 0;
+	 dir_y = 0;
+	 if (RoutePoints.isEmpty())
+		 return;
 
-	if (this->CurrentPosition == this->Destination)
-		return;
+		Destination = RoutePoints.takeFirst();
 
-	    //qDebug() << "MOVING " << this->CurrentPosition.GetIsoCoord() << "DESTINATION - " << Destination.GetIsoCoord();
-	int dir_x = 0;
-	int dir_y = 0;
+	 d_x = Destination.IsoPos(0) - CurrentPosition.IsoPos(0);
+	 d_y = Destination.IsoPos(1) - CurrentPosition.IsoPos(1);
 
 
 	    if(d_x != 0)
@@ -52,49 +59,56 @@ void UnitObjectClass::MoveUnit()
 		if(d_y != 0)
 		dir_y = d_y / std::abs(d_y);
 
-			if (CurrentPosition.IsoPos(1) != RoutePoints.first().IsoPos(1))
-				CurrentPosition.translate(0, -0.02*dir_y);
-			else
-				CurrentPosition.translate(-0.02*dir_x, 0);
+		qDebug() << "SET DIRECTION - " << dir_x << dir_y << DirectionTable.value(QPair<int, int>(dir_x, dir_y));
 
-			Direction Dir = Direction::Right;
+	UnitImage.SetDiretionMoving(DirectionTable.value(QPair<int,int>(dir_x,dir_y)));
 
-			if (dir_y == 0)
-			{
-				if (dir_x == 1)
-					Dir = Direction::Right;
-			    if (dir_x == -1)
-					Dir = Direction::Left;
-			}
+}
 
-				if (dir_x == 0)
-				{
-						if (dir_y == 1)
-							Dir = Direction::Up;
-						if (dir_y == -1)
-							Dir = Direction::Down;
-				}
+void UnitObjectClass::MoveUnit()
+{
 
-	UnitImage.SetDiretionMoving(Dir);
+
+	if (this->CurrentPosition == this->Destination)
+		GetMoveDirection();
+
+	    //qDebug() << "MOVING " << this->CurrentPosition.GetIsoCoord() << "DESTINATION - " << Destination.GetIsoCoord();
+	if (dir_y == 0 && dir_x == 0)
+		return;
+
+			if (dir_y != 0)
+				CurrentPosition.translate(0, 0.02*dir_y);
+
+			if (dir_x != 0)
+				CurrentPosition.translate(0.02*dir_x, 0);
+
+
 
 	UnitImage.SetPositionOnMap(CurrentPosition.IsoPos(0), CurrentPosition.IsoPos(1));
 }
 
 void UnitObjectClass::SetDestination(int x,int y  )
 {
-	RoutePoints.clear();
-	qDebug() << "UNIT SET DESTINATION - " << x << y;
-	Destination.SetCoordIsometric(x, y);
+	qDebug() << "   ===========================================";
+	qDebug() << "   CURRENT POS - " << CurrentPosition.GetIsoCoord();
+	qDebug() << "   SET DESTINATION X - " << x << "Y - " << y;
+	 RoutePoints.clear();
 
+	 Destination.SetCoordIsometric(x, y);
 
-	 d_x = CurrentPosition.IsoPos(0) - Destination.IsoPos(0);
-	 d_y = CurrentPosition.IsoPos(1) - Destination.IsoPos(1);
+	 d_x = Destination.IsoPos(0) - CurrentPosition.IsoPos(0);
+	 d_y = Destination.IsoPos(1) - CurrentPosition.IsoPos(1);
 
 	 GameCoord RouteNode = CurrentPosition;
 			   RouteNode.translate(0, d_y);
-			   qDebug() << "ADD ROUTE NODE - " << RouteNode.GetIsoCoord();
+	qDebug() << "   ADD ROUTE NODE - " << RouteNode.GetIsoCoord();
 	 RoutePoints.append(RouteNode);
+	 RoutePoints.append(Destination);
+	 Destination = CurrentPosition;
+	qDebug() << "   DESTINATION - " << Destination.GetIsoCoord();
+	qDebug() << "   ROUTE POINTS SIZE - " << RoutePoints.size();
 
+	qDebug() << "===========================================";
 
 }
 
