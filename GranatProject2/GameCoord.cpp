@@ -40,7 +40,7 @@ void GameCoord::SetCoordDecart(float x, float y)
 	IsoPos = n*DecPos;
 }
 
-void GameCoord::SetCoordIsometric(float x, float y)
+void GameCoord::SetCoordIsometric(double x, double y)
 {
 	IsoPos(0) = x;
 	IsoPos(1) = y;
@@ -79,10 +79,9 @@ sf::Vector2f GameCoord::GetDecVector()
 
 void GameCoord::translate(float d_x, float d_y)
 {
-	float new_x_iso = IsoPos(0) + d_x;
-	float new_y_iso = IsoPos(1) + d_y;
 
-	this->SetCoordIsometric(new_x_iso, new_y_iso);
+
+	this->SetCoordIsometric(IsoPos(0) + d_x, IsoPos(1) + d_y);
 }
 
 

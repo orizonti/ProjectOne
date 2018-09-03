@@ -70,25 +70,29 @@ void UnitObjectClass::MoveUnit()
 
 
 	if (this->CurrentPosition == this->Destination)
+	{
+		CurrentPosition = Destination;
 		GetMoveDirection();
+	}
 
 	    //qDebug() << "MOVING " << this->CurrentPosition.GetIsoCoord() << "DESTINATION - " << Destination.GetIsoCoord();
 	if (dir_y == 0 && dir_x == 0)
 		return;
 
 			if (dir_y != 0)
-				CurrentPosition.translate(0, 0.02*dir_y);
+				CurrentPosition.translate(0, 0.025*dir_y);
 
 			if (dir_x != 0)
-				CurrentPosition.translate(0.02*dir_x, 0);
+				CurrentPosition.translate(0.025*dir_x, 0);
 
-			float remain_x_edge =std::abs(CurrentPosition.IsoPos(0) - std::floor(CurrentPosition.IsoPos(0)));
-			float remain_y_edge =std::abs(CurrentPosition.IsoPos(1) - std::floor(CurrentPosition.IsoPos(1)));
+			double remain_x_edge =std::abs(CurrentPosition.IsoPos(0) - std::floor(CurrentPosition.IsoPos(0)));
+			double remain_y_edge =std::abs(CurrentPosition.IsoPos(1) - std::floor(CurrentPosition.IsoPos(1)));
 			//qDebug() << "remain - " << remain_x_edge << remain_y_edge;
+			//qDebug() << "CURRENT POSITION - " << CurrentPosition.GetIsoCoord();
 
 			QVector<double> CellHeightMap;
-			if (remain_x_edge < 0.02 &&
-				remain_y_edge < 0.02)
+			if (remain_x_edge < 0.03 &&
+				remain_y_edge < 0.03)
 			{
 				CellHeightMap = this->TerrainMap->GetCellHeightMap(CurrentPosition.IsoPos(0),CurrentPosition.IsoPos(1));
 

@@ -21,14 +21,14 @@ public:
 
 
 	void SetCoordDecart(float x, float y);
-	void SetCoordIsometric(float x, float y);
+	void SetCoordIsometric(double x, double y);
 	void SetRealCoord(double x, double y);
 
 	void translate(float d_x, float d_y);
 
 	QPair<float, float> GetIsoCoord();
 	QPair<float, float> GetDecCoord();
-
+	
 	sf::Vector2f GetIsoVector();
 	sf::Vector2f GetDecVector();
 
@@ -38,7 +38,7 @@ public:
 		double d_x = this->IsoPos(0) - Coord.IsoPos(0);
 		double d_y = this->IsoPos(1) - Coord.IsoPos(1);
 
-		if (abs(d_x) < 0.0001 && abs(d_y) < 0.0001)
+		if (abs(d_x) < 0.02 && abs(d_y) < 0.02)
 			return true;
 		else
 			return false;

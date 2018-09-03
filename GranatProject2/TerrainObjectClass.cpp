@@ -107,8 +107,9 @@ bool TerrainObjectClass::ContainsMapPoint(int x, int y)
 	bool Lager_BL   =         (Position.IsoPos(0) <= x) &&         (Position.IsoPos(1) <= y);
 	bool Smaller_TR = (PositionTopRight.IsoPos(0) > x) && (PositionTopRight.IsoPos(1) > y);
 
-//	if (Lager_BL && Smaller_TR)
-//		qDebug() << "UNIT ON - BL" << Position.GetIsoCoord() << "TR - " << PositionTopRight.GetIsoCoord() << "NAME - " << this->TerrainData->Name << "Size - " << TileSize << "REAL POS - " << x << y;
+	//qDebug() << "POS - " << x << y << "TILE POS - " << Position.GetIsoCoord() << "TILE TOP - " << PositionTopRight.GetIsoCoord();
+	if (Lager_BL && Smaller_TR)
+		qDebug() << "UNIT ON -" << Position.GetIsoCoord()  << "NAME - " << this->TerrainData->Name;
 
 	return (Lager_BL && Smaller_TR);
 }
@@ -117,10 +118,10 @@ QVector<double>&  TerrainObjectClass::GetHeightMapOnCell(int x, int y)
 {
 	int x_relative = x -Position.IsoPos(0);
 	int y_relative = y -Position.IsoPos(1);
-    qDebug() << "RELATIVE POS - " << y_relative << x_relative << "REAL POS - " << x << y << "TERRAIN - " << TerrainData->Name;
+    //qDebug() << "RELATIVE POS - " << y_relative << x_relative << "REAL POS - " << x << y << "TERRAIN - " << TerrainData->Name;
 
-		int n = x_relative*TileSize.height() + y_relative;
-		//qDebug() << x << y << "IT NUMBER - " << n << "IN - " << TerrainData->HeightMap.size();
+		int n = x_relative*TileSize.width() + y_relative;
+		qDebug() << x_relative << y_relative << "IT NUMBER - " << n << "IN - " << TerrainData->HeightMap.size() << "SIZE - " << TileSize;
 
 //		if (n > 0)
 //			return TerrainData->HeightMap[n - 1];
