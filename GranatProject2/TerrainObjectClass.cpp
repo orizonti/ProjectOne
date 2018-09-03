@@ -23,7 +23,7 @@ void TerrainObjectClass::SetCoord(int x, int y)
 	if (TerrainData != 0)
 	{
 	Position.SetCoordIsometric(x, y);
-	PositionTopRight.SetCoordIsometric(x + TileSize.width(), y + TileSize.height());
+	PositionTopRight.SetCoordIsometric(x + TileSize.height(), y + TileSize.width());
 	PathContour.translate(Position.DecPos(0) + TerrainData->offset.first, 
 		                  Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
 	for (QPainterPath& Path : CellPathes)
@@ -107,8 +107,8 @@ bool TerrainObjectClass::ContainsMapPoint(int x, int y)
 	bool Lager_BL   =         (Position.IsoPos(0) <= x) &&         (Position.IsoPos(1) <= y);
 	bool Smaller_TR = (PositionTopRight.IsoPos(0) > x) && (PositionTopRight.IsoPos(1) > y);
 
-	if(Lager_BL && Smaller_TR)
-	qDebug() << "UNIT ON - BL" << Position.GetIsoCoord() << "TR - " << PositionTopRight.GetIsoCoord() << "NAME - " << this->TerrainData->Name;
+//	if (Lager_BL && Smaller_TR)
+//		qDebug() << "UNIT ON - BL" << Position.GetIsoCoord() << "TR - " << PositionTopRight.GetIsoCoord() << "NAME - " << this->TerrainData->Name << "Size - " << TileSize << "REAL POS - " << x << y;
 
 	return (Lager_BL && Smaller_TR);
 }
@@ -117,7 +117,7 @@ QVector<double>&  TerrainObjectClass::GetHeightMapOnCell(int x, int y)
 {
 	int x_relative = x -Position.IsoPos(0);
 	int y_relative = y -Position.IsoPos(1);
-    qDebug() << "RELATIVE POS - " << y_relative << x_relative << "REAL POS - " << x << y;
+    qDebug() << "RELATIVE POS - " << y_relative << x_relative << "REAL POS - " << x << y << "TERRAIN - " << TerrainData->Name;
 
 		int n = x_relative*TileSize.height() + y_relative;
 		//qDebug() << x << y << "IT NUMBER - " << n << "IN - " << TerrainData->HeightMap.size();
