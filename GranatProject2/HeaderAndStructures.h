@@ -17,7 +17,7 @@
 #include <math.h>
 #include <qpoint.h>
 #include <memory>
-enum Direction { Down = 0, Up = 1, Right = 2, Left = 3, UpLeft = 4, UpRight = 5, DownLeft = 6, DownRight = 7 };
+enum Direction { Right = 0, Left = 1, Up = 2, Down = 3, UpLeft = 4, UpRight = 5, DownLeft = 6, DownRight = 7 };
 enum TypeUnit   { MaceMap = 0, SpearMan};
 enum TypeObject { House1  = 0, House2};
 
