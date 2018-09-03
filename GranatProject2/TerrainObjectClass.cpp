@@ -104,10 +104,11 @@ void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 
 bool TerrainObjectClass::ContainsMapPoint(int x, int y)
 {
-	qDebug() << "CHECK - " << x << y << "BL - " << Position.GetIsoCoord() << "TR - " << PositionTopRight.GetIsoCoord() << "NAME - " << this->TerrainData->Name;
 	bool Lager_BL   =         (Position.IsoPos(0) <= x) &&         (Position.IsoPos(1) <= y);
-	bool Smaller_TR = (PositionTopRight.IsoPos(0) >= x) && (PositionTopRight.IsoPos(1) >= y);
-	qDebug() << Lager_BL << Smaller_TR << (Lager_BL && Smaller_TR);
+	bool Smaller_TR = (PositionTopRight.IsoPos(0) > x) && (PositionTopRight.IsoPos(1) > y);
+
+	if(Lager_BL && Smaller_TR)
+	qDebug() << "UNIT ON - BL" << Position.GetIsoCoord() << "TR - " << PositionTopRight.GetIsoCoord() << "NAME - " << this->TerrainData->Name;
 
 	return (Lager_BL && Smaller_TR);
 }
@@ -116,10 +117,10 @@ QVector<double>&  TerrainObjectClass::GetHeightMapOnCell(int x, int y)
 {
 	int x_relative = x -Position.IsoPos(0);
 	int y_relative = y -Position.IsoPos(1);
-    qDebug() << "UNIT GET HEIGTH MAP ON POS RELATIVE - " << x_relative << y_relative;
+    qDebug() << "RELATIVE POS - " << y_relative << x_relative << "REAL POS - " << x << y;
 
 		int n = x_relative*TileSize.height() + y_relative;
-		qDebug() << x << y << "IT NUMBER - " << n << "IN - " << TerrainData->HeightMap.size();
+		//qDebug() << x << y << "IT NUMBER - " << n << "IN - " << TerrainData->HeightMap.size();
 
 //		if (n > 0)
 //			return TerrainData->HeightMap[n - 1];

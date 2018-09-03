@@ -23,7 +23,7 @@ UnitObjectClass::UnitObjectClass(QString Type )
 
 
 	qDebug() << "CREATE GROUP IMAGE TO UNIT";
-	UnitImage = GroupImage(AnimationImage("MaceMan"), 4);
+	UnitImage = GroupImage(AnimationImage(Type), 4);
 	UnitImage.SetPositionOnMap(CurrentPosition.GetIsoCoord());
 	qDebug() << "================================================";
 
@@ -92,10 +92,10 @@ void UnitObjectClass::MoveUnit()
 			{
 				CellHeightMap = this->TerrainMap->GetCellHeightMap(CurrentPosition.IsoPos(0),CurrentPosition.IsoPos(1));
 
-				if (CellHeightMap.isEmpty())
-					qDebug() << "UNIT ON PLAIN CELL";
-				else
-					qDebug() << "HEIGHT MAP - " << CellHeightMap;
+			//	if (CellHeightMap.isEmpty())
+			//		qDebug() << "UNIT ON PLAIN CELL";
+			//	else
+			//		qDebug() << "HEIGHT MAP - " << CellHeightMap;
 			}
 
 
@@ -112,8 +112,14 @@ void UnitObjectClass::SetDestination(int x,int y  )
 
 	 Destination.SetCoordIsometric(x, y);
 
+	 int diff = 0;
 	 d_x = Destination.IsoPos(0) - CurrentPosition.IsoPos(0);
 	 d_y = Destination.IsoPos(1) - CurrentPosition.IsoPos(1);
+//	 if (d_x < d_y)
+//		 diff = -d_x;
+
+//	 if (d_x > d_y)
+//		 diff = -d_y;
 
 	 GameCoord RouteNode = CurrentPosition;
 			   RouteNode.translate(0, d_y);

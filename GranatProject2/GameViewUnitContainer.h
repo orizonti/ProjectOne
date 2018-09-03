@@ -8,7 +8,7 @@ class GameViewUnitContainer
 public:
 	GameViewUnitContainer();
 	~GameViewUnitContainer();
-	std::shared_ptr<UnitObjectClass> CurrentUnit;
+	std::shared_ptr<UnitObjectClass> CurrentUnit = NULL;
 	QMap<QPair<int,int>,std::shared_ptr<UnitObjectClass>> UnitOnMapContainer;
 
 	std::shared_ptr<AnimationSetContainer> Animation_Units_Objects;

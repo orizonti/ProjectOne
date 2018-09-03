@@ -177,7 +177,6 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 QVector<double>& MapContainerClass::GetCellHeightMap(int x, int y)
 {
-	qDebug() << "CHECK COORD  - " << x << y;
 	GameCoord Coord; 
 	Coord.SetCoordIsometric(x, y);
     PairCoord CenterCluster = DefineBelongPoint(CalculateNearestCluster(x, y),Coord);
@@ -186,12 +185,11 @@ QVector<double>& MapContainerClass::GetCellHeightMap(int x, int y)
 
 	if (CenterCluster != PairCoord(0, 0))
 	{
-		qDebug() << "UNIT ON HILL";
 			for (auto Terrain : ClusteredObjects.value(CenterCluster))
 			{
 				     if (Terrain->ContainsMapPoint(x, y))
 					 {
-					 qDebug() << "Terrain - " << Terrain->TerrainData->Name << "POS - " << Terrain->Position.GetIsoCoord() << "contains - " << x << y << "SIZE - " << Terrain->TileSize;
+					 //qDebug() << "Terrain - " << Terrain->TerrainData->Name << "POS - " << Terrain->Position.GetIsoCoord() << "contains - " << x << y << "SIZE - " << Terrain->TileSize;
 					 Heights = Terrain->GetHeightMapOnCell(x,y);
 					 }
 
@@ -201,7 +199,6 @@ QVector<double>& MapContainerClass::GetCellHeightMap(int x, int y)
 			}
 	}
 
-	qDebug() << "NO HEIGHT MAP";
 	return QVector<double>();
 
 }
