@@ -24,7 +24,7 @@ public:
 	void SetCoordIsometric(double x, double y);
 	void SetRealCoord(double x, double y);
 
-	void translate(float d_x, float d_y);
+	void translate(double d_x, double d_y);
 
 	QPair<float, float> GetIsoCoord();
 	QPair<float, float> GetDecCoord();

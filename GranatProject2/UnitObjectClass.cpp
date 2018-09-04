@@ -59,7 +59,7 @@ void UnitObjectClass::GetMoveDirection()
 		if(d_y != 0)
 		dir_y = d_y / std::abs(d_y);
 
-		qDebug() << "SET DIRECTION - " << dir_x << dir_y << DirectionTable.value(QPair<int, int>(dir_x, dir_y));
+		//qDebug() << "SET DIRECTION - " << dir_x << dir_y << DirectionTable.value(QPair<int, int>(dir_x, dir_y));
 
 	UnitImage.SetDiretionMoving(DirectionTable.value(QPair<int,int>(dir_x,dir_y)));
 
@@ -68,16 +68,33 @@ void UnitObjectClass::GetMoveDirection()
 void UnitObjectClass::MoveUnit()
 {
 
-
 	if (this->CurrentPosition == this->Destination)
 	{
 		CurrentPosition = Destination;
 		GetMoveDirection();
 	}
 
-	    //qDebug() << "MOVING " << this->CurrentPosition.GetIsoCoord() << "DESTINATION - " << Destination.GetIsoCoord();
 	if (dir_y == 0 && dir_x == 0)
 		return;
+
+			QVector<double> CellHeightMap;
+	        
+			if (CurrentPosition == NextCell)
+			{
+				NextCell.translate(dir_x, dir_y);
+				qDebug() << "NEXT CELL - " << NextCell.GetIsoCoord();
+
+				CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
+
+				qDebug() << "-----------------------------------------";
+				if (CellHeightMap.isEmpty())
+					qDebug() << "            UNIT ON PLAIN CELL";
+				else
+					qDebug() << "            HEIGHT MAP - " << CellHeightMap;
+				qDebug() << "-----------------------------------------";
+			}
+
+	    //qDebug() << "MOVING " << this->CurrentPosition.GetIsoCoord() << "DESTINATION - " << Destination.GetIsoCoord();
 
 			if (dir_y != 0)
 				CurrentPosition.translate(0, 0.025*dir_y);
@@ -85,22 +102,8 @@ void UnitObjectClass::MoveUnit()
 			if (dir_x != 0)
 				CurrentPosition.translate(0.025*dir_x, 0);
 
-			double remain_x_edge =std::abs(CurrentPosition.IsoPos(0) - std::floor(CurrentPosition.IsoPos(0)));
-			double remain_y_edge =std::abs(CurrentPosition.IsoPos(1) - std::floor(CurrentPosition.IsoPos(1)));
-			//qDebug() << "remain - " << remain_x_edge << remain_y_edge;
-			//qDebug() << "CURRENT POSITION - " << CurrentPosition.GetIsoCoord();
 
-			QVector<double> CellHeightMap;
-			if (remain_x_edge < 0.03 &&
-				remain_y_edge < 0.03)
-			{
-				CellHeightMap = this->TerrainMap->GetCellHeightMap(CurrentPosition.IsoPos(0),CurrentPosition.IsoPos(1));
 
-			//	if (CellHeightMap.isEmpty())
-			//		qDebug() << "UNIT ON PLAIN CELL";
-			//	else
-			//		qDebug() << "HEIGHT MAP - " << CellHeightMap;
-			}
 
 
 
@@ -131,7 +134,8 @@ void UnitObjectClass::SetDestination(int x,int y  )
 	 RoutePoints.append(RouteNode);
 	 RoutePoints.append(Destination);
 	 Destination = CurrentPosition;
-	qDebug() << "   DESTINATION - " << Destination.GetIsoCoord();
+	 NextCell = CurrentPosition;
+	qDebug() << "   DESTINATION - " << Destination.GetIsoCoord() << "NEXT CELL - " << NextCell.GetIsoCoord();
 	qDebug() << "   ROUTE POINTS SIZE - " << RoutePoints.size();
 
 	qDebug() << "===========================================";

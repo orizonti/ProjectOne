@@ -39,6 +39,7 @@ GameViewUnitContainer::~GameViewUnitContainer()
 void GameViewUnitContainer::MapCellPressed(int x, int y)
 {
 
+	qDebug() << "UNITS CELL PRESSED - " << x << y;
 	if (UnitOnMapContainer.contains(QPair<float, float>(x, y)))
 	{
 		CurrentUnit = UnitOnMapContainer[QPair<float, float>(x, y)];

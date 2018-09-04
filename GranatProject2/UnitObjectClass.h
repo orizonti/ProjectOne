@@ -28,6 +28,7 @@ public:
 
 	QVector<GameCoord> RoutePoints;
 
+
 	QString TypeUnit;
 
 	int CurrentFrame = 0;
@@ -42,6 +43,7 @@ public:
 	GroupImage UnitImage;
 	GameCoord CurrentPosition;
 	GameCoord Destination;
+	GameCoord NextCell;
 };
 
 class ClassWarriorUnit :

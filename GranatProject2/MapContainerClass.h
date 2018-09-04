@@ -48,6 +48,7 @@ public:
 	void MapCellPressed(int x, int y);
 	void MapCellMoved(int x, int );
 	void DefineCellMoved(int x,int y); //DEFINE THAT CURSOR IS MOVING UNDER ANY HILL TO DRAW CELL BORDER ON HILL
+	QPair<int, int> GetRealCellPressed();
 	QVector<double>& GetCellHeightMap(int x, int y);
 
 				private:

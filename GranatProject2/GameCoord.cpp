@@ -77,7 +77,7 @@ sf::Vector2f GameCoord::GetDecVector()
 	return Coord;
 }
 
-void GameCoord::translate(float d_x, float d_y)
+void GameCoord::translate(double d_x, double d_y)
 {
 
 

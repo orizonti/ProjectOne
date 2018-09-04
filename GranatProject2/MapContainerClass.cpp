@@ -229,6 +229,14 @@ void MapContainerClass::DefineCellMoved(int x, int y)
 }
 
 
+QPair<int, int> MapContainerClass::GetRealCellPressed()
+{
+
+	if (FLAG_CURSOR_ON_HILL)
+		return CurrentTerrain->GetCellPressed();
+	else
+		return PressedPosition.GetIsoCoord();
+}
 
 void MapContainerClass::MapCellPressed(int x, int y)
 {

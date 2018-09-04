@@ -188,6 +188,14 @@ void TerrainTileElement::GetHeightMap()
 						}
 							Size_By_Cell.setWidth(width_grid); 
 							Size_By_Cell.setHeight(height_grid);
-qDebug() << "          HEIGHT MAP SIZE - " << HeightMap.size() << "HEIGHT MAP TO DRAW - " << HeightMapToDraw.size() <<"TERR SIZE - " << width_grid << height_grid;
+//qDebug() << "          HEIGHT MAP SIZE - " << HeightMap.size() << "HEIGHT MAP TO DRAW - " << HeightMapToDraw.size() <<"TERR SIZE - " << width_grid << height_grid;
+//	qDebug() << "========================";
+//	int n = 0;
+//for (QVector<double> Heights : HeightMap)
+//{
+//	qDebug() << "<<<<<<" << n++ << ">>>>>>";
+//	qDebug() << Heights;
+//}
+//	qDebug() << "========================";
 
 }

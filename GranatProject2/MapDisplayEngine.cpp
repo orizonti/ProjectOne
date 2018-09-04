@@ -116,7 +116,9 @@ void MapDisplayEngine::MouseControl(sf::Event event)
 				MousePosition.SetRealCoord(x_pos_real,y_pos_real);
 
 				Map.MapCellPressed(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
-				Units.MapCellPressed(MousePosition.IsoPos(0), MousePosition.IsoPos(1));
+
+					QPair<int, int> Cell = Map.GetRealCellPressed();
+					Units.MapCellPressed(Cell.first,Cell.second);
 			}
 		//===============================================================================================
 

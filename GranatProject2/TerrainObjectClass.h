@@ -31,6 +31,7 @@ public:
 	int Number_Cell_Moved = 0;
 
 	QuadeRangleShape& GetCellBorderMoved();
+	QPair<int, int> GetCellPressed();
 
 	bool CheckCursorPosition(int x, int y);
 	bool ContainsMapPoint(int x, int y);
