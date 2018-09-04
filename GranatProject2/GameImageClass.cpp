@@ -5,11 +5,11 @@ std::shared_ptr<AnimationSetContainer> AnimationImage::Animations = NULL;
 
 AnimationImage::AnimationImage()
 {
-	qDebug() << "ANIMATION IMAGE DEFAULT CONSTRUCTOR";
+	//qDebug() << "ANIMATION IMAGE DEFAULT CONSTRUCTOR";
 }
 AnimationImage::AnimationImage(QString UnitType)
 {
-	qDebug() << "CREATE ANIMATION IMAGE TO TYPE - " << UnitType;
+	//qDebug() << "CREATE ANIMATION IMAGE TO TYPE - " << UnitType;
 							this->CurrentDir = Direction::Right;
 	AnimationImages = Animations->GetUnitAnimationSet(UnitType);
 	this->Sprite->setTexture(AnimationImages->GetTexture(CurrentDir,0));
@@ -18,7 +18,7 @@ AnimationImage::AnimationImage(QString UnitType)
 
 AnimationImage::AnimationImage(AnimationImage&& Image)
 {
-	qDebug() << "ANIMATION IMAGE CONSTRUCTOR OF MOVING";
+	//qDebug() << "ANIMATION IMAGE CONSTRUCTOR OF MOVING";
 	this->Sprite = Image.Sprite;
 				   Image.Sprite = NULL;
 	this->AnimationImages = Image.AnimationImages;
@@ -30,7 +30,7 @@ AnimationImage::AnimationImage(AnimationImage&& Image)
 
 AnimationImage::AnimationImage(const AnimationImage& Image)
 {
-	qDebug() << "         CREATE ANIMATION IMAGE COPY of TYPE - " << Image.Type << "PTR - " << this;
+	//qDebug() << "         CREATE ANIMATION IMAGE COPY of TYPE - " << Image.Type << "PTR - " << this;
 	this->Sprite = std::shared_ptr<sf::Sprite>(new sf::Sprite(*Image.Sprite->getTexture()));
 	this->AnimationImages = Image.AnimationImages;
 	this->CurrentDir = Image.CurrentDir;
@@ -68,7 +68,7 @@ SimpleImage::SimpleImage(sf::Texture& tex)
 
 SimpleImage::SimpleImage(const SimpleImage& Image)
 {
-	qDebug() << "SIMPLE IMAGE COPY CONSTRUCTOR - " << this;
+	//qDebug() << "SIMPLE IMAGE COPY CONSTRUCTOR - " << this;
 	Sprite = std::shared_ptr<sf::Sprite>(new sf::Sprite(*Image.Sprite->getTexture()));
 }
 SimpleImage::SimpleImage(SimpleImage&& Image)
@@ -78,12 +78,12 @@ SimpleImage::SimpleImage(SimpleImage&& Image)
 }
 AnimationImage::~AnimationImage()
 {
-	qDebug() << "ANIMATION IMAGE DESTRUCTOR";
+	//qDebug() << "ANIMATION IMAGE DESTRUCTOR";
 }
 
 SimpleImage::~SimpleImage()
 {
-	qDebug() << "SIMPLE IMAGE DESTRUCTOR";
+	//qDebug() << "SIMPLE IMAGE DESTRUCTOR";
 }
 
 void AnimationImage::LinkAnimationSet(std::shared_ptr<AnimationSet> Animation)
@@ -93,13 +93,13 @@ void AnimationImage::LinkAnimationSet(std::shared_ptr<AnimationSet> Animation)
 
 GroupImage::GroupImage()
 {
-	qDebug() << "GROUP IMAGE DEFAULT CONSTRUCTOR";
+	//qDebug() << "GROUP IMAGE DEFAULT CONSTRUCTOR";
 	
 }
 GroupImage::GroupImage(const GroupImage& Image) : Images(Image.Images), 
                                                   OffsetToImage(Image.OffsetToImage)
 {
-	qDebug() << "GROUP COPY CONSTRUCTOR";
+	//qDebug() << "GROUP COPY CONSTRUCTOR";
 	GroupSize = Image.GroupSize;
 }
 
@@ -107,13 +107,13 @@ GroupImage::GroupImage(const GroupImage&& Image) : Images(std::move(Image.Images
                                                    OffsetToImage(std::move(OffsetToImage))
 {
 
-	qDebug() << "GROUP MOVE CONSTRUCTOR";
+	//qDebug() << "GROUP MOVE CONSTRUCTOR";
 	GroupSize = Image.GroupSize;
 }
 
 void GroupImage::operator=(const GroupImage& Image)
 {
-	qDebug() << "GROUP IMAGE COPY = OPERATOR";
+	//qDebug() << "GROUP IMAGE COPY = OPERATOR";
 	this->Images.append(Image.Images);
 	this->OffsetToImage.append(Image.OffsetToImage);
 	this->GroupSize = Image.GroupSize;
@@ -121,7 +121,7 @@ void GroupImage::operator=(const GroupImage& Image)
 
 void GroupImage::operator=(const GroupImage&& Image)
 {
-	qDebug() << "GROUP IMAGE MOVE = OPERATOR";
+	//qDebug() << "GROUP IMAGE MOVE = OPERATOR";
 	Images.append(std::move(Image.Images));
 	this->OffsetToImage.append(std::move(Image.OffsetToImage));
 	this->GroupSize = Image.GroupSize;
@@ -148,7 +148,7 @@ GroupImage::GroupImage(const SimpleImage& Image, int Size)
 GroupImage::GroupImage(const AnimationImage& Image, int Size)
 {
 	this->GroupSize = Size;
-	qDebug() << "GROUP IMAGE CONSTRUCTOR SIZE - " << Size;
+	//qDebug() << "GROUP IMAGE CONSTRUCTOR SIZE - " << Size;
 
 	if (Size <= 4)
 	{
@@ -160,8 +160,8 @@ GroupImage::GroupImage(const AnimationImage& Image, int Size)
 
 	for (int n = 0; n < Size; n++)
 	{
-		qDebug() << "--------------------------------------------";
-		qDebug() << "APPEND NEW ANIMATION IMAGE - " << n;
+		//qDebug() << "--------------------------------------------";
+		//qDebug() << "APPEND NEW ANIMATION IMAGE - " << n;
 		Images.append(std::shared_ptr<AnimationImage>(new AnimationImage(Image)));
 	}
 }

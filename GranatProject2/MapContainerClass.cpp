@@ -332,7 +332,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 					//CREATE QUADERANGLE TO DRAW RED BORDER WHEN CURSOR POINT TO HILL TERRAINS CLUSTER
 					sf::ConvexShape newConvex;
 					newConvex.setPointCount(4);
-					qDebug() << "CREATE CLUSTER CONVEX";
+					//qDebug() << "CREATE CLUSTER CONVEX";
 				 GameCoord PointCoord;
 							for (auto TerrainObject : CornerTerrains)
 							{                                          //GET CORNER TYPE TERRAIN ELEMENT 5,7,2 or 22 AND SET IT'S COORD TO CONVEX
@@ -465,7 +465,7 @@ void MapContainerClass::TerrainClasterization(QVector<TerrainObjectClass*> Terra
 						NewSet.append(ChildSet);
 						}
 
-				qDebug() << "CHILD SET UNDEFINED CODE INVOKE";
+				//qDebug() << "CHILD SET UNDEFINED CODE INVOKE";
 				return NewSet;
 		};
 	   //=================================================================================

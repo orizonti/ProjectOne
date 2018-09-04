@@ -2,7 +2,7 @@
 
 std::shared_ptr<AnimationSet> &AnimationSetContainer::GetUnitAnimationSet(int Unit)
 {
-	qDebug() << "GET UNIT NUMBER - " << Unit;
+	//qDebug() << "GET UNIT NUMBER - " << Unit;
 	return this->AnimationSetsToUnits[Unit];
 }
 
@@ -24,15 +24,15 @@ std::shared_ptr<AnimationSet> &AnimationSetContainer::GetObjectAnimationSet(int 
 void AnimationSetContainer::UploadAnimationSets(QString PathToAnimation)
 {
 	QDir AnimationDirectory(PathToAnimation);
-	qDebug() << "UPLOAD ANIMATION FROM DIRECTORY - " << PathToAnimation;
+	//qDebug() << "UPLOAD ANIMATION FROM DIRECTORY - " << PathToAnimation;
 	auto FileInfo = AnimationDirectory.entryInfoList();
 
 	for (QFileInfo& entity : FileInfo)
 	{
-	    qDebug() << "ANIMATION DIR CONTAINING - " << entity.baseName();
+	   // qDebug() << "ANIMATION DIR CONTAINING - " << entity.baseName();
 		if (!entity.baseName().isEmpty())
 		{
-	    qDebug() << "APPEND - " << entity.baseName();
+	   // qDebug() << "APPEND - " << entity.baseName();
 		UnitsType.insert(entity.baseName(), UnitsType.size() + 1);
 		}
 

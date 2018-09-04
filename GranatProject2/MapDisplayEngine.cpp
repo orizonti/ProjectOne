@@ -10,14 +10,15 @@ MapDisplayEngine::~MapDisplayEngine()
 MapDisplayEngine::MapDisplayEngine()
 
 {
-	 Window = new sf::RenderWindow(sf::VideoMode(1800, 1000), "SFML works!");
-	 Camera = new sf::View(sf::Vector2f(0, 0), sf::Vector2f(1800, 1000));
+	WindowSize.setHeight(800);
+	WindowSize.setWidth(1200);
+
+	 Window = new sf::RenderWindow(sf::VideoMode(WindowSize.width(), WindowSize.height()), "SFML works!");
+	 Camera = new sf::View(sf::Vector2f(0, 0), sf::Vector2f(WindowSize.width(), WindowSize.height()));
 	 CellSize = QSize(512, 256);
 	Window->setView(*Camera);
 	OffsetCamera(0) = 0;
 	OffsetCamera(1) = 0;
-	WindowSize.setHeight(1000);
-	WindowSize.setWidth(1800);
 
 	QString GameDir = qgetenv("GAME_WORK_DIR");
 	Font.loadFromFile(GameDir.toStdString() + "/Gc05002t.ttf");
@@ -41,14 +42,14 @@ void MapDisplayEngine::KeyboardControl(sf::Event Keyboard)
 			{
 				Camera->move(-CellSize.height(), 0);
 				OffsetCamera(0) += 1;
-				qDebug() << "Scale - " << Scale << "OffsetCamera(0) - " << OffsetCamera(0);
+				//qDebug() << "Scale - " << Scale << "OffsetCamera(0) - " << OffsetCamera(0);
 			}
 
 			if (Keyboard.key.code == sf::Keyboard::Right)
 			{
 				Camera->move(CellSize.height() , 0);
 				OffsetCamera(0) -= 1;
-				qDebug() << "Scale - " << Scale << "OffsetCamera(1) - " << OffsetCamera(0);
+				//qDebug() << "Scale - " << Scale << "OffsetCamera(1) - " << OffsetCamera(0);
 			}
 			if (Keyboard.key.code == sf::Keyboard::Up)
 			{

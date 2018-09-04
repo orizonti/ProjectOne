@@ -82,7 +82,7 @@ void UnitObjectClass::MoveUnit()
 			if (CurrentPosition == NextCell)
 			{
 				NextCell.translate(dir_x, dir_y);
-				qDebug() << "NEXT CELL - " << NextCell.GetIsoCoord();
+				//qDebug() << "NEXT CELL - " << NextCell.GetIsoCoord().first + 1 << NextCell.GetIsoCoord().second + 1;
 
 				CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
 

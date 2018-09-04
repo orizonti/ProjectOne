@@ -12,7 +12,7 @@ TerrainObjectClass::TerrainObjectClass(TerrainTileElement* Terrain)
 		}
 		TerrainData = Terrain;
 		this->TileSize = TerrainData->Size_By_Cell;
-		qDebug() << "  >>>>>>>>>>CREATE TERRAIN wit TYPE - " << TerrainData->Name << "SIZE - " << TileSize;
+		//qDebug() << "  >>>>>>>>>>CREATE TERRAIN wit TYPE - " << TerrainData->Name << "SIZE - " << TileSize;
 	}
 
 }
@@ -130,7 +130,7 @@ QVector<double>&  TerrainObjectClass::GetHeightMapOnCell(int x, int y)
 	int x_relative = x -Position.IsoPos(0);
 	int y_relative = y -Position.IsoPos(1);
 
-		int n = y_relative*TileSize.width() + x_relative;
+		int n = y_relative*TileSize.height() + x_relative;
 		//qDebug() << x_relative << y_relative << "IT NUMBER - " << n << "IN TERRAIN - " << TerrainData->Name;
 
 		if (n >= 0)

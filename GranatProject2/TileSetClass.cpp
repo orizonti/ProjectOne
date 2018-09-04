@@ -155,18 +155,19 @@ void TerrainTileElement::GetHeightMap()
 						int line = 0;
 						int node = 0;
 						int side = 0;
+						qDebug() << "========================================================";
 						for (int sector = 0; sector < width_grid * height_grid; sector++)
 						{
 							HeightMap.append(QVector<double>());
 							line = sector / height_grid;
 							node = sector - line*height_grid;
-							//qDebug() << "          ADD SECTOR NUMBER - " << sector << "LINE - " << line << "NODE - " << node;
+							qDebug() << "          ADD SECTOR NUMBER - " << sector << "LINE - " << line << "NODE - " << node;
 
 							for(int corner = 0; corner < 4; corner++)
 								{
 
 								side = corner / 2;
-						        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + side);
+						        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + side); // ERROR !!!!!
 								NodePoint = NodePoint + StartGridPoint;
 								LineCoord.SetCoordIsometric(node+side,line + side);
 
@@ -177,7 +178,7 @@ void TerrainTileElement::GetHeightMap()
 								Height = std::hypot(x_cathetus, y_cathetus);
 
 								HeightMap.last().append(Height);
-
+								qDebug() << "Height - " << Height << "Side - " << side << "node - " << node;
 										Draw_Height_Node NewNode;
 										NewNode.DrawHeight.setString(std::to_string((int)Height));
 										NewNode.NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node+side);
