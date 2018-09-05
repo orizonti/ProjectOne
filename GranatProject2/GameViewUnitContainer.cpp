@@ -9,15 +9,28 @@ GameViewUnitContainer::GameViewUnitContainer()
 		AnimationImage::Animations = Animation_Units_Objects;
 
 		auto TestUnit  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
-		auto TestUnit2  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("Spearman"));
-		auto TestUnit3  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("Axeman"));
-		TestUnit2->SetPosition(10, 8);
-		TestUnit3->SetPosition(12, 8);
+		auto TestUnit2  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
+		auto TestUnit3  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
+
+		auto TestUnit11  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
+		auto TestUnit22 = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
+		auto TestUnit33  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
+
+		TestUnit->SetPosition(20, 21);
+		TestUnit2->SetPosition(20, 22);
+		TestUnit3->SetPosition(20, 23);
 		
+		TestUnit11->SetPosition(3, 6);
+		TestUnit22->SetPosition(4, 6);
+		TestUnit33->SetPosition(5, 6);
+
 		UnitOnMapContainer.insert(TestUnit->CurrentPosition.GetIsoCoord(), TestUnit);
 		UnitOnMapContainer.insert(TestUnit2->CurrentPosition.GetIsoCoord(), TestUnit2);
 		UnitOnMapContainer.insert(TestUnit3->CurrentPosition.GetIsoCoord(), TestUnit3);
 
+		UnitOnMapContainer.insert(TestUnit11->CurrentPosition.GetIsoCoord(), TestUnit11);
+		UnitOnMapContainer.insert(TestUnit22->CurrentPosition.GetIsoCoord(), TestUnit22);
+		UnitOnMapContainer.insert(TestUnit33->CurrentPosition.GetIsoCoord(), TestUnit33);
 
 		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 0, 1), Direction::Right);
 		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 0,-1), Direction::Left);

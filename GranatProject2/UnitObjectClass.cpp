@@ -93,7 +93,8 @@ void UnitObjectClass::MoveUnit()
 
 				CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
 			    PosInCell = 0;
-
+                   
+				//double offset_
 
 				qDebug() << "-----------------------------------------";
 				if (CellHeightMap.isEmpty())
@@ -108,6 +109,10 @@ void UnitObjectClass::MoveUnit()
 				//qDebug() << "            HEIGHT MAP - " << CellHeightMap;
 					if (CellHeightMapCurrent.isEmpty())
 					{
+
+                    
+
+
 				Elevations[0] = CellHeightMap[0]/40.0;
 				Elevations[1] = CellHeightMap[1]/40.0;
 				Elevations[2] = CellHeightMap[2]/40.0;
