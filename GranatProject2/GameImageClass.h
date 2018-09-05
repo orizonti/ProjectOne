@@ -17,6 +17,7 @@ virtual	void DisplayImage(sf::RenderWindow& Window);
 
 	void SetTexture(sf::Texture& Texture);
 	void SetPositionImage(float x, float y);
+	void TranslateImage(float x, float y);
 	void SetPositionImage(QPair<float,float> Coord);
 
 	void SetPositionOnMap(float iso_x, float iso_y);
@@ -24,12 +25,16 @@ virtual	void DisplayImage(sf::RenderWindow& Window);
 
 	void SetObjectDirection(Direction Dir);
 
+	void SetElevation(double Elevation);
+	void Elevate(double Elevation);
+
 protected:
 	QString Type = "None";
 	GameCoord ImagePosOnMap;
 	Direction CurrentDir = Right;
 	std::shared_ptr<sf::Sprite>  Sprite;
-
+	double DecElevation = 0;
+	
 };
 
 class AnimationImage : public SimpleImage
@@ -83,6 +88,8 @@ public:
 	void SetPositionOnMap(QPair<float,float> IsoCoord);
 
 	void SetDiretionMoving(Direction Dir);
+
+	void TranslateElevation(QVector<double>& Translation);
 private:
 	QVector<QPair<float,float> > OffsetToImage;
 	QVector<std::shared_ptr<SimpleImage>> Images;

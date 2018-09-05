@@ -26,6 +26,10 @@ public:
 	int dir_x = 0;
 	int dir_y = 0;
 
+	QVector<double> Elevations;
+	double PosInCell = 0;
+	double CurrentHeight;
+
 	QVector<GameCoord> RoutePoints;
 
 

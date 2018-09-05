@@ -163,13 +163,38 @@ void TerrainTileElement::GetHeightMap()
 							node = sector - line*height_grid;
 							qDebug() << "          ADD SECTOR NUMBER - " << sector << "LINE - " << line << "NODE - " << node;
 
-							for(int corner = 0; corner < 4; corner++)
+						//	for(int corner = 0; corner < 4; corner++)
+						//		{
+
+						//		side = corner / 2;
+						//        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + side); // ERROR !!!!!
+						//		NodePoint = NodePoint + StartGridPoint;
+						//		LineCoord.SetCoordIsometric(node+side,line + side);
+
+						//		LinePos = LineCoord.GetDecCoord();
+						//		//qDebug() << "NODE POINT - " << NodePoint << "LINE  - " << line + side << "IsoPos - " << LineCoord.GetIsoCoord();
+						//		x_cathetus = NodePoint.x() - LinePos.first;
+						//		y_cathetus = NodePoint.y() - LinePos.second;
+						//		Height = std::hypot(x_cathetus, y_cathetus);
+
+						//		HeightMap.last().append(Height);
+						//		qDebug() << "Height - " << Height << "Side - " << side << "node - " << node;
+						//				Draw_Height_Node NewNode;
+						//				NewNode.DrawHeight.setString(std::to_string((int)Height));
+						//				NewNode.NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node+side);
+						//				HeightMapToDraw.append(NewNode);
+
+						//		}
+
+							for (int side = 0; side < 2; side++)
+							{
+
+							for(int corner = 0; corner < 2; corner++)
 								{
 
-								side = corner / 2;
-						        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + side); // ERROR !!!!!
+						        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + corner); // ERROR !!!!!
 								NodePoint = NodePoint + StartGridPoint;
-								LineCoord.SetCoordIsometric(node+side,line + side);
+								LineCoord.SetCoordIsometric(node+corner,line + side);
 
 								LinePos = LineCoord.GetDecCoord();
 								//qDebug() << "NODE POINT - " << NodePoint << "LINE  - " << line + side << "IsoPos - " << LineCoord.GetIsoCoord();
@@ -178,14 +203,15 @@ void TerrainTileElement::GetHeightMap()
 								Height = std::hypot(x_cathetus, y_cathetus);
 
 								HeightMap.last().append(Height);
-								qDebug() << "Height - " << Height << "Side - " << side << "node - " << node;
+								//qDebug() << "Height - " << Height << "Side - " << side + line << "node - " << node + corner ;
 										Draw_Height_Node NewNode;
 										NewNode.DrawHeight.setString(std::to_string((int)Height));
-										NewNode.NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node+side);
+										NewNode.NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node+corner);
 										HeightMapToDraw.append(NewNode);
 
 								}
 
+							}
 						}
 							Size_By_Cell.setWidth(width_grid); 
 							Size_By_Cell.setHeight(height_grid);

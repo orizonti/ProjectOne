@@ -26,8 +26,12 @@ UnitObjectClass::UnitObjectClass(QString Type )
 	UnitImage = GroupImage(AnimationImage(Type), 4);
 	UnitImage.SetPositionOnMap(CurrentPosition.GetIsoCoord());
 	qDebug() << "================================================";
+	Elevations.resize(4);
+	//Elevations.fill(0, 4);
+	Elevations.fill(0);
+	qDebug() << Elevations[0];
 
-
+	qDebug() << "================================================";
 }
 
 
@@ -77,20 +81,46 @@ void UnitObjectClass::MoveUnit()
 	if (dir_y == 0 && dir_x == 0)
 		return;
 
+			QVector<double> CellHeightMapCurrent;
 			QVector<double> CellHeightMap;
 	        
+
 			if (CurrentPosition == NextCell)
 			{
+				CellHeightMapCurrent = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
 				NextCell.translate(dir_x, dir_y);
 				//qDebug() << "NEXT CELL - " << NextCell.GetIsoCoord().first + 1 << NextCell.GetIsoCoord().second + 1;
 
 				CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
+			    PosInCell = 0;
+
 
 				qDebug() << "-----------------------------------------";
 				if (CellHeightMap.isEmpty())
+				{
+					Elevations.fill(0);
 					qDebug() << "            UNIT ON PLAIN CELL";
+				}
 				else
-					qDebug() << "            HEIGHT MAP - " << CellHeightMap;
+				{
+				//qDebug() << "            HEIGHT MAP CURRENT - " << CellHeightMapCurrent;
+				//qDebug() << "-----------------------------------------";
+				//qDebug() << "            HEIGHT MAP - " << CellHeightMap;
+					if (CellHeightMapCurrent.isEmpty())
+					{
+				Elevations[0] = CellHeightMap[0]/40.0;
+				Elevations[1] = CellHeightMap[1]/40.0;
+				Elevations[2] = CellHeightMap[2]/40.0;
+				Elevations[3] = CellHeightMap[3]/40.0;
+					}
+					else
+					{
+				Elevations[0] = (CellHeightMap[0] - CellHeightMapCurrent[0])/40.0;
+				Elevations[1] = (CellHeightMap[1] - CellHeightMapCurrent[1])/40.0;
+				Elevations[2] = (CellHeightMap[2] - CellHeightMapCurrent[2])/40.0;
+				Elevations[3] = (CellHeightMap[3] - CellHeightMapCurrent[3])/40.0;
+					}
+				}
 				qDebug() << "-----------------------------------------";
 			}
 
@@ -101,6 +131,13 @@ void UnitObjectClass::MoveUnit()
 
 			if (dir_x != 0)
 				CurrentPosition.translate(0.025*dir_x, 0);
+
+			if(Elevations.last() != 0)
+			UnitImage.TranslateElevation(Elevations);
+
+			PosInCell += 0.025;
+			CurrentHeight += Elevations[0];
+			//qDebug() << "POS IN CELL - " << PosInCell << "CURRENT HEIGHT - " << CurrentHeight;
 
 
 

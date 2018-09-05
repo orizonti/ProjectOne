@@ -25,6 +25,7 @@ public:
 	void SetRealCoord(double x, double y);
 
 	void translate(double d_x, double d_y);
+	void translateDecart(double d_x, double d_y);
 
 	QPair<float, float> GetIsoCoord();
 	QPair<float, float> GetDecCoord();

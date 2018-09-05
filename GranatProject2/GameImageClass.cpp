@@ -52,8 +52,12 @@ void AnimationImage::DisplayImage(sf::RenderWindow& Window)
 
 void GroupImage::DisplayImage(sf::RenderWindow& Window)
 {
-	for (auto Image : Images)
-		Image->DisplayImage(Window);
+	        Images[3]->DisplayImage(Window);
+			Images[0]->DisplayImage(Window);
+			Images[1]->DisplayImage(Window);
+			Images[2]->DisplayImage(Window);
+	//for (auto Image : Images)
+	//	Image->DisplayImage(Window);
 }
 
 SimpleImage::SimpleImage()
@@ -152,9 +156,9 @@ GroupImage::GroupImage(const AnimationImage& Image, int Size)
 
 	if (Size <= 4)
 	{
-		OffsetToImage.append(QPair<float, float>(0.5, 0));
-		OffsetToImage.append(QPair<float, float>(1, 0));
-		OffsetToImage.append(QPair<float, float>(0.5, -0.5));
+		OffsetToImage.append(QPair<float, float>(0.4, -0.1));
+		OffsetToImage.append(QPair<float, float>(1, -0.1));
+		OffsetToImage.append(QPair<float, float>(0.4, -0.5));
 		OffsetToImage.append(QPair<float, float>(1, -0.5));
 	}
 
@@ -183,6 +187,23 @@ void GroupImage::AppendImage(SimpleImage&& Image)
 }
 
 
+void GroupImage::TranslateElevation(QVector<double>& Translation)
+{
+	qDebug() << "ELEVATE GROUP - " << Translation;
+	int size = Translation.size();
+
+			Images[0]->Elevate(Translation[2]);
+			Images[1]->Elevate(Translation[3]);
+
+			Images[2]->Elevate(Translation[0]);
+	        Images[3]->Elevate(Translation[1]);
+
+	//if(Images.size() < Translation.size())
+	//    size = Images.size();
+
+	//for (int n = 0; n < size; n++)
+	//		Images[n]->Elevate(Translation[n]);
+}
 
 void GroupImage::SetPositionOnMap(float iso_x, float iso_y)
 {
@@ -230,6 +251,7 @@ void SimpleImage::SetPositionOnMap(float iso_x, float iso_y)
 {
 	//qDebug() << "SET POS ON MAP IN IMAGE - " << this <<"COORD - " <<iso_x << iso_y;
 	ImagePosOnMap.SetCoordIsometric(iso_x, iso_y);
+	ImagePosOnMap.translateDecart(0, -DecElevation);
 	SetPositionImage(ImagePosOnMap.GetDecCoord());
 
 }
@@ -249,10 +271,26 @@ void SimpleImage::SetPositionImage(float x, float y)
 		Sprite->setPosition(x,y);
 }
 
+void SimpleImage::TranslateImage(float x, float y)
+{
+	ImagePosOnMap.translate(x, y);
+	SetPositionImage(ImagePosOnMap.GetDecCoord());
+}
 
 void SimpleImage::SetObjectDirection(Direction Dir)
 {
 	this->CurrentDir = Dir;
+}
+
+void SimpleImage::SetElevation(double Elevation)
+{
+	DecElevation = Elevation;
+}
+
+void SimpleImage::Elevate(double Elevation)
+{
+	DecElevation += Elevation;
+	qDebug() << "CURRENT ELEVATION - " << DecElevation;
 }
 
 

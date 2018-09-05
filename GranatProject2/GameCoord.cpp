@@ -79,11 +79,13 @@ sf::Vector2f GameCoord::GetDecVector()
 
 void GameCoord::translate(double d_x, double d_y)
 {
-
-
 	this->SetCoordIsometric(IsoPos(0) + d_x, IsoPos(1) + d_y);
 }
 
+void GameCoord::translateDecart(double d_x, double d_y)
+{
+	this->SetCoordDecart(DecPos(0) + d_x, DecPos(1) + d_y);
+}
 
 //void GameCoord::translate(int d_x, int d_y)
 //{
