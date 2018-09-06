@@ -155,36 +155,12 @@ void TerrainTileElement::GetHeightMap()
 						int line = 0;
 						int node = 0;
 						int side = 0;
-						qDebug() << "========================================================";
 						for (int sector = 0; sector < width_grid * height_grid; sector++)
 						{
 							HeightMap.append(QVector<double>());
 							line = sector / height_grid;
 							node = sector - line*height_grid;
-							qDebug() << "          ADD SECTOR NUMBER - " << sector << "LINE - " << line << "NODE - " << node;
 
-						//	for(int corner = 0; corner < 4; corner++)
-						//		{
-
-						//		side = corner / 2;
-						//        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + side); // ERROR !!!!!
-						//		NodePoint = NodePoint + StartGridPoint;
-						//		LineCoord.SetCoordIsometric(node+side,line + side);
-
-						//		LinePos = LineCoord.GetDecCoord();
-						//		//qDebug() << "NODE POINT - " << NodePoint << "LINE  - " << line + side << "IsoPos - " << LineCoord.GetIsoCoord();
-						//		x_cathetus = NodePoint.x() - LinePos.first;
-						//		y_cathetus = NodePoint.y() - LinePos.second;
-						//		Height = std::hypot(x_cathetus, y_cathetus);
-
-						//		HeightMap.last().append(Height);
-						//		qDebug() << "Height - " << Height << "Side - " << side << "node - " << node;
-						//				Draw_Height_Node NewNode;
-						//				NewNode.DrawHeight.setString(std::to_string((int)Height));
-						//				NewNode.NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node+side);
-						//				HeightMapToDraw.append(NewNode);
-
-						//		}
 
 							for (int side = 0; side < 2; side++)
 							{
@@ -192,7 +168,7 @@ void TerrainTileElement::GetHeightMap()
 							for(int corner = 0; corner < 2; corner++)
 								{
 
-						        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + corner); // ERROR !!!!!
+						        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + corner); 
 								NodePoint = NodePoint + StartGridPoint;
 								LineCoord.SetCoordIsometric(node+corner,line + side);
 
@@ -210,8 +186,34 @@ void TerrainTileElement::GetHeightMap()
 										HeightMapToDraw.append(NewNode);
 
 								}
-
 							}
+						//qDebug() << "========================================================";
+							QVector<double> HeightsConverted; HeightsConverted.resize(4); HeightsConverted.fill(0);
+							QVector<double> LastHeights = HeightMap.last();
+							double Diff_H1 = (LastHeights[1] - LastHeights[0])/100;
+							double Diff_H2 = (LastHeights[3] - LastHeights[2])/100;
+
+							HeightsConverted[0] = LastHeights[0] + Diff_H1 * 15;
+							HeightsConverted[1] = LastHeights[1] - Diff_H1 * 15;
+
+							HeightsConverted[2] = LastHeights[2] + Diff_H2 * 15;
+							HeightsConverted[3] = LastHeights[3] - Diff_H2 * 15;
+						//	qDebug() << "Pre Converted HEIGHT GROUP - " << HeightsConverted;
+
+							 Diff_H1 = (HeightsConverted[2] - HeightsConverted[0])/100;
+							 Diff_H2 = (HeightsConverted[3] - HeightsConverted[1])/100;
+						//	qDebug() << "DIFF 1 - " << Diff_H1 << "DIFF 2 - " << Diff_H2;
+
+							HeightsConverted[0] = LastHeights[0] + Diff_H1 * 15;
+							HeightsConverted[2] = LastHeights[2] - Diff_H1 * 15;
+
+							HeightsConverted[1] = LastHeights[1] + Diff_H2 * 15;
+							HeightsConverted[3] = LastHeights[3] - Diff_H2 * 15;
+
+							HeightMapConverted.append(HeightsConverted);
+						//	qDebug() << "RAW HEIGHT GROUP - " << HeightMap.last();
+						//	qDebug() << "Converted HEIGHT GROUP - " << HeightMapConverted.last();
+						//qDebug() << "========================================================";
 						}
 							Size_By_Cell.setWidth(width_grid); 
 							Size_By_Cell.setHeight(height_grid);

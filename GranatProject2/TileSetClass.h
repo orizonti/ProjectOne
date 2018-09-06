@@ -24,6 +24,7 @@ public:
 
 	GridShapeContainer* GridLines = 0;
 	QVector<QVector<double>>  HeightMap;
+	QVector<QVector<double>>  HeightMapConverted;
 	QVector<Draw_Height_Node> HeightMapToDraw;
 
 };

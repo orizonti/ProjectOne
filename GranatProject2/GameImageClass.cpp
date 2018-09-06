@@ -166,10 +166,10 @@ GroupImage::GroupImage(const AnimationImage& Image, int Size)
 	//	OffsetToImage.append(QPair<float, float>(0.5, -0.5));
 	//	OffsetToImage.append(QPair<float, float>(1, -0.5));
 
-		OffsetToImage.append(QPair<float, float>(0.3, 0.2));    //BR
-		OffsetToImage.append(QPair<float, float>(1.2, 0.2));      //TR
-		OffsetToImage.append(QPair<float, float>(0.3, -0.8)); //BL
-		OffsetToImage.append(QPair<float, float>(1.2, -0.8)); //TL
+		OffsetToImage.append(QPair<float, float>(0.4, 0.1));    //BR
+		OffsetToImage.append(QPair<float, float>(1.1, 0.1));      //TR
+		OffsetToImage.append(QPair<float, float>(0.4, -0.7)); //BL
+		OffsetToImage.append(QPair<float, float>(1.1, -0.7)); //TL
 	}
 
 	for (int n = 0; n < Size; n++)
