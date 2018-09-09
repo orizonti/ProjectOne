@@ -39,7 +39,10 @@ public:
 	QMap<int,TerrainTileElement*>     TerrainElementsByType;
 	QMap<QString,TerrainTileElement*> TerrainElementsByName;
 
+	QMap<QString, QVector<QVector<double>>> HeightsMap;
 
+
+	void UploadTestHeightsMap();
 	void UploadTerrainElementData(QString PathXMLFile, int type_id);
 	void UploadGridLines(QString PathXMLSprite, TerrainTileElement* element);
 

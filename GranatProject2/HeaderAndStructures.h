@@ -17,6 +17,10 @@
 #include <math.h>
 #include <qpoint.h>
 #include <memory>
+#include <QXmlStreamWriter>
+#include <QFile>
+
+
 enum Direction { Left = 0, Right = 1, Up = 2, Down = 3, UpLeft = 4, UpRight = 5, DownLeft = 6, DownRight = 7 };
 enum TypeUnit   { MaceMap = 0, SpearMan};
 enum TypeObject { House1  = 0, House2};

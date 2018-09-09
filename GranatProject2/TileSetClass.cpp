@@ -30,6 +30,9 @@ void TileSetClass::CreateTileSetFromMap(QString MapFilePath)
 {
 		QFile XMLMapFile(MapFilePath);
 		bool result = XMLMapFile.open(QIODevice::ReadOnly);
+		
+		qDebug() << "   <<<<  UPLOAD TEST HEIGHT MAP  >>>>";
+		this->UploadTestHeightsMap();
 
 		QDomDocument newDomDoc;
 		result = newDomDoc.setContent(&XMLMapFile);
@@ -56,6 +59,75 @@ void TileSetClass::CreateTileSetFromMap(QString MapFilePath)
 
 }
 
+
+void TileSetClass::UploadTestHeightsMap()
+{
+	QFile FileRead("E:/WorkDir/Heights1.xml");
+	FileRead.open(QFile::ReadOnly);
+
+	QXmlStreamReader xmlDoc(&FileRead);
+	QString Sector;
+
+
+	QVector < QVector<double>> HeightMap;
+	while (!xmlDoc.atEnd() && !xmlDoc.hasError())
+	{
+
+		QXmlStreamReader::TokenType token = xmlDoc.readNext();
+
+		if (token == QXmlStreamReader::EndElement)
+		{
+			if (xmlDoc.name() == "SECTOR")
+			{
+				int Node = 0;
+			//	qDebug() << "SECTOR SIZE - " << HeightMap.size();
+			//	for (auto QuadeHeight : HeightMap)
+			//	{
+			//		Node++;
+			//		qDebug()<<"NODE "<<Node << "H1 - " << QuadeHeight[0] 
+			//								<< "H2 - " << QuadeHeight[1] 
+			//								<< "H3 - " << QuadeHeight[2] 
+			//								<< "H4 - " << QuadeHeight[3];
+			//	}
+				//qDebug() << "=======================================";
+				HeightsMap.insert(Sector,HeightMap);
+			}
+			xmlDoc.readNext();
+		}
+
+		if (token == QXmlStreamReader::StartElement)
+		{
+			if (xmlDoc.name() == "SECTOR")
+			{
+				//qDebug() << "=======================================";
+				QXmlStreamAttributes attrib = xmlDoc.attributes();
+				//qDebug() << "SECTOR - " << attrib.value("NAME").toString();
+				Sector = attrib.value("NAME").toString();
+				HeightMap.clear();
+				HeightMap.resize(0);
+				xmlDoc.readNext();
+			}
+		}
+
+		QXmlStreamAttributes attrib = xmlDoc.attributes();
+
+		QVector<double> Node;
+		if (!xmlDoc.name().toString().isEmpty())
+		{
+			//qDebug() << "APPEND - " << xmlDoc.name();
+		Node.append(attrib.value("H1").toDouble());
+		Node.append(attrib.value("H2").toDouble());
+		Node.append(attrib.value("H3").toDouble());
+		Node.append(attrib.value("H4").toDouble());
+		HeightMap.append(Node);
+  		}
+
+	}
+	//qDebug() << "NUMBER OF SECTOR - " << HeightsMap.size();
+	//qDebug() << "SECTORS - " << HeightsMap.keys();
+
+	FileRead.close();
+}
 
 void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 {
@@ -101,7 +173,12 @@ void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 											 newTileElement->Name = name;
 
 											 UploadGridLines(PathXMLFile, newTileElement);
+
+
+											 qDebug() << "TERRAIN ELEMENT- " << name;
 											 newTileElement->GetHeightMap();
+											 newTileElement->HeightMapConverted.append(HeightsMap[name]);
+											 qDebug() << "HEIGHT MAP SIZE - " << newTileElement->HeightMapConverted.size();
 
 										TerrainElementsByType.insert(type_id, newTileElement);
 										TerrainElementsByName.insert(name, newTileElement);
@@ -135,19 +212,16 @@ void TileSetClass::UploadGridLines(QString PathXMLSprite,TerrainTileElement* ele
 
 void TerrainTileElement::GetHeightMap()
 {
-	//qDebug() << "GET HEIGHT MAP";
 	GameCoord LineCoord;
 	if (GridLines->CurvesVert.isEmpty())
 		return;
 	
 	int height_grid = GridLines->CurvesHoriz.size() - 1;
 	int width_grid  = GridLines->CurvesVert.size() - 1;
-	//qDebug() << "SECTOR COUNT - " << width_grid*height_grid << "HEIGHT GRID - " << height_grid;
 
 	int x_cathetus = 0;
 	int y_cathetus = 0;
 	QPair<int,int> LinePos;
-	//QPointF StartGridPoint = GridLines->CurvesVert.first().NodePoints.first();
 	QPointF StartGridPoint; StartGridPoint.setX(0); StartGridPoint.setY(this->offset.second - size.height() + 128);
 
 						double Height;
@@ -173,13 +247,11 @@ void TerrainTileElement::GetHeightMap()
 								LineCoord.SetCoordIsometric(node+corner,line + side);
 
 								LinePos = LineCoord.GetDecCoord();
-								//qDebug() << "NODE POINT - " << NodePoint << "LINE  - " << line + side << "IsoPos - " << LineCoord.GetIsoCoord();
 								x_cathetus = NodePoint.x() - LinePos.first;
 								y_cathetus = NodePoint.y() - LinePos.second;
 								Height = std::hypot(x_cathetus, y_cathetus);
 
 								HeightMap.last().append(Height);
-								//qDebug() << "Height - " << Height << "Side - " << side + line << "node - " << node + corner ;
 										Draw_Height_Node NewNode;
 										NewNode.DrawHeight.setString(std::to_string((int)Height));
 										NewNode.NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node+corner);
@@ -187,44 +259,8 @@ void TerrainTileElement::GetHeightMap()
 
 								}
 							}
-						//qDebug() << "========================================================";
-							QVector<double> HeightsConverted; HeightsConverted.resize(4); HeightsConverted.fill(0);
-							QVector<double> LastHeights = HeightMap.last();
-							double Diff_H1 = (LastHeights[1] - LastHeights[0])/100;
-							double Diff_H2 = (LastHeights[3] - LastHeights[2])/100;
-
-							HeightsConverted[0] = LastHeights[0] + Diff_H1 * 15;
-							HeightsConverted[1] = LastHeights[1] - Diff_H1 * 15;
-
-							HeightsConverted[2] = LastHeights[2] + Diff_H2 * 15;
-							HeightsConverted[3] = LastHeights[3] - Diff_H2 * 15;
-						//	qDebug() << "Pre Converted HEIGHT GROUP - " << HeightsConverted;
-
-							 Diff_H1 = (HeightsConverted[2] - HeightsConverted[0])/100;
-							 Diff_H2 = (HeightsConverted[3] - HeightsConverted[1])/100;
-						//	qDebug() << "DIFF 1 - " << Diff_H1 << "DIFF 2 - " << Diff_H2;
-
-							HeightsConverted[0] = LastHeights[0] + Diff_H1 * 15;
-							HeightsConverted[2] = LastHeights[2] - Diff_H1 * 15;
-
-							HeightsConverted[1] = LastHeights[1] + Diff_H2 * 15;
-							HeightsConverted[3] = LastHeights[3] - Diff_H2 * 15;
-
-							HeightMapConverted.append(HeightsConverted);
-						//	qDebug() << "RAW HEIGHT GROUP - " << HeightMap.last();
-						//	qDebug() << "Converted HEIGHT GROUP - " << HeightMapConverted.last();
-						//qDebug() << "========================================================";
 						}
 							Size_By_Cell.setWidth(width_grid); 
 							Size_By_Cell.setHeight(height_grid);
-//qDebug() << "          HEIGHT MAP SIZE - " << HeightMap.size() << "HEIGHT MAP TO DRAW - " << HeightMapToDraw.size() <<"TERR SIZE - " << width_grid << height_grid;
-//	qDebug() << "========================";
-//	int n = 0;
-//for (QVector<double> Heights : HeightMap)
-//{
-//	qDebug() << "<<<<<<" << n++ << ">>>>>>";
-//	qDebug() << Heights;
-//}
-//	qDebug() << "========================";
 
 }
