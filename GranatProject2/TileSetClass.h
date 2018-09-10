@@ -9,7 +9,12 @@ public:
 	TerrainTileElement();
 	~TerrainTileElement();
 
-	void GetHeightMap(); // IT SHOULD BE REWRITED, GetHeightMap -> CreateHeightMap in private block
+	void GetHeightMapToDraw(); // IT IS TEMPORARY DEBUGING METHOD
+	void UploadData(QString PathXMLFile, int element_number); // UPLOADS SIZE, NAME, TEXTURE, SVG GRID LINES TO TILE ELEMENT
+	void UploadGridData(QString PathXMLFile);          // UPLOADS SVG GRIDS, THAT IS USED TO DISPLAY GRIDS AND DEFINCE CELL PRESSING ON CURVED CELL
+
+	void UploadHeightMap(QFile& XMLFileHeights);       // UPLOADS HEIGHTS ON TERRAIN CELLS TO DISPLAY UNITS ON CURVED CELL PROPERLY
+
 
 	sf::Texture* Texture;//TEXTURE AND SPRITE TO DRAW TILE ON MAP
 	sf::Sprite*  Sprite ;
@@ -24,7 +29,6 @@ public:
 
 	GridShapeContainer* GridLines = 0;
 	QVector<QVector<double>>  HeightMap;
-	QVector<QVector<double>>  HeightMapConverted;
 	QVector<Draw_Height_Node> HeightMapToDraw;
 
 };
@@ -38,13 +42,6 @@ public:
 
 	QMap<int,TerrainTileElement*>     TerrainElementsByType;
 	QMap<QString,TerrainTileElement*> TerrainElementsByName;
-
-	QMap<QString, QVector<QVector<double>>> HeightsMap;
-
-
-	void UploadTestHeightsMap();
-	void UploadTerrainElementData(QString PathXMLFile, int type_id);
-	void UploadGridLines(QString PathXMLSprite, TerrainTileElement* element);
 
 
 	~TileSetClass();

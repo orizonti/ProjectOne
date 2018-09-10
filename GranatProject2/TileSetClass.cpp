@@ -26,136 +26,82 @@ TileSetClass::~TileSetClass()
 	}
 }
 
+//FINDING TILESET ELEMENTS AND CREATE TILE ELEMENT OBJECT TO EACH OF THEM
 void TileSetClass::CreateTileSetFromMap(QString MapFilePath)
 {
-		QFile XMLMapFile(MapFilePath);
+		QFile XMLMapFile(MapFilePath);                      //MAIN TMX FILE WITH MAP DATA
 		bool result = XMLMapFile.open(QIODevice::ReadOnly);
 		
-		qDebug() << "   <<<<  UPLOAD TEST HEIGHT MAP  >>>>";
-		this->UploadTestHeightsMap();
+		QFile XMLwithHeights("E:/WorkDir/Heights1.xml");
+		XMLwithHeights.open(QFile::ReadOnly);
 
+//=========================================================================================================
 		QDomDocument newDomDoc;
 		result = newDomDoc.setContent(&XMLMapFile);
 		if (result)
 		{
 			QDomNode currentNod = newDomDoc.documentElement().firstChild();
-			while (!currentNod.isNull())
+			while (!currentNod.isNull()) 
 			{
 				QDomElement newElement = currentNod.toElement();
-
 
 				if (newElement.tagName() == "tileset")
 				{
 					
-					int type_id = newElement.attribute("firstgid").toInt();
-					QString MapTilePath = newElement.attribute("source");
+					int type_id = newElement.attribute("firstgid").toInt(); // NUMBER OF TILE ELEMENT IN MAIN MAP FILE
+					QString MapTilePath = newElement.attribute("source");   // PATH TO TSX FILE THAT CONTAINS TILE DATA SUCH OFFSET, SIZE , NAME and PATH TO PNG IMAGE
 
-					UploadTerrainElementData(MapTilePath, type_id);
+					TerrainTileElement* newTileElement = new TerrainTileElement;
+					newTileElement->UploadData(MapTilePath, type_id);
+					newTileElement->UploadHeightMap(XMLwithHeights);
+					newTileElement->GetHeightMapToDraw(); // SHOUD BE DELETED !!!!
+					XMLwithHeights.seek(0);
+
+										TerrainElementsByType.insert(type_id, newTileElement);
+										TerrainElementsByName.insert(newTileElement->Name, newTileElement);
 				}
 
-				currentNod = currentNod.nextSibling();
+				currentNod = currentNod.nextSibling(); 
 			}
 		}
+//=========================================================================================================
 
+	XMLwithHeights.close();
+	XMLMapFile.close();
 }
 
 
-void TileSetClass::UploadTestHeightsMap()
+// UPLOADS SIZE, NAME, TEXTURE, SVG GRID LINES TO TILE ELEMENT
+void TerrainTileElement::UploadData(QString PathXMLFile, int element_number)
 {
-	QFile FileRead("E:/WorkDir/Heights1.xml");
-	FileRead.open(QFile::ReadOnly);
 
-	QXmlStreamReader xmlDoc(&FileRead);
-	QString Sector;
-
-
-	QVector < QVector<double>> HeightMap;
-	while (!xmlDoc.atEnd() && !xmlDoc.hasError())
-	{
-
-		QXmlStreamReader::TokenType token = xmlDoc.readNext();
-
-		if (token == QXmlStreamReader::EndElement)
-		{
-			if (xmlDoc.name() == "SECTOR")
-			{
-				int Node = 0;
-			//	qDebug() << "SECTOR SIZE - " << HeightMap.size();
-			//	for (auto QuadeHeight : HeightMap)
-			//	{
-			//		Node++;
-			//		qDebug()<<"NODE "<<Node << "H1 - " << QuadeHeight[0] 
-			//								<< "H2 - " << QuadeHeight[1] 
-			//								<< "H3 - " << QuadeHeight[2] 
-			//								<< "H4 - " << QuadeHeight[3];
-			//	}
-				//qDebug() << "=======================================";
-				HeightsMap.insert(Sector,HeightMap);
-			}
-			xmlDoc.readNext();
-		}
-
-		if (token == QXmlStreamReader::StartElement)
-		{
-			if (xmlDoc.name() == "SECTOR")
-			{
-				//qDebug() << "=======================================";
-				QXmlStreamAttributes attrib = xmlDoc.attributes();
-				//qDebug() << "SECTOR - " << attrib.value("NAME").toString();
-				Sector = attrib.value("NAME").toString();
-				HeightMap.clear();
-				HeightMap.resize(0);
-				xmlDoc.readNext();
-			}
-		}
-
-		QXmlStreamAttributes attrib = xmlDoc.attributes();
-
-		QVector<double> Node;
-		if (!xmlDoc.name().toString().isEmpty())
-		{
-			//qDebug() << "APPEND - " << xmlDoc.name();
-		Node.append(attrib.value("H1").toDouble());
-		Node.append(attrib.value("H2").toDouble());
-		Node.append(attrib.value("H3").toDouble());
-		Node.append(attrib.value("H4").toDouble());
-		HeightMap.append(Node);
-  		}
-
-	}
-	//qDebug() << "NUMBER OF SECTOR - " << HeightsMap.size();
-	//qDebug() << "SECTORS - " << HeightsMap.keys();
-
-	FileRead.close();
-}
-
-void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
-{
 							QFile XMLMapFile(GameDir + "/WORK_DIR/MAPS_TILED/" + PathXMLFile);
-						    bool result = XMLMapFile.open(QIODevice::ReadOnly);
+						    XMLMapFile.open(QIODevice::ReadOnly);
 
-							TerrainTileElement* newTileElement = new TerrainTileElement;
 
+							//=======================================================
 							QDomDocument newDomDoc;
-							result = newDomDoc.setContent(&XMLMapFile);
+							newDomDoc.setContent(&XMLMapFile);
 
-							QDomElement tileset = newDomDoc.elementsByTagName("tileset").at(0).toElement();
+							QDomElement tileset    = newDomDoc.elementsByTagName("tileset").at(0).toElement();
 							QDomElement tileoffset = newDomDoc.elementsByTagName("tileoffset").at(0).toElement();
-							QDomElement image = newDomDoc.elementsByTagName("image").at(0).toElement();
+							QDomElement image      = newDomDoc.elementsByTagName("image").at(0).toElement();
 
-							QString name = tileset.attribute("name");
+							//=======================================================
+		                    type_id = element_number;
+							Name = tileset.attribute("name");
+							size.setWidth(tileset.attribute("tilewidth").toInt()); 
+							size.setHeight(tileset.attribute("tileheight").toInt());
+
+							Size_By_Cell.setWidth(size.width()/512); 
+							Size_By_Cell.setHeight(size.height()/256);
+
+							offset.first = tileoffset.attribute("x").toInt(); 
+							offset.second = tileoffset.attribute("y").toInt();
+							//=======================================================
 
 
-							newTileElement->size.setWidth(tileset.attribute("tilewidth").toInt()); 
-							newTileElement->size.setHeight(tileset.attribute("tileheight").toInt());
-
-							newTileElement->Size_By_Cell.setWidth(newTileElement->size.width()/512); 
-							newTileElement->Size_By_Cell.setHeight(newTileElement->size.height()/256);
-
-							newTileElement->offset.first = tileoffset.attribute("x").toInt(); 
-							newTileElement->offset.second = tileoffset.attribute("y").toInt();
-
-
+							//=======================================================
 							QString imageSource = image.attribute("source");
 							imageSource.remove(0, 2);
 							imageSource = GameDir + "/WORK_DIR" + imageSource;
@@ -164,32 +110,24 @@ void TileSetClass::UploadTerrainElementData(QString PathXMLFile, int type_id)
 									sf::Texture* textureTerrain = new sf::Texture;
 									sf::Sprite*  spriteTerrain = new sf::Sprite;
 
-									result = textureTerrain->loadFromFile(imageSource.toStdString());
+									         textureTerrain->loadFromFile(imageSource.toStdString());
 											 spriteTerrain->setTexture(*textureTerrain);
 
-											 newTileElement->Texture = textureTerrain;
-											 newTileElement->Sprite = spriteTerrain;
-											 newTileElement->type_id = type_id;
-											 newTileElement->Name = name;
+											 Texture = textureTerrain;
+											 Sprite = spriteTerrain;
+							//=======================================================
 
-											 UploadGridLines(PathXMLFile, newTileElement);
-
-
-											 qDebug() << "TERRAIN ELEMENT- " << name;
-											 newTileElement->GetHeightMap();
-											 newTileElement->HeightMapConverted.append(HeightsMap[name]);
-											 qDebug() << "HEIGHT MAP SIZE - " << newTileElement->HeightMapConverted.size();
-
-										TerrainElementsByType.insert(type_id, newTileElement);
-										TerrainElementsByName.insert(name, newTileElement);
+											 UploadGridData(PathXMLFile);
 
 }
 
-void TileSetClass::UploadGridLines(QString PathXMLSprite,TerrainTileElement* element)
+// UPLOADS SVG GRIDS, THAT IS USED TO DISPLAY GRIDS AND DEFINCE CELL PRESSING ON CURVED CELL
+void TerrainTileElement::UploadGridData(QString PathXMLFile)
 {
-	QString FileName = PathXMLSprite.split(".").first();
+	QString FileName = PathXMLFile.split(".").first();
 	QString PathTSX = QString("%1.tsx").arg(FileName);
-	QString PathXMLLines = PathTSX.replace(".tsx", ".svg");
+	QString PathXMLLines = PathTSX.replace(".tsx", ".svg"); //
+	//=======================================================
 
 							QFile XMLGridFile(PathTSX);
 						    bool result = XMLGridFile.open(QIODevice::ReadOnly);
@@ -205,36 +143,68 @@ void TileSetClass::UploadGridLines(QString PathXMLSprite,TerrainTileElement* ele
 							newTileElement->offsetGrid.second = tileoffset.attribute("y").toInt();
 							XMLGridFile.close();
 
-	GridShapeContainer* newGrid = new GridShapeContainer;
-	newGrid->AddCurves(PathXMLLines);
-	element->GridLines = newGrid;
+	GridLines = new GridShapeContainer;
+	GridLines->AddCurves(PathXMLLines);
 }
 
-void TerrainTileElement::GetHeightMap()
+void TerrainTileElement::UploadHeightMap(QFile& XMLFileHeights)
 {
-	GameCoord LineCoord;
-	if (GridLines->CurvesVert.isEmpty())
-		return;
-	
+	QXmlStreamReader xmlDoc(&XMLFileHeights);
+	QString Sector;
+
+	qDebug() << "                  >>> UPLOAD HEIGHTS TO ELEMENT - " << Name;
+	while (!xmlDoc.atEnd() && !xmlDoc.hasError())
+	{
+		xmlDoc.readNextStartElement();
+	    Sector = xmlDoc.attributes().value("NAME").toString();
+		if (Sector == Name)
+			break;
+	}
+
+	QXmlStreamAttributes attrib;
+	QXmlStreamReader::TokenType token;
+	while (!xmlDoc.atEnd() && !xmlDoc.hasError())
+	{
+
+		token = xmlDoc.readNext();
+		if (token == QXmlStreamReader::EndElement)
+		{
+			if (xmlDoc.name() == "SECTOR")
+				return;
+			xmlDoc.readNext();
+		}
+
+
+		attrib = xmlDoc.attributes();
+
+		QVector<double> Node;
+		if (!xmlDoc.name().toString().isEmpty())
+		{
+		Node.append(attrib.value("H1").toDouble());
+		Node.append(attrib.value("H2").toDouble());
+		Node.append(attrib.value("H3").toDouble());
+		Node.append(attrib.value("H4").toDouble());
+		HeightMap.append(Node);
+  		}
+
+	}
+}
+
+
+
+
+void TerrainTileElement::GetHeightMapToDraw()
+{
 	int height_grid = GridLines->CurvesHoriz.size() - 1;
 	int width_grid  = GridLines->CurvesVert.size() - 1;
 
-	int x_cathetus = 0;
-	int y_cathetus = 0;
-	QPair<int,int> LinePos;
-	QPointF StartGridPoint; StartGridPoint.setX(0); StartGridPoint.setY(this->offset.second - size.height() + 128);
-
-						double Height;
-						QPointF NodePoint;
 						int line = 0;
 						int node = 0;
 						int side = 0;
-						for (int sector = 0; sector < width_grid * height_grid; sector++)
+						for (int sector = 0; sector < HeightMap.size(); sector++)
 						{
-							HeightMap.append(QVector<double>());
 							line = sector / height_grid;
 							node = sector - line*height_grid;
-
 
 							for (int side = 0; side < 2; side++)
 							{
@@ -242,25 +212,14 @@ void TerrainTileElement::GetHeightMap()
 							for(int corner = 0; corner < 2; corner++)
 								{
 
-						        NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node + corner); 
-								NodePoint = NodePoint + StartGridPoint;
-								LineCoord.SetCoordIsometric(node+corner,line + side);
-
-								LinePos = LineCoord.GetDecCoord();
-								x_cathetus = NodePoint.x() - LinePos.first;
-								y_cathetus = NodePoint.y() - LinePos.second;
-								Height = std::hypot(x_cathetus, y_cathetus);
-
-								HeightMap.last().append(Height);
 										Draw_Height_Node NewNode;
-										NewNode.DrawHeight.setString(std::to_string((int)Height));
+										NewNode.DrawHeight.setString(std::to_string((int)HeightMap[sector][side*2 + corner]));
 										NewNode.NodePoint = GridLines->CurvesVert.at(line + side).NodePoints.at(node+corner);
-										HeightMapToDraw.append(NewNode);
 
+										HeightMapToDraw.append(NewNode);
 								}
 							}
 						}
-							Size_By_Cell.setWidth(width_grid); 
-							Size_By_Cell.setHeight(height_grid);
-
+					//		Size_By_Cell.setWidth(width_grid); 
+					//		Size_By_Cell.setHeight(height_grid);
 }

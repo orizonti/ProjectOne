@@ -134,7 +134,7 @@ QVector<double>&  TerrainObjectClass::GetHeightMapOnCell(int x, int y)
 		//qDebug() << x_relative << y_relative << "IT NUMBER - " << n << "IN TERRAIN - " << TerrainData->Name;
 
 		if (n >= 0)
-			return TerrainData->HeightMapConverted[n];
+			return TerrainData->HeightMap[n];
 		else
 			return QVector<double>();
 
