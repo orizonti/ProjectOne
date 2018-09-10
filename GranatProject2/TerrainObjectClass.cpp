@@ -25,11 +25,11 @@ void TerrainObjectClass::SetCoord(int x, int y)
 	Position.SetCoordIsometric(x, y);
 	PositionTopRight.SetCoordIsometric(x + TileSize.height(), y + TileSize.width());
 	PathContour.translate(Position.DecPos(0) + TerrainData->offset.first, 
-		                  Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
+		                  Position.DecPos(1) + TerrainData->offset.second - TerrainData->Size_In_Pixels.height()+128);
 	for (QPainterPath& Path : CellPathes)
 	{
 	Path.translate(Position.DecPos(0) + TerrainData->offset.first, 
-		           Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
+		           Position.DecPos(1) + TerrainData->offset.second - TerrainData->Size_In_Pixels.height()+128);
 	}
 
 	//qDebug() << "ELEMENT -  "<< TerrainData->Name <<"COORD - " << x << y << "Dec - " << Position.DecPos(0) << Position.DecPos(1) << "Offset - " << this->TerrainData->offset.first << this->TerrainData->offset.second;
@@ -57,7 +57,7 @@ void TerrainObjectClass::DrawTerrainHeight(sf::RenderWindow& Window)
 			n = 0;
 
 		Node.DrawHeight.setPosition(Node.NodePoint.x() + Position.DecPos(0) + TerrainData->offset.first  - QuadeOffset[n].x(), 
-			                        Node.NodePoint.y() + Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128 + QuadeOffset[n].y());
+			                        Node.NodePoint.y() + Position.DecPos(1) + TerrainData->offset.second - TerrainData->Size_In_Pixels.height()+128 + QuadeOffset[n].y());
 		Window.draw(Node.DrawHeight);
 
 		n++;
@@ -70,7 +70,7 @@ sf::Sprite* TerrainObjectClass::GetSpriteToDraw()
 {
 	
 	TerrainData->Sprite->setPosition(Position.DecPos(0) + TerrainData->offset.first,
-		                             Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
+		                             Position.DecPos(1) + TerrainData->offset.second - TerrainData->Size_In_Pixels.height()+128);
 
 	return TerrainData->Sprite;
 }
@@ -89,7 +89,7 @@ QPair<int, int> TerrainObjectClass::GetCellPressed()
 QuadeRangleShape& TerrainObjectClass::GetCellBorderMoved()
 {
 	TerrainData->GridLines->SetPosition(this->Position.DecPos(0) + TerrainData->offset.first, 
-		                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
+		                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->Size_In_Pixels.height()+128);
 
 	int x = (Number_Cell_Moved-1) / TileSize.width();
 	int y = (Number_Cell_Moved-1) - x*TileSize.width();
@@ -104,7 +104,7 @@ void TerrainObjectClass::DrawGrid(sf::RenderWindow& Window)
 	if (TerrainData->GridLines != 0)
 	{
 		TerrainData->GridLines->SetPosition(this->Position.DecPos(0) + TerrainData->offset.first, 
-			                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->size.height()+128);
+			                                this->Position.DecPos(1) + TerrainData->offset.second - TerrainData->Size_In_Pixels.height()+128);
 		TerrainData->GridLines->DrawGrid(Window);
 
 		if (FLAG_MOUSE_MOVED)

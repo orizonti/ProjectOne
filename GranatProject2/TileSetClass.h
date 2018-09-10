@@ -21,7 +21,7 @@ public:
 
 	int     type_id;
 	QString Name = "";
-	QSize   size;
+	QSize   Size_In_Pixels;
 	QSize   Size_By_Cell;
 
 	QPair<int, int> offset;//OFFSET OF TILE IN IMAGE TO CUNJUGATION OF CONTIGOUS TILES

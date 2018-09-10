@@ -90,11 +90,11 @@ void TerrainTileElement::UploadData(QString PathXMLFile, int element_number)
 							//=======================================================
 		                    type_id = element_number;
 							Name = tileset.attribute("name");
-							size.setWidth(tileset.attribute("tilewidth").toInt()); 
-							size.setHeight(tileset.attribute("tileheight").toInt());
+							Size_In_Pixels.setWidth(tileset.attribute("tilewidth").toInt()); 
+							Size_In_Pixels.setHeight(tileset.attribute("tileheight").toInt());
 
-							Size_By_Cell.setWidth(size.width()/512); 
-							Size_By_Cell.setHeight(size.height()/256);
+							Size_By_Cell.setWidth(Size_In_Pixels.width()/512); 
+							Size_By_Cell.setHeight(Size_In_Pixels.height()/256);
 
 							offset.first = tileoffset.attribute("x").toInt(); 
 							offset.second = tileoffset.attribute("y").toInt();
@@ -124,43 +124,50 @@ void TerrainTileElement::UploadData(QString PathXMLFile, int element_number)
 // UPLOADS SVG GRIDS, THAT IS USED TO DISPLAY GRIDS AND DEFINCE CELL PRESSING ON CURVED CELL
 void TerrainTileElement::UploadGridData(QString PathXMLFile)
 {
-	QString FileName = PathXMLFile.split(".").first();
-	QString PathTSX = QString("%1.tsx").arg(FileName);
-	QString PathXMLLines = PathTSX.replace(".tsx", ".svg"); //
+	QString FileName = PathXMLFile.split(".").first();      //GET FILE NAME FROM FILE_NAME.tmx
+	QString PathTSX = QString("G%1.tsx").arg(FileName);     //GRID OFFSET FROM TILED MAP EDITOR
+	QString PathXMLLines = QString("%1.svg").arg(FileName); //SVG CURVES FROM PHOTOSHOP
 	//=======================================================
 
-							QFile XMLGridFile(PathTSX);
-						    bool result = XMLGridFile.open(QIODevice::ReadOnly);
-
-							TerrainTileElement* newTileElement = new TerrainTileElement;
+	//=================================================================
+							QFile XMLGridFile(PathTSX);             //GET GRID OFFSET
+						    XMLGridFile.open(QIODevice::ReadOnly);
 
 							QDomDocument newDomDoc;
-							result = newDomDoc.setContent(&XMLGridFile);
+							newDomDoc.setContent(&XMLGridFile);
 
 							QDomElement tileoffset = newDomDoc.elementsByTagName("tileoffset").at(0).toElement();
 
-							newTileElement->offsetGrid.first = tileoffset.attribute("x").toInt(); 
-							newTileElement->offsetGrid.second = tileoffset.attribute("y").toInt();
+							offsetGrid.first = tileoffset.attribute("x").toInt(); 
+							offsetGrid.second = tileoffset.attribute("y").toInt();
 							XMLGridFile.close();
+	//=================================================================
 
 	GridLines = new GridShapeContainer;
-	GridLines->AddCurves(PathXMLLines);
+	GridLines->AddCurves(PathXMLLines);  //LOAD CURVES FROM SVG FILE
+
+	Size_By_Cell.setWidth(GridLines->CurvesVert.size() - 1);   //IF PLAIN TILE IT IS GETTING FROM TILE SIZE BY PIXELS in UploadData 
+	Size_By_Cell.setHeight(GridLines->CurvesHoriz.size() - 1); //IF CURVED HILL TILE SIZE IS ETTING FROM GRID LINE COUNTS
 }
 
+//UPLOAD HILL HEIGHTS THAT WAS GETTING FROM PNG HEIGHTS FILE, CREATED IN PHOTOSHOP
+//PNG FILE WAS CONVERETED TO SVG TABLE IN OTHER UTILITY PROGRAM
 void TerrainTileElement::UploadHeightMap(QFile& XMLFileHeights)
 {
 	QXmlStreamReader xmlDoc(&XMLFileHeights);
 	QString Sector;
 
-	qDebug() << "                  >>> UPLOAD HEIGHTS TO ELEMENT - " << Name;
+	//============================================================
 	while (!xmlDoc.atEnd() && !xmlDoc.hasError())
-	{
+	{   // SEEK XML ELEMENT BY NAME OF TERRAIN ELEMENT
 		xmlDoc.readNextStartElement();
 	    Sector = xmlDoc.attributes().value("NAME").toString();
 		if (Sector == Name)
 			break;
 	}
+	//============================================================
 
+	//IF ELEMENT HAVE BENN FOUND BY NAME THEN READ ITS HEIGHTS TABLE
 	QXmlStreamAttributes attrib;
 	QXmlStreamReader::TokenType token;
 	while (!xmlDoc.atEnd() && !xmlDoc.hasError())
@@ -169,7 +176,7 @@ void TerrainTileElement::UploadHeightMap(QFile& XMLFileHeights)
 		token = xmlDoc.readNext();
 		if (token == QXmlStreamReader::EndElement)
 		{
-			if (xmlDoc.name() == "SECTOR")
+			if (xmlDoc.name() == "SECTOR") // END ELEMENT WITH NAME SECTOR IT IS END OF HEIGHTS TABLE TO CURRENT ELEMENT
 				return;
 			xmlDoc.readNext();
 		}
@@ -180,7 +187,7 @@ void TerrainTileElement::UploadHeightMap(QFile& XMLFileHeights)
 		QVector<double> Node;
 		if (!xmlDoc.name().toString().isEmpty())
 		{
-		Node.append(attrib.value("H1").toDouble());
+		Node.append(attrib.value("H1").toDouble());  //GET FOUR HEIGHTS TO ON CELL NODE
 		Node.append(attrib.value("H2").toDouble());
 		Node.append(attrib.value("H3").toDouble());
 		Node.append(attrib.value("H4").toDouble());
@@ -195,16 +202,15 @@ void TerrainTileElement::UploadHeightMap(QFile& XMLFileHeights)
 
 void TerrainTileElement::GetHeightMapToDraw()
 {
-	int height_grid = GridLines->CurvesHoriz.size() - 1;
-	int width_grid  = GridLines->CurvesVert.size() - 1;
+
 
 						int line = 0;
 						int node = 0;
 						int side = 0;
 						for (int sector = 0; sector < HeightMap.size(); sector++)
 						{
-							line = sector / height_grid;
-							node = sector - line*height_grid;
+							line = sector / Size_By_Cell.height();
+							node = sector - line*Size_By_Cell.height();
 
 							for (int side = 0; side < 2; side++)
 							{
@@ -220,6 +226,4 @@ void TerrainTileElement::GetHeightMapToDraw()
 								}
 							}
 						}
-					//		Size_By_Cell.setWidth(width_grid); 
-					//		Size_By_Cell.setHeight(height_grid);
 }
