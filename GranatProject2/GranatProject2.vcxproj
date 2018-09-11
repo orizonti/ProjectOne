@@ -92,7 +92,7 @@
   <ItemGroup>
     <ClCompile Include="AnimationSet.cpp" />
     <ClCompile Include="AnimationSetContainer.cpp" />
-    <ClCompile Include="MapDisplayEngine.cpp" />
+    <ClCompile Include="GameDisplayEngine.cpp" />
     <ClCompile Include="GameCoord.cpp" />
     <ClCompile Include="GameImageClass.cpp" />
     <ClCompile Include="GameViewUnitContainer.cpp" />
@@ -106,7 +106,7 @@
   <ItemGroup>
     <ClInclude Include="AnimationSet.h" />
     <ClInclude Include="AnimationSetContainer.h" />
-    <ClInclude Include="MapDisplayEngine.h" />
+    <ClInclude Include="GameDisplayEngine.h" />
     <ClInclude Include="GameCoord.h" />
     <ClInclude Include="GameImageClass.h" />
     <ClInclude Include="GameViewUnitContainer.h" />

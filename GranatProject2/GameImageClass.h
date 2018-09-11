@@ -47,9 +47,9 @@ public:
 	AnimationImage(AnimationImage&& Image);
 
 	static std::shared_ptr<AnimationSetContainer> Animations;
+	static void LoadAnimationSet(QString PathAnimation);
 
 	void DisplayImage(sf::RenderWindow& Window);
-	void LinkAnimationSet(std::shared_ptr<AnimationSet> Animation);
 
 private:
 	std::shared_ptr<AnimationSet> AnimationImages = NULL;

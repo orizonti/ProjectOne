@@ -3,11 +3,11 @@
 #include <GameCoord.h>
 #include <MapContainerClass.h>
 
-class MapDisplayEngine :public EventControlInterface
+class GameDisplayEngine :public EventControlInterface
 {
 public: 
-	MapDisplayEngine();
-	~MapDisplayEngine();
+	GameDisplayEngine();
+	~GameDisplayEngine();
 
 	 sf::RenderWindow* Window;
 	 sf::View* Camera;
@@ -15,19 +15,21 @@ public:
 	 float Scale = 1;
 	 QSize WindowSize;
 	 QSize CellSize;
+	 QPair<int,int> OffsetCamera; //POSITION OF CAMERA VIEW ON MAP IN CELL COUNT
 
-	Eigen::Vector2d OffsetCamera;
+	sf::Clock clock; // 
 
-    GameCoord MousePosition;
+    GameCoord MousePosition;  
 
 	 void KeyboardControl(sf::Event event);
 	 void MouseControl(sf::Event event);
+	 void RunGame();
 
 
-	 void DrawMap();
-	 void DrawUnits();
+	 void DrawALL();
 	 
 	 MapContainerClass Map;
 	 GameViewUnitContainer Units;
+
 };
 

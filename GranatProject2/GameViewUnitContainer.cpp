@@ -1,12 +1,10 @@
 #include "GameViewUnitContainer.h"
 GameViewUnitContainer::GameViewUnitContainer()
 {
-	qDebug() << "CREATE GAME UNIT CONTAINER";
 	    QString GameDir = qgetenv("GAME_WORK_DIR");
 		QString PathAnimation = GameDir + "/WORK_DIR/GameAnimation/";
-	    Animation_Units_Objects = std::shared_ptr<AnimationSetContainer>(new AnimationSetContainer());
-	    Animation_Units_Objects->UploadAnimationSets(PathAnimation);
-		AnimationImage::Animations = Animation_Units_Objects;
+		AnimationImage::LoadAnimationSet(PathAnimation);
+
 
 		auto TestUnit  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
 		auto TestUnit2  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
@@ -42,7 +40,6 @@ GameViewUnitContainer::GameViewUnitContainer()
 		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 1,-1), Direction::UpRight);
 		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 1, 1), Direction::UpLeft);
 
-		qDebug() << "UNIT HAS BEEN ADDED - " <<  TestUnit->CurrentPosition.GetIsoCoord();
 
 }
 GameViewUnitContainer::~GameViewUnitContainer()
@@ -51,22 +48,22 @@ GameViewUnitContainer::~GameViewUnitContainer()
 
 void GameViewUnitContainer::MapCellPressed(int x, int y)
 {
-
-	qDebug() << "UNITS CELL PRESSED - " << x << y;
+	qDebug() << "MAP CELL PRESSED - " << x << y;
 	if (UnitOnMapContainer.contains(QPair<float, float>(x, y)))
 	{
 		CurrentUnit = UnitOnMapContainer[QPair<float, float>(x, y)];
-		if(CurrentUnit != NULL)
-		qDebug() << "CURRENT UNIT - " << CurrentUnit->TypeUnit <<"POS- " << CurrentUnit->CurrentPosition.GetIsoCoord();
 	}
 	else
 	{
-		if(CurrentUnit != NULL)
+		if (CurrentUnit != NULL)
+		{
+	    UnitOnMapContainer.remove(CurrentUnit->CurrentPosition.GetIsoCoord());
 		CurrentUnit->SetDestination(x, y);
+		UnitOnMapContainer.insert(CurrentUnit->EndDestination.GetIsoCoord(), CurrentUnit);
 
+		qDebug() << "UNIT SET DESTINATION - " << x << y;
+		}
 	}
-
-
 
 }
 

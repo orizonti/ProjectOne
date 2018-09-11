@@ -88,8 +88,8 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 			for (TerrainObjectClass* item :Ground)   //DRAW PLAIN TERRAIN
 				item->DrawObject(Window);
 //------------------------------------------------------------------------
-			if (FLAG_DRAW_GRID)                      //DRAW PLAIN RHOMBUS GRID 
-			for (CurveShape& Shape : PlainGridLines)
+			
+			for (CurveShape& Shape : PlainGridLines) //DRAW PLAIN RHOMBUS GRID 
 				Window.draw(Shape);
 //------------------------------------------------------------------------
 			for (TerrainObjectClass* item :Hill)     //DRAW HILL TERRAIN OBJECTS
@@ -98,10 +98,7 @@ void MapContainerClass::DrawTerrain(sf::RenderWindow &Window)
 			for (QVector<TerrainObjectClass*> Layer : TerrainLayers)  //DRAW CURVE GRID ON HILL
 			{
 					for (TerrainObjectClass* item :Layer)
-					{
-						if(FLAG_DRAW_GRID)
 						item->DrawGrid(Window);
-					}
 			}
 
 			for (TerrainObjectClass* item :Hill)    //DRAW HILL TERRAIN OBJECTS
@@ -136,7 +133,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 				if (newElement.tagName() == "layer" && newElement.attribute("name") != "GridHill" && newElement.attribute("name") != "Grid")
 				{
-					//GRID LAYERS IS NOT USED BECOUSE PLAING GRID IS DRAWED BY PROGRAMMING METHOD WITH CURVE SHAPE
+					//GRID LAYERS IS NOT USED BECAUSE PLAING GRID IS DRAWED BY PROGRAMMING METHOD WITH CURVE SHAPE
 					TerrainLayers.insert(Number_Layer, QVector<TerrainObjectClass*>());
 
 							QDomNode dataNode = newElement.firstChild();
@@ -188,10 +185,7 @@ QVector<double>& MapContainerClass::GetCellHeightMap(int x, int y)
 			for (auto Terrain : ClusteredObjects.value(CenterCluster))
 			{
 				     if (Terrain->ContainsMapPoint(x, y))
-					 {
-					 //qDebug() << "Terrain - " << Terrain->TerrainData->Name << "POS - " << Terrain->Position.GetIsoCoord() << "contains - " << x << y << "SIZE - " << Terrain->TileSize;
 					 Heights = Terrain->GetHeightMapOnCell(x,y);
-					 }
 
 					 if (!Heights.isEmpty())
 						 return Heights;

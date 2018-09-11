@@ -47,6 +47,7 @@ public:
 	GroupImage UnitImage;
 	GameCoord CurrentPosition;
 	GameCoord Destination;
+	GameCoord EndDestination;
 	GameCoord NextCell;
 };
 

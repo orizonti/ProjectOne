@@ -327,22 +327,8 @@ void GridShapeContainer::DrawCell(sf::RenderWindow& Window, int NumberCell)
 
 void GridShapeContainer::DrawGrid(sf::RenderWindow& Window)
 {
-
-//	if (CurvesVert.isEmpty())
-//		return;
-
-//	for (CurveShape Shape : this->CurvesVert)
-//		Window.draw(Shape);
-
-//	for (CurveShape Shape : this->CurvesHoriz)
-//		Window.draw(Shape);
-//	if (SubCellShapes.size() == 0)
-//		return;
-
 	for (QuadeRangleShape& QuadeShape : this->SubCellShapes)
 		QuadeShape.DrawShape(Window);
-
-
 }
 
 QPainterPath GridShapeContainer::GetPathContour()

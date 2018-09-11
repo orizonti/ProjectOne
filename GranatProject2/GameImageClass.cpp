@@ -44,6 +44,12 @@ void SimpleImage::DisplayImage(sf::RenderWindow& Window)
 	Window.draw(*Sprite);
 }
 
+void AnimationImage::LoadAnimationSet(QString PathAnimation)
+{
+   Animations = std::shared_ptr<AnimationSetContainer>(new AnimationSetContainer());
+   Animations->UploadAnimationSets(PathAnimation);
+}
+
 void AnimationImage::DisplayImage(sf::RenderWindow& Window)
 {
 	Window.draw(*Sprite);
@@ -90,10 +96,6 @@ SimpleImage::~SimpleImage()
 	//qDebug() << "SIMPLE IMAGE DESTRUCTOR";
 }
 
-void AnimationImage::LinkAnimationSet(std::shared_ptr<AnimationSet> Animation)
-{
-	AnimationImages = Animation;
-}
 
 GroupImage::GroupImage()
 {
@@ -199,7 +201,6 @@ void GroupImage::AppendImage(SimpleImage&& Image)
 
 void GroupImage::TranslateElevation(QVector<double>& Translation)
 {
-	qDebug() << "ELEVATE GROUP - " << Translation;
 	int size = Translation.size();
 
 			Images[0]->Elevate(Translation[2]);
@@ -300,7 +301,6 @@ void SimpleImage::SetElevation(double Elevation)
 void SimpleImage::Elevate(double Elevation)
 {
 	DecElevation += Elevation;
-	qDebug() << "CURRENT ELEVATION - " << DecElevation;
 }
 
 

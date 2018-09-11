@@ -37,6 +37,7 @@ UnitObjectClass::UnitObjectClass(QString Type )
 
 UnitObjectClass::~UnitObjectClass()
 {
+	qDebug() << "UNIT DESCTRUCTOR ";
 }
 
 ClassWarriorUnit::ClassWarriorUnit(QString TypeUnit) : UnitObjectClass(TypeUnit)
@@ -89,30 +90,16 @@ void UnitObjectClass::MoveUnit()
 			{
 				CellHeightMapCurrent = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
 				NextCell.translate(dir_x, dir_y);
-				//qDebug() << "NEXT CELL - " << NextCell.GetIsoCoord().first + 1 << NextCell.GetIsoCoord().second + 1;
 
 				CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
 			    PosInCell = 0;
-                   
-				//double offset_
 
-				qDebug() << "-----------------------------------------";
 				if (CellHeightMap.isEmpty())
-				{
 					Elevations.fill(0);
-					qDebug() << "            UNIT ON PLAIN CELL";
-				}
 				else
 				{
-				//qDebug() << "            HEIGHT MAP CURRENT - " << CellHeightMapCurrent;
-				//qDebug() << "-----------------------------------------";
-				//qDebug() << "            HEIGHT MAP - " << CellHeightMap;
 					if (CellHeightMapCurrent.isEmpty())
 					{
-
-                    
-
-
 				Elevations[0] = CellHeightMap[0]/40.0;
 				Elevations[1] = CellHeightMap[1]/40.0;
 				Elevations[2] = CellHeightMap[2]/40.0;
@@ -126,10 +113,8 @@ void UnitObjectClass::MoveUnit()
 				Elevations[3] = (CellHeightMap[3] - CellHeightMapCurrent[3])/40.0;
 					}
 				}
-				qDebug() << "-----------------------------------------";
 			}
 
-	    //qDebug() << "MOVING " << this->CurrentPosition.GetIsoCoord() << "DESTINATION - " << Destination.GetIsoCoord();
 
 			if (dir_y != 0)
 				CurrentPosition.translate(0, 0.025*dir_y);
@@ -142,7 +127,6 @@ void UnitObjectClass::MoveUnit()
 
 			PosInCell += 0.025;
 			CurrentHeight += Elevations[0];
-			//qDebug() << "POS IN CELL - " << PosInCell << "CURRENT HEIGHT - " << CurrentHeight;
 
 
 
@@ -157,30 +141,23 @@ void UnitObjectClass::SetDestination(int x,int y  )
 	qDebug() << "   ===========================================";
 	qDebug() << "   CURRENT POS - " << CurrentPosition.GetIsoCoord();
 	qDebug() << "   SET DESTINATION X - " << x << "Y - " << y;
-	 RoutePoints.clear();
+	qDebug() << "   ===========================================";
 
-	 Destination.SetCoordIsometric(x, y);
+
+	 RoutePoints.clear();
+	 EndDestination.SetCoordIsometric(x, y);
 
 	 int diff = 0;
-	 d_x = Destination.IsoPos(0) - CurrentPosition.IsoPos(0);
-	 d_y = Destination.IsoPos(1) - CurrentPosition.IsoPos(1);
-//	 if (d_x < d_y)
-//		 diff = -d_x;
-
-//	 if (d_x > d_y)
-//		 diff = -d_y;
+	 d_x = EndDestination.IsoPos(0) - CurrentPosition.IsoPos(0);
+	 d_y = EndDestination.IsoPos(1) - CurrentPosition.IsoPos(1);
 
 	 GameCoord RouteNode = CurrentPosition;
 			   RouteNode.translate(0, d_y);
-	qDebug() << "   ADD ROUTE NODE - " << RouteNode.GetIsoCoord();
 	 RoutePoints.append(RouteNode);
-	 RoutePoints.append(Destination);
+	 RoutePoints.append(EndDestination);
 	 Destination = CurrentPosition;
 	 NextCell = CurrentPosition;
-	qDebug() << "   DESTINATION - " << Destination.GetIsoCoord() << "NEXT CELL - " << NextCell.GetIsoCoord();
-	qDebug() << "   ROUTE POINTS SIZE - " << RoutePoints.size();
 
-	qDebug() << "===========================================";
 
 }
 

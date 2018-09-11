@@ -56,10 +56,10 @@
     <ClCompile Include="AnimationSetContainer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MapDisplayEngine.cpp">
+    <ClCompile Include="AnimationSet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationSet.cpp">
+    <ClCompile Include="GameDisplayEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -94,10 +94,10 @@
     <ClInclude Include="AnimationSetContainer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MapDisplayEngine.h">
+    <ClInclude Include="AnimationSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AnimationSet.h">
+    <ClInclude Include="GameDisplayEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
