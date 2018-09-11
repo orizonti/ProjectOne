@@ -58,7 +58,7 @@ MapContainerClass::MapContainerClass()
 
 
 		//===============================================================================================
-	TileSet.CreateTileSetFromMap(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx"); // TILE ELEMENT HAS SPRITE OF TERRAIN THAT COMMON TO ALL TERRAINS OF SAME TYPE, EACH TERRAIN HAS POINTER TO RESPECTIE TILE ELEMENT
+		TerrainObjectClass::LoadTileSet();
 	this->CreateMapFromFile(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx");      // CREATING TERRAIN OBJECTS THAT ARE USED TO DRAWING MAP, EACH TERRAINS OBJECT HAS IT'S COORD AND LINK TO RESPECTIVE TILE
 	TerrainClasterization(this->TerrainLayers.value(1));  // CLASTERIZATION HILLS LAYER
 		//===============================================================================================
@@ -152,7 +152,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 											 Type = Digits.at(x).toInt();
 											 if (Type > 0)
 											 {
-											 TerrainObjectClass* newItem = new TerrainObjectClass(TileSet.TerrainElementsByType.value(Type));
+											 TerrainObjectClass* newItem = new TerrainObjectClass(Type);
 											 newItem->TerrainType = Type;
 											 newItem->SetCoord(60-y, x);
 											 TerrainLayers[Number_Layer].append(newItem);

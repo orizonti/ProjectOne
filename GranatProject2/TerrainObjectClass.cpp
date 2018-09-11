@@ -1,20 +1,28 @@
 #include "TerrainObjectClass.h"
+std::shared_ptr<TileSetClass> TerrainObjectClass::TileSet;
 
-TerrainObjectClass::TerrainObjectClass(TerrainTileElement* Terrain)
+TerrainObjectClass::TerrainObjectClass(int Type)
 {
-	if (Terrain != 0)
+	TerrainData = TileSet->TerrainElementsByType.value(Type);
+	if (TerrainData != 0)
 	{
-		if (Terrain->GridLines != 0)
+		if (TerrainData->GridLines != 0)
 		{
-		PathContour = Terrain->GridLines->GetPathContour();//QPAINTER_PATH TO DEFINE THAT CURRENT TERRAIN IS POINTED BY CURSOR
-		CellPathes = Terrain->GridLines->GetSubCells();    //QPAINTER_PATH MASSIVE THAT IS USED TO DEFINE WHAT CELL IS PRESSED ON CURVED TILE
+		PathContour = TerrainData->GridLines->GetPathContour();//QPAINTER_PATH TO DEFINE THAT CURRENT TERRAIN IS POINTED BY CURSOR
+		CellPathes = TerrainData->GridLines->GetSubCells();    //QPAINTER_PATH MASSIVE THAT IS USED TO DEFINE WHAT CELL IS PRESSED ON CURVED TILE
 		}
-		TerrainData = Terrain;// COMMON TERRAIN TILE ELEMENT
+		TerrainData = TerrainData;// COMMON TERRAIN TILE ELEMENT
 		this->TileSize = TerrainData->Size_By_Cell;
 	}
 
 }
 
+
+void TerrainObjectClass::LoadTileSet()
+{
+	TileSet = std::shared_ptr<TileSetClass>(new TileSetClass);
+	TileSet->CreateTileSetFromMap(GameDir +  + "/WORK_DIR/MAPS_TILED/Map512.tmx"); // TILE ELEMENT HAS SPRITE OF TERRAIN THAT COMMON TO ALL TERRAINS OF SAME TYPE, EACH TERRAIN HAS POINTER TO RESPECTIE TILE ELEMENT
+}
 
 void TerrainObjectClass::SetCoord(int x, int y)
 {

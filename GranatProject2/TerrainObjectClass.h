@@ -9,11 +9,12 @@
 class TerrainObjectClass
 {
 public:
-	TerrainObjectClass(TerrainTileElement* Terrain);
+	TerrainObjectClass(int Type);
 	TerrainTileElement* TerrainData = 0;   //TERRAIN OBJECT CONTAINS COMMON TERRAIN_TILE_ELEMENT
 
 	void SetCoord(int x, int y);
 
+	static void LoadTileSet();
 	QuadeRangleShape& GetCellBorderMoved(); // GET QUADE CONTOUR TO HIGHLIGHT CURRENT CELL ON CURRENT TERRAIN OBJECT
 	QPair<int, int>   GetCellPressed();
 	//---------------------------------------------------
@@ -40,6 +41,8 @@ private:
 
 	QVector<QPainterPath> CellPathes;
 	        QPainterPath  PathContour;
+
+	static std::shared_ptr<TileSetClass> TileSet;
 
 	int Number_Cell_Moved = 0;
 	sf::Sprite* GetSpriteToDraw();

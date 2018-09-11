@@ -13,13 +13,10 @@ public:
 	~UnitObjectClass();
 
 	static MapContainerClass *TerrainMap;
-	static std::shared_ptr<AnimationSetContainer> Animations;
 	static QMap<QPair<int, int>, Direction> DirectionTable;
-	std::shared_ptr<AnimationSet> UnitAnimation = NULL;
 
 	bool FLAG_UNIT_AT_MOVING = false;
 
-	double CountMove = 0;
 
 	int d_x = 0;
 	int d_y = 0;
@@ -27,39 +24,26 @@ public:
 	int dir_y = 0;
 
 	QVector<double> Elevations;
-	double PosInCell = 0;
-	double CurrentHeight;
 
 	QVector<GameCoord> RoutePoints;
 
 
 	QString TypeUnit;
 
-	int CurrentFrame = 0;
 
 	void SetPosition(int x,int y);
-	void CheckHeightMap(int x, int y);
 	void GetMoveDirection();
 	void SetDestination(int x,int y);
 	void MoveUnit();
 
 	sf::Vector2f GetCoord();
 	GroupImage UnitImage;
+
 	GameCoord CurrentPosition;
 	GameCoord Destination;
 	GameCoord EndDestination;
 	GameCoord NextCell;
 };
 
-class ClassWarriorUnit :
-	public UnitObjectClass
-{
-public:
-	ClassWarriorUnit(QString TypeUnit);  // Test comment
-
-	void Attack();
-
-
-};
 
 

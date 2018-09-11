@@ -5,33 +5,22 @@ MapContainerClass* UnitObjectClass::TerrainMap = 0;
 QMap<QPair<int, int>, Direction> UnitObjectClass::DirectionTable;
 
 
-std::shared_ptr<AnimationSetContainer> UnitObjectClass::Animations = NULL;
 
-void UnitObjectClass::CheckHeightMap(int x, int y)
-{
-
-}
 
 
 UnitObjectClass::UnitObjectClass(QString Type )
 {
-	qDebug() << "================================================";
 	qDebug() << "CREATE UNIT of TYPE - " << Type;
 	TypeUnit = Type;
 	CurrentPosition.SetCoordIsometric(4, 8);
 	Destination.SetCoordIsometric(4, 8);
 
 
-	qDebug() << "CREATE GROUP IMAGE TO UNIT";
 	UnitImage = GroupImage(AnimationImage(Type), 4);
 	UnitImage.SetPositionOnMap(CurrentPosition.GetIsoCoord());
-	qDebug() << "================================================";
-	Elevations.resize(4);
-	//Elevations.fill(0, 4);
-	Elevations.fill(0);
-	qDebug() << Elevations[0];
 
-	qDebug() << "================================================";
+	Elevations.resize(4); Elevations.fill(0);
+
 }
 
 
@@ -40,10 +29,6 @@ UnitObjectClass::~UnitObjectClass()
 	qDebug() << "UNIT DESCTRUCTOR ";
 }
 
-ClassWarriorUnit::ClassWarriorUnit(QString TypeUnit) : UnitObjectClass(TypeUnit)
-{
-
-}
 
 
 void UnitObjectClass::GetMoveDirection()
@@ -92,7 +77,6 @@ void UnitObjectClass::MoveUnit()
 				NextCell.translate(dir_x, dir_y);
 
 				CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
-			    PosInCell = 0;
 
 				if (CellHeightMap.isEmpty())
 					Elevations.fill(0);
@@ -124,12 +108,6 @@ void UnitObjectClass::MoveUnit()
 
 			if(Elevations.last() != 0)
 			UnitImage.TranslateElevation(Elevations);
-
-			PosInCell += 0.025;
-			CurrentHeight += Elevations[0];
-
-
-
 
 
 
@@ -169,10 +147,6 @@ void UnitObjectClass::SetPosition(int x,int y  )
 }
 
 
-void ClassWarriorUnit::Attack()
-{
-
-}
 
 sf::Vector2f UnitObjectClass::GetCoord()
 {
