@@ -63,7 +63,7 @@ MapContainerClass::MapContainerClass()
 	TerrainClasterization(this->TerrainLayers.value(1));  // CLASTERIZATION HILLS LAYER
 		//===============================================================================================
 
-	UnitObjectClass::TerrainMap = this;
+	MapUnitObject::TerrainMap = this;
 }
 
 void MapContainerClass::DrawCurrentCell(sf::RenderWindow &Window)

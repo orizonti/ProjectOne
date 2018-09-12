@@ -1,5 +1,5 @@
 #pragma once
-#include "UnitObjectClass.h"
+#include "MapObjects.h"
 #include <GridShapeContainer.h>
 #include "TileSetClass.h"
 #include "HeaderAndStructures.h"

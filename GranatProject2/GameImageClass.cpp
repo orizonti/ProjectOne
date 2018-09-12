@@ -261,7 +261,7 @@ void AnimationImage::IterateAnimation()
 void SimpleImage::SetPositionOnMap(float iso_x, float iso_y)
 {
 	//qDebug() << "SET POS ON MAP IN IMAGE - " << this <<"COORD - " <<iso_x << iso_y;
-	ImagePosOnMap.SetCoordIsometric(iso_x, iso_y);
+	ImagePosOnMap.SetCoordIsometric(iso_x + OffsetToImage.first, iso_y + OffsetToImage.second);
 	ImagePosOnMap.translateDecart(0, -DecElevation);
 	SetPositionImage(ImagePosOnMap.GetDecCoord());
 

@@ -101,7 +101,7 @@
     <ClCompile Include="MapContainerClass.cpp" />
     <ClCompile Include="TerrainObjectClass.cpp" />
     <ClCompile Include="TileSetClass.cpp" />
-    <ClCompile Include="UnitObjectClass.cpp" />
+    <ClCompile Include="MapObjects.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationSet.h" />
@@ -115,7 +115,7 @@
     <ClInclude Include="MapContainerClass.h" />
     <ClInclude Include="TerrainObjectClass.h" />
     <ClInclude Include="TileSetClass.h" />
-    <ClInclude Include="UnitObjectClass.h" />
+    <ClInclude Include="MapObjects.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="vpproject\GranatProject2.vpp" />

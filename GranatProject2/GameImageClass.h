@@ -23,11 +23,12 @@ virtual	void DisplayImage(sf::RenderWindow& Window);
 	void SetPositionOnMap(float iso_x, float iso_y);
 	void SetPositionOnMap(QPair<float,float> IsoCoord);
 
-	void SetObjectDirection(Direction Dir);
 
+	void SetObjectDirection(Direction Dir);
 	void SetElevation(double Elevation);
 	void Elevate(double Elevation);
 
+	QPair<float,float>  OffsetToImage;
 protected:
 	QString Type = "None";
 	GameCoord ImagePosOnMap;

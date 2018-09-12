@@ -6,13 +6,13 @@ GameViewUnitContainer::GameViewUnitContainer()
 		AnimationImage::LoadAnimationSet(PathAnimation);
 
 
-		auto TestUnit  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
-		auto TestUnit2  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
-		auto TestUnit3  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
+		auto TestUnit  = std::shared_ptr<MapUnitObject>(new MapUnitObject("MaceMan"));
+		auto TestUnit2  = std::shared_ptr<MapUnitObject>(new MapUnitObject("MaceMan"));
+		auto TestUnit3  = std::shared_ptr<MapUnitObject>(new MapUnitObject("MaceMan"));
 
-		auto TestUnit11  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
-		auto TestUnit22 = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
-		auto TestUnit33  = std::shared_ptr<UnitObjectClass>(new UnitObjectClass("MaceMan"));
+		auto TestUnit11  = std::shared_ptr<MapUnitObject>(new MapUnitObject("MaceMan"));
+		auto TestUnit22 = std::shared_ptr<MapUnitObject>(new MapUnitObject("MaceMan"));
+		auto TestUnit33  = std::shared_ptr<MapUnitObject>(new MapUnitObject("MaceMan"));
 
 		TestUnit->SetPosition(20, 21);
 		TestUnit2->SetPosition(20, 22);
@@ -30,15 +30,15 @@ GameViewUnitContainer::GameViewUnitContainer()
 		UnitOnMapContainer.insert(TestUnit22->CurrentPosition.GetIsoCoord(), TestUnit22);
 		UnitOnMapContainer.insert(TestUnit33->CurrentPosition.GetIsoCoord(), TestUnit33);
 
-		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 0, 1), Direction::Right);
-		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 0,-1), Direction::Left);
-		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 1, 0), Direction::Up);
-		UnitObjectClass::DirectionTable.insert(QPair<int, int>(-1, 0), Direction::Down);
+		MapUnitObject::DirectionTable.insert(QPair<int, int>( 0, 1), Direction::Right);
+		MapUnitObject::DirectionTable.insert(QPair<int, int>( 0,-1), Direction::Left);
+		MapUnitObject::DirectionTable.insert(QPair<int, int>( 1, 0), Direction::Up);
+		MapUnitObject::DirectionTable.insert(QPair<int, int>(-1, 0), Direction::Down);
 
-		UnitObjectClass::DirectionTable.insert(QPair<int, int>(-1, 1), Direction::DownRight);
-		UnitObjectClass::DirectionTable.insert(QPair<int, int>(-1,-1), Direction::DownLeft);
-		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 1,-1), Direction::UpRight);
-		UnitObjectClass::DirectionTable.insert(QPair<int, int>( 1, 1), Direction::UpLeft);
+		MapUnitObject::DirectionTable.insert(QPair<int, int>(-1, 1), Direction::DownRight);
+		MapUnitObject::DirectionTable.insert(QPair<int, int>(-1,-1), Direction::DownLeft);
+		MapUnitObject::DirectionTable.insert(QPair<int, int>( 1,-1), Direction::UpRight);
+		MapUnitObject::DirectionTable.insert(QPair<int, int>( 1, 1), Direction::UpLeft);
 
 
 }
@@ -71,7 +71,7 @@ void GameViewUnitContainer::DrawUnits(sf::RenderWindow &Window)
 {
 	for (auto Unit : UnitOnMapContainer.values())
 	{
-		Unit->UnitImage.DisplayImage(Window);
+		Unit->DrawObject(Window);
 	}
 }
 

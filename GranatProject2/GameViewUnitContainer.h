@@ -1,6 +1,6 @@
 #pragma once
 #include "HeaderAndStructures.h"
-#include "UnitObjectClass.h"
+#include "MapObjects.h"
 #include "AnimationSetContainer.h"
 
 class GameViewUnitContainer
@@ -8,8 +8,8 @@ class GameViewUnitContainer
 public:
 	GameViewUnitContainer();
 	~GameViewUnitContainer();
-	std::shared_ptr<UnitObjectClass> CurrentUnit = NULL;
-	QMap<QPair<int,int>,std::shared_ptr<UnitObjectClass>> UnitOnMapContainer;
+	std::shared_ptr<MapUnitObject> CurrentUnit = NULL;
+	QMap<QPair<int,int>,std::shared_ptr<MapUnitObject>> UnitOnMapContainer;
 
 	//int Scale = 1;
 
