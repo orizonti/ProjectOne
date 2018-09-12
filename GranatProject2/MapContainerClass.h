@@ -18,7 +18,7 @@ public:
 	//---------------------------------------------------------------
 
 	QPair<int, int>  GetRealCellPressed();
-	QVector<double>& GetCellHeightMap(int x, int y); //METHOD IS USED BY UNIT OBJECT WHEN UNIT IS MOVING ON CELL TO DRAW SPRITE ELEVATION PROPERLY
+	QVector<double> GetCellHeightMap(int x, int y); //METHOD IS USED BY UNIT OBJECT WHEN UNIT IS MOVING ON CELL TO DRAW SPRITE ELEVATION PROPERLY
 
 	TerrainObjectClass* CurrentTerrain = 0;  //IS NEEDED TO DRAW CURRENT CELL IN TERRAIN UNDER CURSOR
 

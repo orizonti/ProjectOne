@@ -172,7 +172,7 @@ void MapContainerClass::CreateMapFromFile(QString MapFilePath)
 
 }
 
-QVector<double>& MapContainerClass::GetCellHeightMap(int x, int y)
+QVector<double> MapContainerClass::GetCellHeightMap(int x, int y)
 {
 	GameCoord Coord; 
 	Coord.SetCoordIsometric(x, y);
@@ -192,8 +192,9 @@ QVector<double>& MapContainerClass::GetCellHeightMap(int x, int y)
 
 			}
 	}
+	Heights.resize(4); Heights.fill(0);
 
-	return QVector<double>();
+	return Heights;
 
 }
 

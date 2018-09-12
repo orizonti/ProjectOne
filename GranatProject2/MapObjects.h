@@ -6,25 +6,34 @@
 
 class MapContainerClass;
 
+struct MoveDirectionVector
+{
+	double Step_Iso_X = 0;
+	double Step_Iso_Y = 0;
+	double Step_Elevation = 0;
+};
+
 class MapObject
 {
 public:
 	MapObject();
 	MapObject(QString Type);
 	static MapContainerClass *TerrainMap;
-	double Elevation;
 	QString Type;
 
 	void SetPosition(int x,int y);
 	sf::Vector2f GetCoord();
 	std::shared_ptr<SimpleImage> ObjectImage;
 
-	void SetElevationStep(double Step);
-	double ElevationStep = 0;
-	void LiftObject(double Step);
+	MoveDirectionVector MoveDirection;
 
 	GameCoord CurrentPosition;
 
+	void MoveObjectOnStep();
+	void MoveObjectOnStep(double Iso_Step_X, double Iso_Step_Y, double Lift_Step);
+	void SetMoveDirection(double Iso_Step_X, double Iso_Step_Y, double Lift_Step);
+
+	void LiftObject(double ElevationStep);
 	void DrawObject(sf::RenderWindow& Window);
 };
 
@@ -65,6 +74,8 @@ public:
 	int dir_x = 0;
 	int dir_y = 0;
 
+	void MoveObjectOnStep();
+    void MoveObjectOnStep(double Iso_Step_X, double Iso_Step_Y, double Lift_Step);
 
 	void GetMoveDirection();
 	void SetDestination(int x,int y);

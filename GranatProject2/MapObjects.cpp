@@ -12,16 +12,40 @@ MapObject::MapObject()
 MapObject::MapObject(QString Type)
 {
 	ObjectImage = std::shared_ptr<AnimationImage>(new AnimationImage(Type));
-};
-
-void MapObject::SetElevationStep(double Step)
-{
-	ElevationStep = Step;
 }
 
-void MapObject::LiftObject(double Step)
+void MapObject::SetPosition(int x, int y)
 {
-	ObjectImage->Elevate(Step);
+		CurrentPosition.SetCoordIsometric(x, y);
+		ObjectImage->SetPositionOnMap(CurrentPosition.IsoPos(0), CurrentPosition.IsoPos(1));
+};
+
+
+
+void MapObject::MoveObjectOnStep()
+{
+				CurrentPosition.translate(MoveDirection.Step_Iso_X, MoveDirection.Step_Iso_Y);
+				ObjectImage->Elevate(MoveDirection.Step_Elevation);
+				ObjectImage->SetPositionOnMap(CurrentPosition.IsoPos(0), CurrentPosition.IsoPos(1));
+}
+
+void MapObject::MoveObjectOnStep(double Iso_Step_X, double Iso_Step_Y, double Lift_Step)
+{
+				CurrentPosition.translate(Iso_Step_X, Iso_Step_Y);
+				ObjectImage->Elevate(Lift_Step);
+				ObjectImage->SetPositionOnMap(CurrentPosition.IsoPos(0), CurrentPosition.IsoPos(1));
+}
+
+void MapObject::SetMoveDirection(double Iso_Step_X, double Iso_Step_Y, double Lift_Step)
+{
+	MoveDirection.Step_Iso_X = Iso_Step_X;
+	MoveDirection.Step_Iso_Y = Iso_Step_Y;
+	MoveDirection.Step_Elevation = Lift_Step;
+}
+
+void MapObject::LiftObject(double ElevationStep)
+{
+	ObjectImage->Elevate(ElevationStep);
 }
 
 void MapObject::DrawObject(sf::RenderWindow& Window)
@@ -79,6 +103,19 @@ MapUnitObject::~MapUnitObject()
 }
 
 
+void MapUnitObject::MoveObjectOnStep()
+{
+				CurrentPosition.translate(MoveDirection.Step_Iso_X, MoveDirection.Step_Iso_Y);
+			    for (auto Object : MapObjects)
+				Object->MoveObjectOnStep();
+}
+
+void MapUnitObject::MoveObjectOnStep(double Iso_Step_X, double Iso_Step_Y, double Lift_Step)
+{
+				CurrentPosition.translate(Iso_Step_X, Iso_Step_Y);
+			    for (auto Object : MapObjects)
+				Object->MoveObjectOnStep(Iso_Step_X, Iso_Step_Y, Lift_Step);
+}
 
 void MapUnitObject::GetMoveDirection()
 {
@@ -108,11 +145,22 @@ void MapUnitObject::GetMoveDirection()
 void MapUnitObject::MoveUnit()
 {
 
+	double step_x = 0;
+	double step_y = 0;
+
 	if (this->CurrentPosition == this->Destination)
 	{
 		CurrentPosition = Destination;
 		GetMoveDirection();
+
+			 step_x = 0.025*dir_x;
+			 step_y = 0.025*dir_y;
+			 SetMoveDirection(0.025*dir_x,0.025*dir_y,0);
+
+			for (auto Object : MapObjects)
+				Object->SetMoveDirection(step_x,step_y,0);
 	}
+
 
 	if (dir_y == 0 && dir_x == 0)
 		return;
@@ -121,50 +169,20 @@ void MapUnitObject::MoveUnit()
 			QVector<double> CellHeightMap;
 	        
 
-			if (CurrentPosition == NextCell)
-			{
-				CellHeightMapCurrent = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
-				NextCell.translate(dir_x, dir_y);
+	if (CurrentPosition == NextCell)
+	{
+		CellHeightMapCurrent = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
+		NextCell.translate(dir_x, dir_y);
 
-				CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
+		CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
 
-			//Images[0]->Elevate(Translation[2]);
-			//Images[1]->Elevate(Translation[3]);
+		MapObjects[0]->SetMoveDirection(MoveDirection.Step_Iso_X,MoveDirection.Step_Iso_Y,(CellHeightMap[2] - CellHeightMapCurrent[2]) / 40.0);
+		MapObjects[1]->SetMoveDirection(MoveDirection.Step_Iso_X,MoveDirection.Step_Iso_Y,(CellHeightMap[3] - CellHeightMapCurrent[3]) / 40.0);
+		MapObjects[2]->SetMoveDirection(MoveDirection.Step_Iso_X,MoveDirection.Step_Iso_Y,(CellHeightMap[0] - CellHeightMapCurrent[0]) / 40.0);
+		MapObjects[3]->SetMoveDirection(MoveDirection.Step_Iso_X,MoveDirection.Step_Iso_Y,(CellHeightMap[1] - CellHeightMapCurrent[1]) / 40.0);
+	}
 
-			//Images[2]->Elevate(Translation[0]);
-	        //Images[3]->Elevate(Translation[1]);
-					if (!CellHeightMap.isEmpty())
-					{
-						if (CellHeightMapCurrent.isEmpty())
-						{
-								MapObjects[0]->SetElevationStep(CellHeightMap[2] / 40.0);
-								MapObjects[1]->SetElevationStep(CellHeightMap[3] / 40.0);
-								MapObjects[2]->SetElevationStep(CellHeightMap[0] / 40.0);
-								MapObjects[3]->SetElevationStep(CellHeightMap[1] / 40.0);
-						}
-						else
-						{
-								MapObjects[0]->SetElevationStep((CellHeightMap[2] - CellHeightMapCurrent[2]) / 40.0);
-								MapObjects[1]->SetElevationStep((CellHeightMap[3] - CellHeightMapCurrent[3]) / 40.0);
-								MapObjects[2]->SetElevationStep((CellHeightMap[0] - CellHeightMapCurrent[0]) / 40.0);
-								MapObjects[3]->SetElevationStep((CellHeightMap[1] - CellHeightMapCurrent[1]) / 40.0);
-						}
-					}
-			}
-
-
-			if (dir_y != 0)
-				CurrentPosition.translate(0, 0.025*dir_y);
-
-			if (dir_x != 0)
-				CurrentPosition.translate(0.025*dir_x, 0);
-
-
-			for (auto Object : MapObjects)
-			{
-				Object->LiftObject(Object->ElevationStep);
-				Object->ObjectImage->SetPositionOnMap(CurrentPosition.IsoPos(0), CurrentPosition.IsoPos(1));
-			}
+	this->MoveObjectOnStep();
 }
 
 void MapUnitObject::SetDestination(int x,int y  )
@@ -198,7 +216,7 @@ void MapUnitObject::SetPosition(int x,int y  )
 	this->CurrentPosition.SetCoordIsometric(x, y);
 
 	for (auto Object : MapObjects)
-		Object->ObjectImage->SetPositionOnMap(CurrentPosition.IsoPos(0), CurrentPosition.IsoPos(1));
+	Object->SetPosition(x, y);
 }
 
 
