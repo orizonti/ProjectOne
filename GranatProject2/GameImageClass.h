@@ -60,40 +60,4 @@ private:
 };
 
 
-class GroupImage
-{
-public:
-	GroupImage();
-	GroupImage(const SimpleImage& Image, int Size = 1);
-	GroupImage(const AnimationImage& Image, int Size = 1);
-	GroupImage(const GroupImage& Image);
-	GroupImage(const GroupImage&& Image);
-
-
-	~GroupImage()
-	{
-		qDebug() << "GROUP IMAGE DESTRUCTOR";
-	}
-
-	void operator=(const GroupImage& Image);
-	void operator=(const GroupImage&& Image);
-
-	void AppendImage(AnimationImage&& Image);
-	void AppendImage(SimpleImage&& Image);
-
-	void AppendImage(std::shared_ptr<SimpleImage> Image);
-
-	void DisplayImage(sf::RenderWindow& Window);
-
-	void SetPositionOnMap(float iso_x, float iso_y);
-	void SetPositionOnMap(QPair<float,float> IsoCoord);
-
-	void SetDiretionMoving(Direction Dir);
-
-	void TranslateElevation(QVector<double>& Translation);
-private:
-	QVector<QPair<float,float> > OffsetToImage;
-	QVector<std::shared_ptr<SimpleImage>> Images;
-	int GroupSize = 0;
-};
 

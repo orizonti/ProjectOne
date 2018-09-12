@@ -11,6 +11,30 @@ struct MoveDirectionVector
 	double Step_Iso_X = 0;
 	double Step_Iso_Y = 0;
 	double Step_Elevation = 0;
+
+	double Speed = 0.025;
+
+	void SetMoveVector(int Dir_X, int Dir_Y, int Elevation = 0)
+	{
+		Step_Elevation = Elevation;
+
+	Unit_X = Dir_X;
+	Unit_Y = Dir_Y;
+
+	 Step_Iso_X = Unit_X * Speed;
+	 Step_Iso_Y = Unit_Y * Speed;
+	}
+
+	bool IsNull()
+	{
+		if ((Unit_X + Unit_Y) == 0)
+			return true;
+		else
+			return false;
+	}
+
+	int Unit_X = 0;
+	int Unit_Y = 0;
 };
 
 class MapObject
@@ -69,15 +93,11 @@ public:
 	QVector<GameCoord> RoutePoints;
 
 
-	int d_x = 0;
-	int d_y = 0;
-	int dir_x = 0;
-	int dir_y = 0;
 
 	void MoveObjectOnStep();
     void MoveObjectOnStep(double Iso_Step_X, double Iso_Step_Y, double Lift_Step);
 
-	void GetMoveDirection();
+	void ChangeMoveDirection();
 	void SetDestination(int x,int y);
 	void MoveUnit();
 

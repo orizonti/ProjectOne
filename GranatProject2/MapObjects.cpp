@@ -117,52 +117,50 @@ void MapUnitObject::MoveObjectOnStep(double Iso_Step_X, double Iso_Step_Y, doubl
 				Object->MoveObjectOnStep(Iso_Step_X, Iso_Step_Y, Lift_Step);
 }
 
-void MapUnitObject::GetMoveDirection()
+void MapUnitObject::ChangeMoveDirection()
 {
-	 dir_x = 0;
-	 dir_y = 0;
-	 if (RoutePoints.isEmpty())
+		//CurrentPosition = Destination;
+	int d_x = 0;
+	int d_y = 0;
+	int dir_x = 0;
+	int dir_y = 0;
+	if (RoutePoints.isEmpty())
+	{
+		 MoveDirection.SetMoveVector(0,0);
 		 return;
+	}
 
 		Destination = RoutePoints.takeFirst();
 
 	 d_x = Destination.IsoPos(0) - CurrentPosition.IsoPos(0);
 	 d_y = Destination.IsoPos(1) - CurrentPosition.IsoPos(1);
 
-
 	    if(d_x != 0)
     	dir_x = d_x / std::abs(d_x);
 		if(d_y != 0)
 		dir_y = d_y / std::abs(d_y);
+		//qDebug() << "SET DIRECTION - " << MoveDirection.Unit_X << MoveDirection.Unit_Y << DirectionTable.value(QPair<int, int>(MoveDirection.Unit_X, MoveDirection.Unit_Y));
 
-		//qDebug() << "SET DIRECTION - " << dir_x << dir_y << DirectionTable.value(QPair<int, int>(dir_x, dir_y));
+
+			MoveDirection.SetMoveVector(dir_x, dir_y);
+
+			for (auto Object : MapObjects)
+				Object->SetMoveDirection(MoveDirection.Step_Iso_X,MoveDirection.Step_Iso_Y,0);
 
 	for(auto Object: MapObjects)
-	Object->ObjectImage->SetObjectDirection(DirectionTable.value(QPair<int,int>(dir_x,dir_y)));
+	Object->ObjectImage->SetObjectDirection(DirectionTable.value(QPair<int,int>(MoveDirection.Unit_X,MoveDirection.Unit_Y)));
 
 }
 
 void MapUnitObject::MoveUnit()
 {
 
-	double step_x = 0;
-	double step_y = 0;
 
 	if (this->CurrentPosition == this->Destination)
-	{
-		CurrentPosition = Destination;
-		GetMoveDirection();
-
-			 step_x = 0.025*dir_x;
-			 step_y = 0.025*dir_y;
-			 SetMoveDirection(0.025*dir_x,0.025*dir_y,0);
-
-			for (auto Object : MapObjects)
-				Object->SetMoveDirection(step_x,step_y,0);
-	}
+		ChangeMoveDirection();
 
 
-	if (dir_y == 0 && dir_x == 0)
+	if (MoveDirection.IsNull())
 		return;
 
 			QVector<double> CellHeightMapCurrent;
@@ -172,7 +170,7 @@ void MapUnitObject::MoveUnit()
 	if (CurrentPosition == NextCell)
 	{
 		CellHeightMapCurrent = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
-		NextCell.translate(dir_x, dir_y);
+		NextCell.translate(MoveDirection.Unit_X, MoveDirection.Unit_Y);
 
 		CellHeightMap = this->TerrainMap->GetCellHeightMap(NextCell.IsoPos(0),NextCell.IsoPos(1));
 
@@ -192,6 +190,8 @@ void MapUnitObject::SetDestination(int x,int y  )
 	qDebug() << "   SET DESTINATION X - " << x << "Y - " << y;
 	qDebug() << "   ===========================================";
 
+	int d_x = 0;
+	int d_y = 0;
 
 	 RoutePoints.clear();
 	 EndDestination.SetCoordIsometric(x, y);

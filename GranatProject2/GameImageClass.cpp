@@ -5,11 +5,9 @@ std::shared_ptr<AnimationSetContainer> AnimationImage::Animations = NULL;
 
 AnimationImage::AnimationImage()
 {
-	//qDebug() << "ANIMATION IMAGE DEFAULT CONSTRUCTOR";
 }
 AnimationImage::AnimationImage(QString UnitType)
 {
-	//qDebug() << "CREATE ANIMATION IMAGE TO TYPE - " << UnitType;
 							this->CurrentDir = Direction::Right;
 	AnimationImages = Animations->GetUnitAnimationSet(UnitType);
 	this->Sprite->setTexture(AnimationImages->GetTexture(CurrentDir,0));
@@ -18,7 +16,6 @@ AnimationImage::AnimationImage(QString UnitType)
 
 AnimationImage::AnimationImage(AnimationImage&& Image)
 {
-	//qDebug() << "ANIMATION IMAGE CONSTRUCTOR OF MOVING";
 	this->Sprite = Image.Sprite;
 				   Image.Sprite = NULL;
 	this->AnimationImages = Image.AnimationImages;
@@ -30,7 +27,6 @@ AnimationImage::AnimationImage(AnimationImage&& Image)
 
 AnimationImage::AnimationImage(const AnimationImage& Image)
 {
-	//qDebug() << "         CREATE ANIMATION IMAGE COPY of TYPE - " << Image.Type << "PTR - " << this;
 	this->Sprite = std::shared_ptr<sf::Sprite>(new sf::Sprite(*Image.Sprite->getTexture()));
 	this->AnimationImages = Image.AnimationImages;
 	this->CurrentDir = Image.CurrentDir;
@@ -56,15 +52,7 @@ void AnimationImage::DisplayImage(sf::RenderWindow& Window)
 	this->IterateAnimation();
 }
 
-void GroupImage::DisplayImage(sf::RenderWindow& Window)
-{
-	        Images[3]->DisplayImage(Window);
-			Images[0]->DisplayImage(Window);
-			Images[1]->DisplayImage(Window);
-			Images[2]->DisplayImage(Window);
-	//for (auto Image : Images)
-	//	Image->DisplayImage(Window);
-}
+
 
 SimpleImage::SimpleImage()
 {
@@ -78,7 +66,6 @@ SimpleImage::SimpleImage(sf::Texture& tex)
 
 SimpleImage::SimpleImage(const SimpleImage& Image)
 {
-	//qDebug() << "SIMPLE IMAGE COPY CONSTRUCTOR - " << this;
 	Sprite = std::shared_ptr<sf::Sprite>(new sf::Sprite(*Image.Sprite->getTexture()));
 }
 SimpleImage::SimpleImage(SimpleImage&& Image)
@@ -88,158 +75,10 @@ SimpleImage::SimpleImage(SimpleImage&& Image)
 }
 AnimationImage::~AnimationImage()
 {
-	//qDebug() << "ANIMATION IMAGE DESTRUCTOR";
 }
 
 SimpleImage::~SimpleImage()
 {
-	//qDebug() << "SIMPLE IMAGE DESTRUCTOR";
-}
-
-
-GroupImage::GroupImage()
-{
-	//qDebug() << "GROUP IMAGE DEFAULT CONSTRUCTOR";
-	
-}
-GroupImage::GroupImage(const GroupImage& Image) : Images(Image.Images), 
-                                                  OffsetToImage(Image.OffsetToImage)
-{
-	//qDebug() << "GROUP COPY CONSTRUCTOR";
-	GroupSize = Image.GroupSize;
-}
-
-GroupImage::GroupImage(const GroupImage&& Image) : Images(std::move(Image.Images)),
-                                                   OffsetToImage(std::move(OffsetToImage))
-{
-
-	//qDebug() << "GROUP MOVE CONSTRUCTOR";
-	GroupSize = Image.GroupSize;
-}
-
-void GroupImage::operator=(const GroupImage& Image)
-{
-	//qDebug() << "GROUP IMAGE COPY = OPERATOR";
-	this->Images.append(Image.Images);
-	this->OffsetToImage.append(Image.OffsetToImage);
-	this->GroupSize = Image.GroupSize;
-}
-
-void GroupImage::operator=(const GroupImage&& Image)
-{
-	//qDebug() << "GROUP IMAGE MOVE = OPERATOR";
-	Images.append(std::move(Image.Images));
-	this->OffsetToImage.append(std::move(Image.OffsetToImage));
-	this->GroupSize = Image.GroupSize;
-}
-
-GroupImage::GroupImage(const SimpleImage& Image, int Size)
-{
-	this->GroupSize = Size;
-
-	if (Size <= 4)
-	{
-		OffsetToImage.append(QPair<float, float>(0.5, 0));
-		OffsetToImage.append(QPair<float, float>(0.5, 0.5));
-		OffsetToImage.append(QPair<float, float>(-0.5, 0));
-		OffsetToImage.append(QPair<float, float>(0, 0.5));
-	}
-
-	for (int n = 0; n < Size; n++)
-	{
-		Images.append(std::shared_ptr<SimpleImage>(new SimpleImage(Image)));
-	}
-}
-
-GroupImage::GroupImage(const AnimationImage& Image, int Size)
-{
-	this->GroupSize = Size;
-	//qDebug() << "GROUP IMAGE CONSTRUCTOR SIZE - " << Size;
-
-	if (Size <= 4)
-	{
-//		OffsetToImage.append(QPair<float, float>(0.4, -0.1));
-//		OffsetToImage.append(QPair<float, float>(1, -0.1));
-//		OffsetToImage.append(QPair<float, float>(0.4, -0.5));
-//		OffsetToImage.append(QPair<float, float>(1, -0.5));
-
-		OffsetToImage.append(QPair<float, float>(0.5, 0));
-		OffsetToImage.append(QPair<float, float>(1, 0));
-		OffsetToImage.append(QPair<float, float>(0.5, -0.5));
-		OffsetToImage.append(QPair<float, float>(1, -0.5));
-
-	//	OffsetToImage.append(QPair<float, float>(0.4, 0.1));    //BR
-	//	OffsetToImage.append(QPair<float, float>(1.1, 0.1));      //TR
-	//	OffsetToImage.append(QPair<float, float>(0.4, -0.7)); //BL
-	//	OffsetToImage.append(QPair<float, float>(1.1, -0.7)); //TL
-	}
-
-	for (int n = 0; n < Size; n++)
-	{
-		//qDebug() << "--------------------------------------------";
-		//qDebug() << "APPEND NEW ANIMATION IMAGE - " << n;
-		Images.append(std::shared_ptr<AnimationImage>(new AnimationImage(Image)));
-	}
-}
-
-void GroupImage::AppendImage(std::shared_ptr<SimpleImage> Image)
-{
-	GroupSize++;
-	Images.append(Image);
-}
-
-void GroupImage::AppendImage(AnimationImage&& Image)
-{
-		GroupSize++;
-		Images.append(std::shared_ptr<AnimationImage>(new AnimationImage(std::forward<AnimationImage>(Image))));
-}
-void GroupImage::AppendImage(SimpleImage&& Image)
-{
-		Images.append(std::shared_ptr<SimpleImage>(new SimpleImage(std::forward<SimpleImage>(Image))));
-}
-
-
-void GroupImage::TranslateElevation(QVector<double>& Translation)
-{
-	int size = Translation.size();
-
-			Images[0]->Elevate(Translation[2]);
-			Images[1]->Elevate(Translation[3]);
-
-			Images[2]->Elevate(Translation[0]);
-	        Images[3]->Elevate(Translation[1]);
-
-	//if(Images.size() < Translation.size())
-	//    size = Images.size();
-
-	//for (int n = 0; n < size; n++)
-	//		Images[n]->Elevate(Translation[n]);
-}
-
-void GroupImage::SetPositionOnMap(float iso_x, float iso_y)
-{
-	//qDebug() << "SET GROUP IMAGE TO MAP POS - " << iso_x << iso_y;
-	for (int n = 0; n < GroupSize; n++)
-	{
-		Images[n]->SetPositionOnMap(iso_x + OffsetToImage[n].first,iso_y + OffsetToImage[n].second);
-	}
-}
-void GroupImage::SetPositionOnMap(QPair<float,float> IsoCoord)
-{
-	//qDebug() << "SET GROUP IMAGE TO MAP POS - " << IsoCoord.first << IsoCoord.second;
-	for (int n = 0; n < GroupSize; n++)
-	{
-		Images[n]->SetPositionOnMap(IsoCoord.first + OffsetToImage[n].first, IsoCoord.second + OffsetToImage[n].second);
-	}
-}
-
-
-void GroupImage::SetDiretionMoving(Direction Dir)
-{
-	for (auto Image : Images)
-	{
-		Image->SetObjectDirection(Dir);
-	}
 }
 
 
@@ -260,7 +99,6 @@ void AnimationImage::IterateAnimation()
 
 void SimpleImage::SetPositionOnMap(float iso_x, float iso_y)
 {
-	//qDebug() << "SET POS ON MAP IN IMAGE - " << this <<"COORD - " <<iso_x << iso_y;
 	ImagePosOnMap.SetCoordIsometric(iso_x + OffsetToImage.first, iso_y + OffsetToImage.second);
 	ImagePosOnMap.translateDecart(0, -DecElevation);
 	SetPositionImage(ImagePosOnMap.GetDecCoord());
@@ -274,7 +112,6 @@ void SimpleImage::SetPositionOnMap(QPair<float,float> IsoCoord)
 
 void SimpleImage::SetPositionImage(QPair<float, float> Coord)
 {
-	//qDebug() << "SET DECART COORD - " << Coord.first << Coord.second;
 		Sprite->setPosition(Coord.first,Coord.second);
 }
 void SimpleImage::SetPositionImage(float x, float y)
